@@ -1,0 +1,40 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        repositories {
+            google()
+            mavenCentral()
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/u-n-l/core-java")
+                credentials {
+                    username = "lokeshpunl"
+                    password = "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"
+                }
+
+                /* username = System.getenv("OSS_USERNAME")
+                 password = System.getenv("OSS_PASSWORD")*/
+            }
+            maven {
+                url "https://jitpack.io"
+               /* credentials {
+                    username = "lokeshpunl"
+                    password = "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"
+                   // password = "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"
+                }*/
+            }
+        }
+    }
+}
+rootProject.name = "UNL Address Validator"
+include ':app'
+include ':UNLAddressValidator'
