@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         try {
             val ft: FragmentTransaction = getFragmentManager().beginTransaction()
             val fragment: HomeFragment =
-                HomeFragment.newInstance("UNL","GLOBAL",this,this,supportFragmentManager)
+                HomeFragment.newInstance("","GLOBAL",this,this,supportFragmentManager)
             ft.replace(R.id.fragmentHolder, fragment)
             ft.commit()
         } catch (e: Exception) {
