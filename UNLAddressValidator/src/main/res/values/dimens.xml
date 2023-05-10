@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="big_padding">15dp</dimen>
+    <dimen name="item_height">35dp</dimen>
+    <dimen name="landmark_image_size">30dp</dimen>
+    <dimen name="standard_text_size">16sp</dimen>
+    <dimen name="small_text_size">10sp</dimen>
+    <dimen name="medium_text_size">12sp</dimen>
+    <dimen name="big_text_size">14sp</dimen>
+    <dimen name="large_text_size">20sp</dimen>
+
+
+    <dimen name="top_panel_height">120dp</dimen>
+    <dimen name="top_panel_margin">20dp</dimen>
+    <dimen name="turn_image_size">40dp</dimen>
+    <dimen name="elevation_height">5dp</dimen>
+    <dimen name="instruction_text_size">22sp</dimen>
+
+
+    <dimen name="shape_corner_size_small_component">4dp</dimen>
+    <dimen name="shape_corner_size_medium_component">4dp</dimen>
+    <dimen name="shape_corner_size_large_component">0dp</dimen>
+
+    <dimen name="design_textinput_caption_translate_y">5dp</dimen>
+    <dimen name="min_touch_target_size">48dp</dimen>
+
+    <dimen name="textinput_outline_box_expanded_padding">16dp</dimen>
+
+    <dimen name="textinput_box_corner_radius_small">0dp</dimen>
+    <dimen name="textinput_box_corner_radius_medium">4dp</dimen>
+    <dimen name="textinput_box_stroke_width_default">1dp</dimen>
+    <dimen name="textinput_box_stroke_width_focused">2dp</dimen>
+    <dimen name="textinput_box_label_cutout_padding">4dp</dimen>
+
+    <!-- The icon views' minimum width is 48dp and since each icon is 24dp wide we need a 4dp margin
+         to have the appropriate spacing before and after each icon. -->
+    <dimen name="textinput_end_icon_margin_start">4dp</dimen>
+    <dimen name="textinput_start_icon_margin_end">4dp</dimen>
+
+    <dimen name="exposed_dropdown_menu_popup_elevation">8dp</dimen>
+    <dimen name="exposed_dropdown_menu_popup_vertical_padding">8dp</dimen>
+    <dimen name="exposed_dropdown_menu_popup_vertical_offset">-8dp</dimen>
+</resources>

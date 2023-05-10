@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#8F83B8</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="text_color">#404040</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="black1">#222222</color>
+    <color name="black_shade">#111111</color>
+    <color name="purple1">#8F83B8</color>
+    <color name="black2">#404040</color>
+    <color name="gray1">#B0B0B0</color>
+    <color name="gray2">#E0E0E0</color>
+    <color name="gray3">#707070</color>
+    <color name="heading_color">#404040</color>
+    <color name="background">#DDDDDD</color>
+    <color name="colorOnBackground">#FFFFFF</color>
+    <color name="boxStrokeColor">#E0E0E0</color>
+
+    <!-- Color for the text field's disabled state: 12% black -->
+    <color name="textinput_disabled_color">#1F000000</color>
+    <!-- Color for the text field's default box stroke: 42% black -->
+    <color name="textinput_default_box_stroke_color">#6B000000</color>
+    <!-- Color for the text field's hovered box stroke: 87% black -->
+    <color name="textinput_hovered_box_stroke_color">#DE000000</color>
+    <!-- Color for the text field's focused box stroke: transparent -->
+    <color name="textinput_focused_box_stroke_color">#00000000</color>
+    <!-- Color for the text field's default box background: 4% black -->
+    <color name="textinput_filled_box_default_background_color">#0A000000</color>
+
+
+
+
+</resources>

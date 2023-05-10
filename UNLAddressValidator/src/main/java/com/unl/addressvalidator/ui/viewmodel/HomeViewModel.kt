@@ -1,4 +1,4 @@
-package com.unl.addressvalidator.ui.fragments.viewmodel
+package com.unl.addressvalidator.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

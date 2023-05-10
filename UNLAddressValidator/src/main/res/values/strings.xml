@@ -1,5 +1,74 @@
 <resources>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello It is UNL SDK</string>
+    <string name="app_name">UNLApp</string>
+    <string name="hi_text">Hi there,</string>
+    <string name="para1">To ensure your order is delivered accurately, we kindly request additional information about your delivery address. Please confirm your delivery address by clicking the button below.</string>
+    <string name="start">Get Started</string>
+    <string name="confirm_text">Confirm Address</string>
+    <string name="gallery">Gallery</string>
+    <string name="address">Address</string>
+    <string name="add_address">Add Address</string>
+    <string name="ctext">Drag the pin to adjust delivery location.</string>
+    <string name="delivery_address">Your Delivery Address:</string>
+    <string name="current_location">Use current location</string>
+    <string name="current_location1">Galvanistraat, 3029 AD, Rotterdam, Netherland</string>
+    <string name="digits">1 of 9</string>
+    <string name="unit">Unit Number</string>
+    <string name="floor">Floor</string>
+    <string name="building">Building</string>
+    <string name="street">Street</string>
+    <string name="neighbourhood">Neighbourhood</string>
+    <string name="city">City*</string>
+    <string name="state">State/Province*</string>
+    <string name="country">Country</string>
+    <string name="address_label">Address Label</string>
+    <string name="zip">Zip/Postal Code*</string>
+    <string name="home">Home</string>
+    <string name="office">Office</string>
+    <string name="addLabel">Add Label</string>
+    <string name="search">Search </string>
+    <string name="confirm_text1">Confirm </string>
+    <string name="skip_text">Skip</string>
+    <string name="markEntrance">Mark Entrance(s)</string>
+    <string name="entrance1">Entrance No.1</string>
+    <string name="locationId">Location ID: 973628</string>
+    <string name="keep">Keep</string>
+    <string name="addPicture">Add Picture to the Landmark</string>
+    <string name="next">Next</string>
+    <string name="entrancePara1">Add additional information to earn points and
+help drivers deliver to the right location</string>
+    <string name="entrance">Entrance</string>
+    <string name="update">Update</string>
+    <string name="landmark">Landmark</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="coffeeShop">Coffee Shop</string>
+    <string name="clubHouse">Clubhouse</string>
+    <string name="searchLandmark">Search Nearby Landmark</string>
+    <string name="homeland">Homeland</string>
+    <string name="landmarkPara1">Add additional information to earn points and
+help drivers deliver to the right location</string>
+    <string name="selectLandmark">Select Nearby Landmark(s)</string>
+    <string name="your_add">Your Address</string>
+    <string name="updateAdd">Update Address Form</string>
+    <string name="dialogText1">You\'ve moved the pin outside the current grid dimension.</string>
+    <string name="dialogText2">Update your address with the new pin location?</string>
+
+    <string name="add_new_add">Add New Address</string>
+    <string name="home_address">Kattenburger straat 5, 027E, 1018 JA Amsterdam, 32323232</string>
+
+
+    <!-- The text pattern for the character counter -->
+    <string name="character_counter_pattern" translatable="false">%1$d / %2$d</string>
+    <!-- Content description for the character counter text -->
+    <string name="character_counter_content_description">Characters entered %1$d of %2$d</string>
+    <!-- Content description for the character counter text when it has overflowed -->
+    <string name="character_counter_overflowed_content_description">Character limit exceeded %1$d of %2$d</string>
+    <!-- Content description for the password visibility toggle button. [CHAR LIMIT=NONE] -->
+    <string name="password_toggle_content_description">Show password</string>
+    <!-- Content description for the clear text button end icon. [CHAR LIMIT=NONE] -->
+    <string name="clear_text_end_icon_content_description">Clear text</string>
+    <!-- Content description for the exposed dropdown menu button. [CHAR LIMIT=NONE] -->
+    <string name="exposed_dropdown_menu_content_description">Show dropdown menu</string>
+    <!-- Content description for the error icon. [CHAR LIMIT=NONE] -->
+    <string name="error_icon_content_description">Error</string>
 
 </resources>
