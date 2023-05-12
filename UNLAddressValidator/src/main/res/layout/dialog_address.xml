@@ -55,7 +55,7 @@
 
         <LinearLayout
             android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_weight="10"
@@ -109,17 +109,19 @@
                     android:textColor="@color/black2"
                     android:textSize="@dimen/_9ssp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/tvAddressText"
                     android:fontFamily="@font/poppins_light"
-                    android:text="@string/home_address"
+                    android:text=""
                     android:textColor="@color/black2"
                     android:textSize="@dimen/_9ssp" />
             </LinearLayout>
 
             <ImageView
                 android:layout_width="0dp"
+                android:id="@+id/editAddress"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/_5sdp"

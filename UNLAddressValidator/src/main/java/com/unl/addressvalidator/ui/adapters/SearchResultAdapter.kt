@@ -3,12 +3,11 @@ package com.unl.addressvalidator.ui.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.unl.addressvalidator.R
-import com.unl.addressvalidator.model.AutocompleteData
+import com.unl.addressvalidator.model.autocomplet.AutocompleteData
 import com.unl.addressvalidator.ui.interfaces.SearchItemClickListner
 
 

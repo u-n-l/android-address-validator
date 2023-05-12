@@ -1,6 +1,6 @@
 package com.unl.addressvalidator.ui.interfaces
 
-import com.unl.addressvalidator.model.AutocompleteData
+import com.unl.addressvalidator.model.autocomplet.AutocompleteData
 
 
 interface SearchItemClickListner {
