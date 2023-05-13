@@ -234,7 +234,7 @@ class HomeFragment : Fragment(), SearchItemClickListner {
                 is ApiCallBack.Success -> {
                     response.data
                     reverseGeoCodeResponse = response.data
-                    binding!!.confirmAddress!!.root.visibility  =  View.VISIBLE
+                    binding!!.confirmAddress!!.root.visibility = View.VISIBLE
                     binding!!.addNewAdd!!.root.visibility = View.GONE
                     showReverseGeoAddress()
                 }
@@ -251,35 +251,61 @@ class HomeFragment : Fragment(), SearchItemClickListner {
         })
 
     }
-private fun showReverseGeoAddress()
-{
-    binding!!.confirmAddress!!.tvAddressText.text = reverseGeoCodeResponse!!.features!!.get(0).properties.place.name
-    binding!!.confirmAddress!!.tvConfirm.setOnClickListener {
 
+    private fun showReverseGeoAddress() {
+        binding!!.confirmAddress!!.tvAddressText.text =
+            reverseGeoCodeResponse!!.features!!.get(0).properties.place.name
+        binding!!.confirmAddress!!.tvConfirm.setOnClickListener {
+
+        }
+
+        binding!!.confirmAddress!!.addNew.setOnClickListener {
+            binding!!.confirmAddress!!.root.visibility = View.GONE
+            binding!!.addNewAdd!!.root.visibility = View.VISIBLE
+        }
+        binding!!.confirmAddress!!.editAddress.setOnClickListener {
+            binding!!.confirmAddress!!.root.visibility = View.GONE
+            binding!!.addNewAdd!!.root.visibility = View.VISIBLE
+            setAddressFromGeocodeAddress()
+
+        }
     }
 
-    binding!!.confirmAddress!!.addNew.setOnClickListener {
-        binding!!.confirmAddress!!.root.visibility = View.GONE
-        binding!!.addNewAdd!!.root.visibility = View.VISIBLE
+    private fun setAddressFromGeocodeAddress() {
+        binding!!.addNewAdd!!.edtUnit.setText(
+            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
+                0
+            ).house_number
+        )
+        binding!!.addNewAdd!!.edtFloor.setText("")
+        binding!!.addNewAdd!!.edtBuilding.setText("")
+        binding!!.addNewAdd!!.edtStreet.setText(
+            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
+                0
+            ).street_address
+        )
+        binding!!.addNewAdd!!.edtCity.setText(
+            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
+                0
+            ).city_district
+        )
+        binding!!.addNewAdd!!.edtPincode.setText(
+            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
+                0
+            ).postal_code
+        )
+        binding!!.addNewAdd!!.edtState.setText(
+            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
+                0
+            ).state_district
+        )
+        binding!!.addNewAdd!!.edtCountry.setText(
+            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
+                0
+            ).country_code
+        )
     }
-    binding!!.confirmAddress!!.editAddress.setOnClickListener {
-        binding!!.confirmAddress!!.root.visibility = View.GONE
-        binding!!.addNewAdd!!.root.visibility = View.VISIBLE
-        setAddressFromGeocodeAddress()
 
-    }
-}
-private fun setAddressFromGeocodeAddress()
-{
-binding!!.addNewAdd!!.edtUnit.setText(reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).house_number)
-binding!!.addNewAdd!!.edtFloor.setText("")
-binding!!.addNewAdd!!.edtBuilding.setText("")
-binding!!.addNewAdd!!.edtStreet.setText(reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).street_address)
-binding!!.addNewAdd!!.edtCity.setText(reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).city_district)
-binding!!.addNewAdd!!.edtPincode.setText(reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).postal_code)
-binding!!.addNewAdd!!.edtState.setText(reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).state_district)
-binding!!.addNewAdd!!.edtCountry.setText(reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).country_code)
-}
     companion object {
         /**
          * Use this factory method to create a new instance of
