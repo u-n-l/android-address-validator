@@ -8,5 +8,6 @@ data class PostalAddressData(
     val street_address : String,
     val postal_code : String,
     val house_number : String
+
     )
 

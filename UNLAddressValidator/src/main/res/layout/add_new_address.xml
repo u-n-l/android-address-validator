@@ -2,11 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/top_rounded_shape"
+    android:clickable="true"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/_10sdp">
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -36,8 +39,9 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edtSearch"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="8.5"
                     android:background="@color/transparent"
                     android:fontFamily="@font/poppins_light"
                     android:hint="@string/search"
@@ -47,23 +51,24 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linearLayout3"
+                android:id="@+id/currentAddressLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_8sdp"
-                android:paddingTop="@dimen/_10sdp">
+                android:paddingTop="@dimen/_10sdp"
+                android:weightSum="10">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="6"
+                    android:layout_weight="2"
                     android:src="@drawable/ic_navigation_arrow" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="8"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -79,7 +84,8 @@
                         android:textColor="@color/black2"
                         android:textSize="@dimen/_8ssp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/currentAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -105,7 +111,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:orientation="vertical">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_bold"
@@ -120,43 +126,43 @@
                     android:orientation="horizontal"
                     android:weightSum="3">
 
-                     <com.unl.addressvalidator.customview.textfield.TextInputLayout
-                         android:layout_width="0dp"
-                         android:layout_height="wrap_content"
-                         android:layout_weight="1"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:hint="@string/unit"
-                         android:textColorHint="@color/gray3"
-                         app:boxBackgroundColor="@color/colorOnBackground"
-                         app:boxBackgroundMode="outline"
-                         app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
-                         app:boxCornerRadiusBottomStart="@dimen/_4sdp"
-                         app:boxCornerRadiusTopEnd="@dimen/_4sdp"
-                         app:boxCornerRadiusTopStart="@dimen/_4sdp"
-                         app:boxStrokeColor="@color/input_stroke"
-                         app:boxStrokeWidth="1dp"
-                         app:boxStrokeWidthFocused="1dp"
-                         app:hintEnabled="true"
-                         app:hintPaddingTop="@dimen/_5sdp"
-                         app:hintTextAppearance="@style/TextAppearance.Design.Hint">
+                    <com.unl.addressvalidator.customview.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:layout_weight="1"
+                        android:hint="@string/unit"
+                        android:textColorHint="@color/gray3"
+                        app:boxBackgroundColor="@color/colorOnBackground"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusBottomStart="@dimen/_4sdp"
+                        app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusTopStart="@dimen/_4sdp"
+                        app:boxStrokeColor="@color/input_stroke"
+                        app:boxStrokeWidth="1dp"
+                        app:boxStrokeWidthFocused="1dp"
+                        app:hintEnabled="true"
+                        app:hintPaddingTop="@dimen/_5sdp"
+                        app:hintTextAppearance="@style/TextAppearance.Design.Hint">
 
-                         <com.unl.addressvalidator.customview.textfield.TextInputEditText
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:id="@+id/edtUnit"
-                             android:textColor="@color/text_color"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_regular"
-                             android:textSize="@dimen/_10ssp"
-                             android:singleLine="true" />
-                     </com.unl.addressvalidator.customview.textfield.TextInputLayout>
+                        <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                            android:id="@+id/edtUnit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rounded_gray_bg"
+                            android:fontFamily="@font/poppins_regular"
+                            android:singleLine="true"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/_10ssp" />
+                    </com.unl.addressvalidator.customview.textfield.TextInputLayout>
 
                     <com.unl.addressvalidator.customview.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/_5sdp"
                         android:layout_weight="1"
                         android:hint="@string/floor"
-                        android:layout_marginRight="@dimen/_5sdp"
                         android:textColorHint="@color/gray3"
                         app:boxBackgroundColor="@color/colorOnBackground"
                         app:boxBackgroundMode="outline"
@@ -172,20 +178,20 @@
                         app:hintTextAppearance="@style/TextAppearance.Design.Hint">
 
                         <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                            android:id="@+id/edtFloor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/edtFloor"
                             android:background="@drawable/rounded_gray_bg"
                             android:fontFamily="@font/poppins_regular"
-                            android:textSize="@dimen/_10ssp"
-                            android:singleLine="true" />
+                            android:singleLine="true"
+                            android:textSize="@dimen/_10ssp" />
                     </com.unl.addressvalidator.customview.textfield.TextInputLayout>
 
                     <com.unl.addressvalidator.customview.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="@string/building"
+                        android:hint="@string/building_num"
                         android:textColorHint="@color/gray3"
                         app:boxBackgroundColor="@color/colorOnBackground"
                         app:boxBackgroundMode="outline"
@@ -199,23 +205,56 @@
                         app:hintEnabled="true"
                         app:hintPaddingTop="12dp"
                         app:hintTextAppearance="@style/TextAppearance.Design.Hint">
+
                         <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                            android:id="@+id/edtBuildingNum"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/edtBuilding"
                             android:background="@drawable/rounded_gray_bg"
                             android:fontFamily="@font/poppins_regular"
-                            android:textSize="@dimen/_10ssp"
-                            android:singleLine="true" />
+                            android:singleLine="true"
+                            android:textSize="@dimen/_10ssp" />
                     </com.unl.addressvalidator.customview.textfield.TextInputLayout>
                 </LinearLayout>
 
                 <com.unl.addressvalidator.customview.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginRight="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_weight="1"
+                    android:hint="@string/building_name"
+                    android:textColorHint="@color/gray3"
+                    app:boxBackgroundColor="@color/colorOnBackground"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                    app:boxCornerRadiusBottomStart="@dimen/_4sdp"
+                    app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                    app:boxCornerRadiusTopStart="@dimen/_4sdp"
+                    app:boxStrokeColor="@color/input_stroke"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="1dp"
+                    app:hintEnabled="true"
+                    app:hintPaddingTop="@dimen/_5sdp"
+                    app:hintTextAppearance="@style/TextAppearance.Design.Hint">
+
+                    <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                        android:id="@+id/edtBuildingName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_gray_bg"
+                        android:fontFamily="@font/poppins_regular"
+                        android:singleLine="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/_10ssp" />
+                </com.unl.addressvalidator.customview.textfield.TextInputLayout>
+
+                <com.unl.addressvalidator.customview.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_weight="1"
                     android:hint="@string/street"
                     android:textColorHint="@color/gray3"
                     app:boxBackgroundColor="@color/colorOnBackground"
@@ -233,22 +272,22 @@
                     app:hintTextAppearance="@style/TextAppearance.Design.Hint">
 
                     <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                        android:id="@+id/edtStreet"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edtStreet"
-                        android:textColor="@color/text_color"
                         android:background="@drawable/rounded_gray_bg"
                         android:fontFamily="@font/poppins_regular"
-                        android:textSize="@dimen/_10ssp"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/_10ssp" />
                 </com.unl.addressvalidator.customview.textfield.TextInputLayout>
 
                 <com.unl.addressvalidator.customview.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginRight="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_weight="1"
                     android:hint="@string/neighbourhood"
                     android:textColorHint="@color/gray3"
                     app:boxBackgroundColor="@color/colorOnBackground"
@@ -265,22 +304,22 @@
                     app:hintTextAppearance="@style/TextAppearance.Design.Hint">
 
                     <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                        android:id="@+id/edtNeighbour"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edtNeighbour"
-                        android:textColor="@color/text_color"
                         android:background="@drawable/rounded_gray_bg"
                         android:fontFamily="@font/poppins_regular"
-                        android:textSize="@dimen/_10ssp"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/_10ssp" />
                 </com.unl.addressvalidator.customview.textfield.TextInputLayout>
 
                 <com.unl.addressvalidator.customview.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginRight="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_weight="1"
                     android:hint="@string/city"
                     android:textColorHint="@color/gray3"
                     app:boxBackgroundColor="@color/colorOnBackground"
@@ -297,22 +336,22 @@
                     app:hintTextAppearance="@style/TextAppearance.Design.Hint">
 
                     <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                        android:id="@+id/edtCity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edtCity"
-                        android:textColor="@color/text_color"
                         android:background="@drawable/rounded_gray_bg"
                         android:fontFamily="@font/poppins_regular"
-                        android:textSize="@dimen/_10ssp"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/_10ssp" />
                 </com.unl.addressvalidator.customview.textfield.TextInputLayout>
 
                 <com.unl.addressvalidator.customview.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginRight="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_weight="1"
                     android:hint="@string/zip"
                     android:textColorHint="@color/gray3"
                     app:boxBackgroundColor="@color/colorOnBackground"
@@ -329,22 +368,23 @@
                     app:hintTextAppearance="@style/TextAppearance.Design.Hint">
 
                     <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                        android:id="@+id/edtPincode"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edtPincode"
-                        android:textColor="@color/text_color"
                         android:background="@drawable/rounded_gray_bg"
                         android:fontFamily="@font/poppins_regular"
-                        android:textSize="@dimen/_10ssp"
-                        android:singleLine="true" />
+                        android:inputType="numberDecimal"
+                        android:singleLine="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/_10ssp" />
                 </com.unl.addressvalidator.customview.textfield.TextInputLayout>
 
                 <com.unl.addressvalidator.customview.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginRight="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_weight="1"
                     android:hint="@string/state"
                     android:textColorHint="@color/gray3"
                     app:boxBackgroundColor="@color/colorOnBackground"
@@ -361,22 +401,22 @@
                     app:hintTextAppearance="@style/TextAppearance.Design.Hint">
 
                     <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                        android:id="@+id/edtState"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edtState"
-                        android:textColor="@color/text_color"
                         android:background="@drawable/rounded_gray_bg"
                         android:fontFamily="@font/poppins_regular"
-                        android:textSize="@dimen/_10ssp"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/_10ssp" />
                 </com.unl.addressvalidator.customview.textfield.TextInputLayout>
 
                 <com.unl.addressvalidator.customview.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginRight="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_weight="1"
                     android:hint="@string/country"
                     android:textColorHint="@color/gray3"
                     app:boxBackgroundColor="@color/colorOnBackground"
@@ -393,14 +433,14 @@
                     app:hintTextAppearance="@style/TextAppearance.Design.Hint">
 
                     <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                        android:id="@+id/edtCountry"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edtCountry"
-                        android:textColor="@color/text_color"
                         android:background="@drawable/rounded_gray_bg"
                         android:fontFamily="@font/poppins_regular"
-                        android:textSize="@dimen/_10ssp"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/_10ssp" />
                 </com.unl.addressvalidator.customview.textfield.TextInputLayout>
 
 
@@ -462,12 +502,12 @@
                                         android:id="@+id/tv_home"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/_5sdp"
                                         android:fontFamily="@font/poppins_light"
                                         android:text="@string/home"
-                                        android:layout_marginTop="@dimen/_5sdp"
-                                        android:textSize="@dimen/_10ssp"
                                         android:textAlignment="center"
-                                        android:textColor="@color/black2" />
+                                        android:textColor="@color/black2"
+                                        android:textSize="@dimen/_10ssp" />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -525,12 +565,12 @@
                                         android:id="@+id/tv_office"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/_5sdp"
                                         android:fontFamily="@font/poppins_light"
                                         android:text="@string/office"
-                                        android:layout_marginTop="@dimen/_5sdp"
                                         android:textAlignment="center"
-                                        android:textSize="@dimen/_10ssp"
-                                        android:textColor="@color/black2" />
+                                        android:textColor="@color/black2"
+                                        android:textSize="@dimen/_10ssp" />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -588,12 +628,12 @@
                                         android:id="@+id/tv_addLabel"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/_5sdp"
                                         android:fontFamily="@font/poppins_light"
                                         android:text="@string/addLabel"
-                                        android:layout_marginTop="@dimen/_5sdp"
                                         android:textAlignment="center"
-                                        android:textSize="@dimen/_10ssp"
-                                        android:textColor="@color/black2" />
+                                        android:textColor="@color/black2"
+                                        android:textSize="@dimen/_10ssp" />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -610,7 +650,59 @@
                     </androidx.cardview.widget.CardView>
 
                 </LinearLayout>
-                <TextView
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/addLabelView"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="@string/add_new_label"
+
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/_10ssp" />
+
+                    <com.unl.addressvalidator.customview.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:layout_weight="1"
+                        android:hint="@string/label_name"
+                        android:textColorHint="@color/gray3"
+                        app:boxBackgroundColor="@color/colorOnBackground"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusBottomStart="@dimen/_4sdp"
+                        app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusTopStart="@dimen/_4sdp"
+                        app:boxStrokeColor="@color/input_stroke"
+                        app:boxStrokeWidth="1dp"
+
+                        app:boxStrokeWidthFocused="1dp"
+                        app:hintEnabled="true"
+                        app:hintPaddingTop="@dimen/_5sdp"
+                        app:hintTextAppearance="@style/TextAppearance.Design.Hint">
+
+                        <com.unl.addressvalidator.customview.textfield.TextInputEditText
+                            android:id="@+id/edtLabelName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rounded_gray_bg"
+                            android:fontFamily="@font/poppins_regular"
+                            android:singleLine="true"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/_10ssp" />
+                    </com.unl.addressvalidator.customview.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvConfirm"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -627,526 +719,5 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
-    <!-- <ScrollView
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content">
-         <androidx.appcompat.widget.LinearLayoutCompat
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:orientation="vertical">
 
-             <LinearLayout
-                 android:id="@+id/linearLayout2"
-                 android:layout_width="match_parent"
-                 android:layout_height="@dimen/_35sdp"
-                 android:layout_marginTop="@dimen/_10sdp"
-                 android:background="@drawable/search_bg"
-                 android:paddingVertical="@dimen/_10sdp"
-                 android:weightSum="10">
-
-                 <ImageView
-                     android:layout_width="0dp"
-                     android:layout_height="wrap_content"
-                     android:layout_gravity="center_vertical"
-                     android:layout_weight="1.5"
-                     android:src="@drawable/ic_search" />
-
-                 <androidx.appcompat.widget.AppCompatEditText
-                     android:layout_width="wrap_content"
-                     android:layout_height="match_parent"
-                     android:id="@+id/edtSearch"
-                     android:background="@color/transparent"
-                     android:fontFamily="@font/poppins_light"
-                     android:hint="@string/search"
-                     android:textColor="@color/text_color"
-                     android:textColorHint="@color/gray3"
-                     android:textSize="@dimen/_10ssp" />
-             </LinearLayout>
-
-             <LinearLayout
-                 android:id="@+id/linearLayout3"
-                 android:layout_width="match_parent"
-                 android:layout_height="match_parent"
-                 android:layout_marginVertical="@dimen/_11sdp"
-                 android:paddingTop="@dimen/_10sdp">
-
-                 <ImageView
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_gravity="center_vertical"
-                     android:layout_weight="6"
-                     android:src="@drawable/ic_navigation_arrow" />
-
-                 <LinearLayout
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_weight="1"
-                     android:orientation="vertical"
-                     app:layout_constraintEnd_toEndOf="parent"
-                     app:layout_constraintHorizontal_bias="0.5"
-                     app:layout_constraintStart_toStartOf="parent"
-                     app:layout_constraintTop_toTopOf="parent">
-
-                     <TextView
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_weight="1"
-                         android:fontFamily="@font/poppins_light"
-                         android:text="@string/current_location"
-                         android:textColor="@color/black2"
-                         android:textSize="@dimen/_8ssp" />
-
-                     <TextView
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_weight="1"
-                         android:fontFamily="@font/poppins_light"
-                         android:text="@string/current_location1"
-                         android:textColor="@color/gray1"
-                         android:textSize="@dimen/_8ssp" />
-
-                 </LinearLayout>
-
-             </LinearLayout>
-
-             <androidx.recyclerview.widget.RecyclerView
-                 android:id="@+id/rvSearchResult"
-                 android:layout_width="match_parent"
-                 android:visibility="gone"
-                 android:layout_height="@dimen/_150sdp"
-                 android:background="@color/transparent" />
-
-             <LinearLayout
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:orientation="vertical">
-
-                 <TextView
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:fontFamily="@font/poppins_bold"
-                     android:text="@string/add_address"
-                     android:textColor="@color/black2"
-                     android:textSize="@dimen/_9ssp" />
-
-                 <LinearLayout
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_marginTop="@dimen/_5sdp"
-                     android:orientation="horizontal">
-
-                     <com.google.android.material.textfield.TextInputLayout
-                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                         android:layout_width="0dp"
-                         android:layout_height="wrap_content"
-                         android:layout_marginTop="@dimen/_5sdp"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:layout_weight="1"
-                         android:hint="@string/unit"
-                         android:textColorHint="@color/gray3"
-                         app:boxBackgroundMode="none">
-
-                         <com.google.android.material.textfield.TextInputEditText
-                             android:id="@+id/edt_unit"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_light"
-                             android:textColor="@color/black2"
-                             android:textSize="@dimen/_9ssp" />
-
-                     </com.google.android.material.textfield.TextInputLayout>
-
-                     <com.google.android.material.textfield.TextInputLayout
-                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                         android:layout_width="0dp"
-                         android:layout_height="wrap_content"
-                         android:layout_marginTop="@dimen/_5sdp"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:layout_weight="1"
-                         android:hint="@string/floor"
-                         android:textColorHint="@color/gray3">
-
-                         <com.google.android.material.textfield.TextInputEditText
-                             android:id="@+id/edt_floor"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_light"
-                             android:textColor="@color/black2"
-                             android:textSize="@dimen/_9ssp" />
-
-                     </com.google.android.material.textfield.TextInputLayout>
-
-                     <com.google.android.material.textfield.TextInputLayout
-                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                         android:layout_width="0dp"
-                         android:layout_height="wrap_content"
-                         android:layout_marginTop="@dimen/_5sdp"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:layout_weight="1"
-                         android:hint="@string/building"
-                         android:textColorHint="@color/gray3">
-
-                         <com.google.android.material.textfield.TextInputEditText
-                             android:id="@+id/edt_building"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_light"
-                             android:textColor="@color/black2"
-                             android:textSize="@dimen/_9ssp" />
-
-                     </com.google.android.material.textfield.TextInputLayout>
-                 </LinearLayout>
-
-                 <LinearLayout
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:orientation="vertical">
-
-                     <com.google.android.material.textfield.TextInputLayout
-                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_marginTop="@dimen/_5sdp"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:hint="@string/street"
-                         android:textColorHint="@color/gray3">
-
-                         <com.google.android.material.textfield.TextInputEditText
-                             android:id="@+id/edt_street"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_light"
-                             android:textColor="@color/black2"
-                             android:textSize="@dimen/_9ssp" />
-
-                     </com.google.android.material.textfield.TextInputLayout>
-
-                     <com.google.android.material.textfield.TextInputLayout
-
-                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_marginTop="@dimen/_5sdp"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:hint="@string/neighbourhood"
-                         android:textColorHint="@color/gray3">
-
-                         <com.google.android.material.textfield.TextInputEditText
-                             android:id="@+id/edt_neighbour"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_light"
-                             android:textColor="@color/black2"
-
-                             android:textSize="@dimen/_9ssp" />
-
-                     </com.google.android.material.textfield.TextInputLayout>
-
-
-                     <com.google.android.material.textfield.TextInputLayout
-                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_marginTop="@dimen/_5sdp"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:hint="@string/city"
-                         android:textColorHint="@color/gray3">
-
-                         <com.google.android.material.textfield.TextInputEditText
-                             android:id="@+id/edt_city"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_light"
-                             android:textColor="@color/black2"
-                             android:textSize="@dimen/_9ssp" />
-
-                     </com.google.android.material.textfield.TextInputLayout>
-
-                     <com.google.android.material.textfield.TextInputLayout
-                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_marginTop="@dimen/_5sdp"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:hint="@string/zip"
-                         android:textColorHint="@color/gray3">
-
-                         <com.google.android.material.textfield.TextInputEditText
-                             android:id="@+id/edt_zip"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_light"
-                             android:textColor="@color/black2"
-                             android:textSize="@dimen/_9ssp" />
-
-                     </com.google.android.material.textfield.TextInputLayout>
-
-                     <com.google.android.material.textfield.TextInputLayout
-                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_marginTop="@dimen/_5sdp"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:hint="@string/state"
-                         android:textColorHint="@color/gray3">
-
-                         <com.google.android.material.textfield.TextInputEditText
-                             android:id="@+id/edt_state"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_light"
-                             android:textColor="@color/black2"
-                             android:textSize="@dimen/_9ssp" />
-
-                     </com.google.android.material.textfield.TextInputLayout>
-
-                     <com.google.android.material.textfield.TextInputLayout
-                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_marginTop="@dimen/_5sdp"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:hint="@string/country"
-                         android:textColorHint="@color/gray3">
-
-                         <com.google.android.material.textfield.TextInputEditText
-                             android:id="@+id/edt_country"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/rounded_gray_bg"
-                             android:fontFamily="@font/poppins_light"
-                             android:textColor="@color/black"
-                             android:textSize="@dimen/_9ssp" />
-
-                     </com.google.android.material.textfield.TextInputLayout>
-
-
-                 </LinearLayout>
-
-
-                 <TextView
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_marginTop="@dimen/_16sdp"
-                     android:fontFamily="@font/poppins_bold"
-                     android:text="@string/address_label"
-                     android:textColor="@color/black2"
-                     android:textSize="@dimen/_9ssp" />
-
-                 <LinearLayout
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_marginTop="@dimen/_5sdp"
-                     android:orientation="horizontal"
-                     android:weightSum="3">
-
-                     <androidx.cardview.widget.CardView
-                         android:layout_width="0dp"
-                         android:layout_height="wrap_content"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:layout_weight="1"
-                         app:cardBackgroundColor="@color/white"
-                         app:cardCornerRadius="@dimen/_5sdp"
-                         app:cardElevation="@dimen/_2sdp"
-                         app:cardUseCompatPadding="true">
-
-                         <RelativeLayout
-                             android:id="@+id/rl_home_icon"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/address_label_shape"
-                             android:paddingVertical="@dimen/_5sdp"
-                             android:paddingLeft="@dimen/_5sdp"
-                             android:paddingRight="@dimen/_5sdp">
-
-                             <LinearLayout
-                                 android:layout_width="match_parent"
-                                 android:layout_height="wrap_content"
-                                 android:gravity="center"
-                                 android:orientation="horizontal">
-
-                                 <LinearLayout
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_gravity="center"
-                                     android:gravity="center"
-                                     android:orientation="vertical">
-
-                                     <ImageView
-                                         android:id="@+id/iv_home"
-                                         android:layout_width="wrap_content"
-                                         android:layout_height="wrap_content"
-                                         android:src="@drawable/home" />
-
-                                     <TextView
-                                         android:id="@+id/tv_home"
-                                         android:layout_width="wrap_content"
-                                         android:layout_height="wrap_content"
-                                         android:fontFamily="@font/poppins_light"
-                                         android:text="@string/home"
-                                         android:textAlignment="center"
-                                         android:textColor="@color/black2" />
-                                 </LinearLayout>
-
-                             </LinearLayout>
-
-                             <ImageView
-                                 android:id="@+id/iv_check_home"
-                                 android:layout_width="wrap_content"
-                                 android:layout_height="wrap_content"
-                                 android:layout_alignParentRight="true"
-
-                                 android:src="@drawable/labelunchecked" />
-                         </RelativeLayout>
-
-                     </androidx.cardview.widget.CardView>
-
-                     <androidx.cardview.widget.CardView
-                         android:layout_width="0dp"
-                         android:layout_height="wrap_content"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:layout_weight="1"
-                         app:cardBackgroundColor="@color/white"
-                         app:cardCornerRadius="@dimen/_5sdp"
-                         app:cardElevation="@dimen/_2sdp"
-                         app:cardUseCompatPadding="true">
-
-                         <RelativeLayout
-                             android:id="@+id/rl_office_icon"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/address_label_shape"
-                             android:paddingVertical="@dimen/_5sdp"
-                             android:paddingLeft="@dimen/_5sdp"
-                             android:paddingRight="@dimen/_5sdp">
-
-                             <LinearLayout
-                                 android:layout_width="match_parent"
-                                 android:layout_height="wrap_content"
-                                 android:gravity="center"
-                                 android:orientation="horizontal">
-
-                                 <LinearLayout
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_gravity="center"
-                                     android:gravity="center"
-                                     android:orientation="vertical">
-
-                                     <ImageView
-                                         android:id="@+id/iv_office"
-                                         android:layout_width="wrap_content"
-                                         android:layout_height="wrap_content"
-                                         android:src="@drawable/ic_office" />
-
-                                     <TextView
-                                         android:id="@+id/tv_office"
-                                         android:layout_width="wrap_content"
-                                         android:layout_height="wrap_content"
-                                         android:fontFamily="@font/poppins_light"
-                                         android:text="@string/office"
-                                         android:textAlignment="center"
-                                         android:textColor="@color/black2" />
-                                 </LinearLayout>
-
-                             </LinearLayout>
-
-                             <ImageView
-                                 android:id="@+id/iv_check_office"
-                                 android:layout_width="wrap_content"
-                                 android:layout_height="wrap_content"
-                                 android:layout_alignParentRight="true"
-
-                                 android:src="@drawable/labelunchecked" />
-                         </RelativeLayout>
-
-                     </androidx.cardview.widget.CardView>
-
-                     <androidx.cardview.widget.CardView
-                         android:layout_width="0dp"
-                         android:layout_height="wrap_content"
-                         android:layout_marginRight="@dimen/_5sdp"
-                         android:layout_weight="1"
-                         app:cardBackgroundColor="@color/white"
-                         app:cardCornerRadius="@dimen/_5sdp"
-                         app:cardElevation="@dimen/_2sdp"
-                         app:cardUseCompatPadding="true">
-
-                         <RelativeLayout
-                             android:id="@+id/rl_addLable_icon"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:background="@drawable/address_label_shape"
-                             android:paddingVertical="@dimen/_5sdp"
-                             android:paddingLeft="@dimen/_5sdp"
-                             android:paddingRight="@dimen/_5sdp">
-
-                             <LinearLayout
-                                 android:layout_width="match_parent"
-                                 android:layout_height="wrap_content"
-                                 android:gravity="center"
-                                 android:orientation="horizontal">
-
-                                 <LinearLayout
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_gravity="center"
-                                     android:gravity="center"
-                                     android:orientation="vertical">
-
-                                     <ImageView
-                                         android:id="@+id/iv_addLabel"
-                                         android:layout_width="wrap_content"
-                                         android:layout_height="wrap_content"
-                                         android:src="@drawable/ic_add_lable" />
-
-                                     <TextView
-                                         android:id="@+id/tv_addLabel"
-                                         android:layout_width="wrap_content"
-                                         android:layout_height="wrap_content"
-                                         android:fontFamily="@font/poppins_light"
-                                         android:text="@string/addLabel"
-                                         android:textAlignment="center"
-                                         android:textColor="@color/black2" />
-                                 </LinearLayout>
-
-                             </LinearLayout>
-
-                             <ImageView
-                                 android:id="@+id/iv_check_addLabel"
-                                 android:layout_width="wrap_content"
-                                 android:layout_height="wrap_content"
-                                 android:layout_alignParentRight="true"
-
-                                 android:src="@drawable/labelunchecked" />
-                         </RelativeLayout>
-
-                     </androidx.cardview.widget.CardView>
-
-                 </LinearLayout>
-
-             </LinearLayout>
-
-             <TextView
-                 android:id="@+id/tvConfirm"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_marginVertical="@dimen/_16sdp"
-                 android:background="@drawable/theme_round_btn"
-                 android:fontFamily="@font/poppins_bold"
-                 android:paddingVertical="@dimen/_8sdp"
-                 android:text="@string/confirm_text"
-                 android:textAlignment="center"
-                 android:textColor="@color/white"
-                 android:textSize="@dimen/_12ssp" />
-         </androidx.appcompat.widget.LinearLayoutCompat>
-     </ScrollView>-->
 </LinearLayout>

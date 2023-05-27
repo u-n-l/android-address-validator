@@ -7,6 +7,7 @@
     <string name="gallery">Gallery</string>
     <string name="address">Address</string>
     <string name="add_address">Add Address</string>
+    <string name="add_new_label">Add new label</string>
     <string name="ctext">Drag the pin to adjust delivery location.</string>
     <string name="delivery_address">Your Delivery Address:</string>
     <string name="current_location">Use current location</string>
@@ -14,8 +15,10 @@
     <string name="digits">1 of 9</string>
     <string name="unit">Unit Number</string>
     <string name="floor">Floor</string>
-    <string name="building">Building</string>
+    <string name="building_num">Building No.</string>
+    <string name="building_name">Building Name</string>
     <string name="street">Street</string>
+    <string name="label_name">Label name</string>
     <string name="neighbourhood">Neighbourhood</string>
     <string name="city">City*</string>
     <string name="state">State/Province*</string>

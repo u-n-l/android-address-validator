@@ -2,6 +2,8 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -46,6 +48,10 @@ dependencies {
     // Coroutine Lifecycle Scopes
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
+
+
+
+
     //UNL Map SDK
     implementation 'com.github.u-n-l:unl-maps-sdk-android:1.1.4'
     //SSP and SDP
@@ -58,5 +64,9 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.7.2"
     implementation "io.coil-kt:coil:0.9.5"
 
-
+    // Room components
+    implementation "androidx.room:room-runtime:2.5.1"
+    kapt "androidx.room:room-compiler:2.5.1"
+    implementation "androidx.room:room-ktx:2.5.1"
+    androidTestImplementation "androidx.room:room-testing:2.5.1"
 }

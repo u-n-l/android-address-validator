@@ -6,6 +6,7 @@ import com.unl.addressvalidator.model.reversegeocode.ReverseGeoCodeResponse
 import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -16,5 +17,7 @@ interface APIInterface {
     @GET("geocode/reverse")
     suspend  fun getReverseGeocode(@Query("location") param: JsonObject?) : Response<ReverseGeoCodeResponse>
 
+    @GET("search/place/{item_id}")
+    suspend  fun getAddressFromItemId(@Path("item_id") param: String?) : Response<JsonObject>
 
 }
