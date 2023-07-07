@@ -2,34 +2,44 @@ package com.unl.addressvalidator.ui.fragments
 
 
 import android.Manifest
-import android.app.Activity
+import android.app.Dialog
 import android.app.Fragment
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.contentValuesOf
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.roomdatabasewithmodelclassess.model.*
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.mapbox.mapboxsdk.annotations.IconFactory
+import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -40,11 +50,30 @@ import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.databinding.FragmentHomeBinding
 import com.unl.addressvalidator.model.autocomplet.AutocompleteData
 import com.unl.addressvalidator.model.dbmodel.CreateAddressModel
+import com.unl.addressvalidator.model.landmark.LandmarkDataList
 import com.unl.addressvalidator.model.reversegeocode.ReverseGeoCodeResponse
 import com.unl.addressvalidator.network.ApiCallBack
+import com.unl.addressvalidator.ui.adapters.AddressListAdapter
+import com.unl.addressvalidator.ui.adapters.LandMarkResultAdapter
 import com.unl.addressvalidator.ui.adapters.SearchResultAdapter
-import com.unl.addressvalidator.ui.interfaces.SearchItemClickListner
+import com.unl.addressvalidator.ui.imagepicker.adapter.AddPicturesAdapter
+import com.unl.addressvalidator.ui.imagepicker.builder.MultiImagePicker
+import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
+import com.unl.addressvalidator.ui.interfaces.*
 import com.unl.addressvalidator.ui.viewmodel.HomeViewModel
+import com.unl.addressvalidator.util.Constant.ALL_DAYS
+import com.unl.addressvalidator.util.Constant.FRIDAY
+import com.unl.addressvalidator.util.Constant.FROM_HOURS
+import com.unl.addressvalidator.util.Constant.FROM_MINS
+import com.unl.addressvalidator.util.Constant.MONDAY
+import com.unl.addressvalidator.util.Constant.SATURDAY
+import com.unl.addressvalidator.util.Constant.SUNDAY
+import com.unl.addressvalidator.util.Constant.THURSDAY
+import com.unl.addressvalidator.util.Constant.TO_HOURS
+import com.unl.addressvalidator.util.Constant.TO_MINS
+import com.unl.addressvalidator.util.Constant.TUESDAY
+import com.unl.addressvalidator.util.Constant.WEDNESDAY
+import com.unl.addressvalidator.util.Utility
 import com.unl.map.sdk.UnlMap
 import com.unl.map.sdk.data.EnvironmentType
 import com.unl.map.sdk.helpers.grid_controls.setGridControls
@@ -52,7 +81,6 @@ import com.unl.map.sdk.helpers.tile_controls.enableTileSelector
 import com.unl.map.sdk.helpers.tile_controls.setTileSelectorGravity
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.concurrent.atomic.AtomicBoolean
 
 
 /**
@@ -60,44 +88,72 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, LocationListener {
+class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,AddressItemClickListner, LifecycleOwner,
+    OperationHoursClickListner, AddressImageClickListner, EntranceClickListner,
+    LocationListener {
 
-//Get live location from GPS
+    var entranceList: ArrayList<EntranceModel> = ArrayList()
+    var entranceMarker: ArrayList<Marker> = ArrayList()
 
+    var openCloseTimeList: ArrayList<OpeningHoursSpecificationModel> = ArrayList()
+    var weekDays = arrayOf(ALL_DAYS, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY)
+    //Get live location from GPS
     private var locationByGps: Location? = null
     private var locationByNetwork: Location? = null
     lateinit var locationManager: LocationManager
 
-
+    //Loan Image from gallert
+    var selectImageForEntrance = false
+    var selectImageForLandmakr = false
+    var entranceSelectionEnable = false
+    val imageList = ArrayList<String>()
+    val landMakrImageList = ArrayList<AddPicturesModel>()
+    val dataList = ArrayList<AddPicturesModel>()
+    val entranceImageList = ArrayList<AddPicturesModel>()
+    val uriList = ArrayList<AddPicturesModel>()
+    lateinit var adapter: AddPicturesAdapter
+    val dataListSize = 9
+    var replaceIndex: Int = 0
+    var selectedLandmark: ReverseGeoCodeResponse? = null
     private var apiKey: String? = null
     private var vpmId: String? = null
     lateinit var viewModel: HomeViewModel
     lateinit var lifecycleOwner: LifecycleOwner
     lateinit var viewModelStoreOwner: ViewModelStoreOwner
     lateinit var supportFragmentManager: FragmentManager
-    private var binding: FragmentHomeBinding? = null
-    private var mapBoxMap: MapboxMap? = null
-    private var reverseGeoCodeResponse: ReverseGeoCodeResponse? = null
-    private var reverseGeoCodeCurrentLocationResponse: ReverseGeoCodeResponse? = null
-
+    var binding: FragmentHomeBinding? = null
+     var mapBoxMap: MapboxMap? = null
+    var reverseGeoCodeResponse: ReverseGeoCodeResponse? = null
+    var reverseGeoCodeCurrentLocationResponse: ReverseGeoCodeResponse? = null
     var pinLat: Double = 0.0
     var pinLong: Double = 0.0
-
     var currLat: Double = 0.0
     var currLong: Double = 0.0
-
     var currentAddressText = ""
     var moveCounter: Int = 0
     var isChangeMarker = true
     var updateLocation = true
     var addressType = "home"
+    var accessibilityType = ""
     var cityText = ""
     var stateText = ""
     var pincodeText = ""
-    private lateinit var database: UnlAddressDatabase
+    lateinit var database: UnlAddressDatabase
     var lifecycleRegistry: LifecycleRegistry? = null
+    var createAddressModel: CreateAddressModel? = null
 
     private val permissionsRequestCode = 123
+
+    //operational hours working details
+    var daysType = ALL_DAYS
+    var fromHours = "00"
+    var fromMins = "00"
+    var fromAMPM = "AM"
+    var toHours = "00"
+    var toMins = "00"
+    var toAMPM = "AM"
+
+
 
     // list for add marker reference
     private var markerViewList: ArrayList<View> = ArrayList()
@@ -109,10 +165,18 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
         getAutocompleteResponse()
         getReversgeoCodeResponse()
         getAddressFromCurrLocatinResponse()
+        getNearbyLandmarkResponse()
+        getAddressImageUploadResponse()
         database = UnlAddressDatabase.getInstance(context = context!!)
         lifecycleRegistry = LifecycleRegistry(this);
         lifecycleRegistry!!.setCurrentState(Lifecycle.State.CREATED);
         requestPermissions()
+        for (i in 0 until 9) {
+            dataList.add(AddPicturesModel(Uri.EMPTY))
+            landMakrImageList.add(AddPicturesModel(Uri.EMPTY))
+            entranceImageList.add(AddPicturesModel(Uri.EMPTY))
+        }
+
     }
 
     override fun onCreateView(
@@ -127,50 +191,75 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
             binding!!.mapView.lifeCycleOwner = viewModelStoreOwner
             binding!!.mapView.enableIndoorMap = false
             binding!!.mapView.viewLifecycle = lifecycleOwner
-            binding!!.mapView.enableTileSelector(false)
+            binding!!.mapView.enableTileSelector(true)
             binding!!.mapView.setGridControls(context!!, true)
             binding!!.mapView.setTileSelectorGravity(Gravity.END)
+
+
         }
 
+        binding!!.ivShowAddreess.setOnClickListener {
+            getAddressCreated()
+            viewModel.getAddress(database)
+          // Handler().postDelayed(Runnable {  viewModel.getAddress(database)},1000)
+        }
         binding!!.mapView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
-
                 updateLocation = false
                 val action = event.actionMasked
-
                 if (action == MotionEvent.ACTION_MOVE) {
                     moveCounter++
 
                     Log.v("TOUCHPINT", "MOVE" + MotionEvent.ACTION_MOVE)
                 } else if (action == MotionEvent.ACTION_UP) {
                     Log.v("TOUCHPINT", "Counter" + moveCounter)
+                    if (isChangeMarker && moveCounter < 4)
+                    {
+                        if(entranceSelectionEnable )
+                        {
+                            val new_position: LatLng = binding!!.mapView.mapbox!!.getProjection().fromScreenLocation(PointF(event.x, event.y - 50 ))
+                            showMarker(new_position, "Entrance No 1")
+                            addEntrancePoint(new_position.latitude,new_position.longitude)
+                        }else
+                        {
+                            val new_position: LatLng = binding!!.mapView.mapbox!!.getProjection().fromScreenLocation(PointF(event.x , event.y - 50))
+                            clearMap()
+                            pinLat = new_position.latitude
+                            pinLong = new_position.longitude
+                            showMarker(new_position, "home")
+                            callReverseGeoCode(new_position)
+                        }
 
-                    if (isChangeMarker && moveCounter < 4) {
-                        val new_position: LatLng =
-                            binding!!.mapView.mapbox!!.getProjection()
-                                .fromScreenLocation(PointF(event.x, event.y))
-
+                    }else if( entranceSelectionEnable && moveCounter < 4 )
+                    {
+                        isChangeMarker = true
                         clearMap()
-                        pinLat = new_position.latitude
-                        pinLong = new_position.longitude
-                        showMarker(new_position, "home")
-                        callReverseGeoCode(new_position)
+                        val new_position: LatLng = binding!!.mapView.mapbox!!.getProjection().fromScreenLocation(PointF(event.x, event.y - 50))
+                        showMarker(new_position, "Entrance No 1")
+                        addEntrancePoint(new_position.latitude,new_position.longitude)
                     }
                     moveCounter = 0
                 }
-
-
                 return false
             }
         })
+
+        binding!!.hidePinHint.setOnClickListener {
+            binding!!.cvPintHint.visibility = View.GONE
+        }
 
         binding!!.addNewAdd.edtSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 try {
                     if (s!!.isNotEmpty() && s!!.toString().length > 1 /*&& fromSelection == false*/) {
                         // binding!!.progressBar.visibility = View.VISIBLE
+                        var searchNearbyMe : JsonObject? = JsonObject()
+                        var jsonArray = JsonArray()
+                        jsonArray.add(pinLong)
+                        jsonArray.add(pinLat)
+                        searchNearbyMe!!.add("Point", jsonArray)
 
-                        viewModel.getAutocompleteData(s.toString())
+                        viewModel.getAutocompleteData(s.toString(),searchNearbyMe!!)
                     } else {
                         //  fromSelection = false
                     }
@@ -190,15 +279,14 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
                 before: Int, count: Int
             ) {
 
-
             }
         })
-
 
         setSearchListView()
         selectedLabel(0)
         setNewAddressClick()
         getSearchAddressResponse()
+        viewModel.getAddress(database)
         return binding!!.root
     }
 
@@ -217,7 +305,7 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
     }
 
     //Clear Map before adding new Marker
-    private fun clearMap() {
+    fun clearMap() {
         markerViewList.forEach {
             binding!!.mapView.removeView(it)
         }
@@ -226,22 +314,42 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
     }
 
     //Create marker for Address
-    private fun showMarker(latLng: LatLng, address: String) {
+    fun showMarker(latLng: LatLng, address: String) {
         try {
 
-            val iconFactory = IconFactory.getInstance(context!!)
-            val btmap: Bitmap = (ResourcesCompat.getDrawable(
-                context!!.resources,
-                R.drawable.home_marker,
-                null
-            ) as BitmapDrawable).getBitmap()
-            val icon: com.mapbox.mapboxsdk.annotations.Icon = iconFactory.fromBitmap(btmap)
-            mapBoxMap?.addMarker(
-                MarkerOptions()
+            if(entranceSelectionEnable)
+            {
+                val iconFactory = IconFactory.getInstance(context!!)
+                val btmap: Bitmap = (ResourcesCompat.getDrawable(
+                    context!!.resources,
+                    R.drawable.entrance_marker,
+                    null
+                ) as BitmapDrawable).getBitmap()
+                val icon: com.mapbox.mapboxsdk.annotations.Icon = iconFactory.fromBitmap(btmap)
+
+                var marker  = MarkerOptions()
                     .position(latLng)
                     .icon(icon)
 
-            )
+                entranceMarker.add(mapBoxMap?.addMarker(marker)!!)
+
+            }else
+            {
+                val iconFactory = IconFactory.getInstance(context!!)
+                val btmap: Bitmap = (ResourcesCompat.getDrawable(
+                    context!!.resources,
+                    R.drawable.home_marker,
+                    null
+                ) as BitmapDrawable).getBitmap()
+                val icon: com.mapbox.mapboxsdk.annotations.Icon = iconFactory.fromBitmap(btmap)
+                mapBoxMap?.addMarker(
+                    MarkerOptions()
+                        .position(latLng)
+                        .icon(icon)
+
+                )
+            }
+
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
@@ -315,56 +423,31 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
 
     }
 
-    fun parseSearchResultJson(rawData: JsonObject) {
 
-        try {
-            val parsed = JSONObject(rawData.toString())
-            val featuresArray: JSONArray = parsed.getJSONArray("geojson:Features")
-            var featureArrayJson: String = featuresArray.getString(0)
-            val featureJson: JSONObject = JSONObject(featureArrayJson)
-            var propertiesData: JSONObject = featureJson.getJSONObject("geojson:properties")
-            val addressArray: JSONArray = propertiesData.getJSONArray("vocabulary:address")
-            var AddressObject: String = addressArray.getString(0)
-            val AddressJson: JSONObject = JSONObject(AddressObject)
-            var addressType: String = AddressJson.getString("@type")
-            var addressRegion: String = AddressJson.getString("vocabulary:addressRegion")
-            var cityDistrict: String = AddressJson.getString("vocabulary:cityDistrict")
-            var houseNumber: String = AddressJson.getString("vocabulary:houseNumber")
-            var postalCode: String = AddressJson.getString("vocabulary:postalCode")
-            var countryCode: String = AddressJson.getString("vocabulary:countryCode")
-            var stateDistrict: String = AddressJson.getString("vocabulary:stateDistrict")
-            var streetAddress: String = AddressJson.getString("vocabulary:streetAddress")
+    private fun getNearbyLandmarkResponse() {
+        viewModel.nearbyLandmark.observe(lifecycleOwner, { response ->
+            when (response) {
+                is ApiCallBack.Success -> {
+                    binding!!.progressBar.visibility = View.GONE
+                    showNearbyLandmark(Utility.parseNearbyLandmarkJson(response.data!!))
+                }
 
-            clearAddressFields()
-            setAddressFromSearchResult(
-                houseNumber,
-                cityDistrict,
-                stateDistrict,
-                postalCode,
-                countryCode,
-                streetAddress
-            )
+                is ApiCallBack.Error -> {
+                    binding!!.progressBar.visibility = View.GONE
 
+                }
 
-            val geoLocationArray: JSONArray = propertiesData.getJSONArray("vocabulary:geo")
+                is ApiCallBack.Loading -> {
+                    binding!!.progressBar.visibility = View.VISIBLE
+                }
 
-            var geoLocObject: String = geoLocationArray.getString(0)
+            }
+        })
 
-            val geoLocJson: JSONObject = JSONObject(geoLocObject)
-
-            var lattitude: Double = geoLocJson.getDouble("vocabulary:latitude")
-            var longitude: Double = geoLocJson.getDouble("vocabulary:longitude")
-
-            isChangeMarker = false
-            clearMap()
-            showMarker(LatLng(lattitude, longitude), "addressType")
-            changeCameraPosition(LatLng(lattitude, longitude))
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
     }
 
-    private fun changeCameraPosition(latlng: LatLng) {
+
+    fun changeCameraPosition(latlng: LatLng) {
         val latLngBounds = LatLngBounds.Builder()
             .include(latlng)
             .include(latlng)
@@ -376,33 +459,16 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
                 50
             )
         )
-        binding!!.mapView!!.mapbox!!.setMaxZoomPreference(17.00)
+        binding!!.mapView!!.mapbox!!.setMaxZoomPreference(21.00)
     }
 
-    private fun setAddressFromSearchResult(
-        houseNumber: String,
-        cityDistrict: String,
-        stateDistrict: String,
-        postalCode: String,
-        countryCode: String,
-        streetAddress: String
-    ) {
-
-        binding!!.addNewAdd!!.edtUnit.setText(houseNumber)
-        binding!!.addNewAdd!!.edtStreet.setText(streetAddress)
-        binding!!.addNewAdd!!.edtCity.setText(cityDistrict)
-        binding!!.addNewAdd!!.edtPincode.setText(postalCode)
-        binding!!.addNewAdd!!.edtState.setText(stateDistrict)
-        binding!!.addNewAdd!!.edtCountry.setText(countryCode)
-
-
-    }
-
-
-    private fun getAddressCreated() {
+    fun getAddressCreated() {
         viewModel.addresslist.observe(this, { users ->
             try {
-                for (user in users) {
+
+               if(users!= null && users.size>0)
+                {
+                     initAddressList(users)
                 }
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
@@ -416,259 +482,75 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
                 is ApiCallBack.Success -> {
                     response.data
                     reverseGeoCodeResponse = response.data
-                    binding!!.confirmAddress!!.root.visibility = View.VISIBLE
-                    binding!!.addNewAdd!!.root.visibility = View.GONE
+
                     showReverseGeoAddress()
                 }
 
                 is ApiCallBack.Error -> {
-
+                        Toast.makeText(context , ""+response.message,Toast.LENGTH_SHORT).show()
                 }
 
                 is ApiCallBack.Loading -> {
 
                 }
-
             }
         })
-
     }
 
-    private fun showReverseGeoAddress() {
-        try {
-            binding!!.confirmAddress!!.tvAddressText.text =
-                reverseGeoCodeResponse!!.features!!.get(0).properties.place.name
-            binding!!.confirmAddress!!.tvConfirm.setOnClickListener {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-            }
-            binding!!.confirmAddress!!.mainLayout.setOnClickListener {
+        if (requestCode == MultiImagePicker.REQUEST_PICK_MULTI_IMAGES && resultCode == AppCompatActivity.RESULT_OK) {
+            val result = MultiImagePicker.Result(data)
+            if (result.isSuccess()) {
+                val imageList = result.getImageList()
 
-            }
-
-            binding!!.confirmAddress!!.addNew.setOnClickListener {
-                binding!!.confirmAddress!!.root.visibility = View.GONE
-                binding!!.addNewAdd!!.root.visibility = View.VISIBLE
-            }
-            binding!!.confirmAddress!!.editAddress.setOnClickListener {
-                binding!!.confirmAddress!!.root.visibility = View.GONE
-                binding!!.addNewAdd!!.root.visibility = View.VISIBLE
-                setAddressFromGeocodeAddress()
-            }
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun setAddressFromGeocodeAddress() {
-
-        binding!!.addNewAdd!!.edtUnit.setText(
-            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).house_number
-        )
-        binding!!.addNewAdd!!.edtStreet.setText(
-            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).street_address
-        )
-        binding!!.addNewAdd!!.edtCity.setText(
-            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).city_district
-        )
-        binding!!.addNewAdd!!.edtPincode.setText(
-            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).postal_code
-        )
-        binding!!.addNewAdd!!.edtState.setText(
-            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).state_district
-        )
-        binding!!.addNewAdd!!.edtCountry.setText(
-            reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).country_code
-        )
-    }
-
-    private fun setNewAddressClick() {
-        binding!!.addNewAdd!!.tvConfirm.setOnClickListener {
-            createAddress()
-        }
-        binding!!.addNewAdd!!.mainLayout.setOnClickListener {
-
-        }
-
-        binding!!.addNewAdd!!.currentAddressLayout.setOnClickListener {
-            clearMap()
-            clearAddressFields()
-            setAddressFromCurrentLcation()
-            showMarker(LatLng(currLat, currLong), "Current Location")
-            changeCameraPosition(LatLng(currLat, currLong))
-        }
-
-        binding!!.addNewAdd.rlHomeIcon.setOnClickListener(View.OnClickListener { selectedLabel(0) })
-        binding!!.addNewAdd.rlOfficeIcon.setOnClickListener(View.OnClickListener { selectedLabel(1) })
-        binding!!.addNewAdd.rlAddLableIcon.setOnClickListener(View.OnClickListener { selectedLabel(2) })
-
-
-        binding!!.addNewAdd!!.edtCity.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                try {
-                    if (s!!.isNotEmpty() && s!!.toString().length > 1) {
-                        cityText = s.toString()
-                    } else
-                        cityText = ""
-
-                    updateButton()
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
+                uriList.clear()
+                for (uri in imageList) {
+                    uriList.add(AddPicturesModel(uri))
                 }
-            }
 
-            override fun beforeTextChanged(
-                s: CharSequence?, start: Int,
-                count: Int, after: Int
-            ) {
-            }
-
-            override fun onTextChanged(
-                s: CharSequence?, start: Int,
-                before: Int, count: Int
-            ) {
-
-
-            }
-        })
-
-        binding!!.addNewAdd!!.edtState.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                try {
-                    if (s!!.isNotEmpty() && s!!.toString().length > 1) {
-                        stateText = s.toString()
-                    } else
-                        stateText = ""
-                    updateButton()
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
+                val uriListSize = uriList.size
+                if (selectImageForLandmakr) {
+                    for (i in replaceIndex until dataListSize) {
+                        if (i - replaceIndex < uriListSize) {
+                            landMakrImageList[i] =
+                                AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                        } else {
+                            landMakrImageList[i] = AddPicturesModel(Uri.EMPTY)
+                        }
+                    }
+                } else if(selectImageForEntrance)
+                {
+                    for (i in replaceIndex until dataListSize) {
+                        if (i - replaceIndex < uriListSize) {
+                            entranceImageList[i] =
+                                AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                        } else {
+                            entranceImageList[i] = AddPicturesModel(Uri.EMPTY)
+                        }
+                    }
                 }
-            }
-
-            override fun beforeTextChanged(
-                s: CharSequence?, start: Int,
-                count: Int, after: Int
-            ) {
-            }
-
-            override fun onTextChanged(
-                s: CharSequence?, start: Int,
-                before: Int, count: Int
-            ) {
-
-
-            }
-        })
-
-        binding!!.addNewAdd!!.edtPincode.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                try {
-                    if (s!!.isNotEmpty() && s!!.toString().length > 1) {
-                        pincodeText = s.toString()
-                    } else
-                        pincodeText = ""
-
-                    updateButton()
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
+                else {
+                    for (i in replaceIndex until dataListSize) {
+                        if (i - replaceIndex < uriListSize) {
+                            dataList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                        } else {
+                            dataList[i] = AddPicturesModel(Uri.EMPTY)
+                        }
+                    }
                 }
+                adapter.notifyDataSetChanged()
             }
 
-            override fun beforeTextChanged(
-                s: CharSequence?, start: Int,
-                count: Int, after: Int
-            ) {
-            }
 
-            override fun onTextChanged(
-                s: CharSequence?, start: Int,
-                before: Int, count: Int
-            ) {
-
-
-            }
-        })
+        }
     }
 
-    private fun updateButton() {
-
-        if (cityText.isNotEmpty() && stateText.isNotEmpty() && pincodeText.isNotEmpty()) {
-            binding!!.addNewAdd!!.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
-            binding!!.addNewAdd!!.tvConfirm.isClickable = true
-        } else {
-            binding!!.addNewAdd!!.tvConfirm.setBackgroundResource(R.drawable.bg_button_disable)
-            binding!!.addNewAdd!!.tvConfirm.isClickable = false
-        }
-
-    }
-
-
-    private fun createAddress() {
-
-        var houseNo = binding!!.addNewAdd!!.edtUnit.text!!.toString()
-        var floor = binding!!.addNewAdd!!.edtFloor.text!!.toString()
-        var buildingNum = binding!!.addNewAdd!!.edtBuildingNum.text!!.toString()
-        var buildingName = binding!!.addNewAdd!!.edtBuildingName.text!!.toString()
-        var streetName = binding!!.addNewAdd!!.edtStreet.text!!.toString()
-        var neighbour = binding!!.addNewAdd!!.edtNeighbour.text!!.toString()
-        var country = binding!!.addNewAdd!!.edtCountry.text!!.toString()
-        if (addressType.equals("other")) {
-            addressType = binding!!.addNewAdd!!.edtLabelName.text!!.toString()
-        }
-        val addressModel = AddressModel(
-            houseNo,
-            floor,
-            buildingNum,
-            buildingName,
-            streetName,
-            neighbour,
-            cityText,
-            stateText,
-            country,
-            pincodeText
-        )
-
-        val locationModel = LocationModel(pinLat!!, pinLong!!)
-
-        val landmarkModel = LandmarkModel(
-            "Gyan Sagar school",
-            "schood",
-            "22.56765434",
-            "75.324565432",
-            "https://www.image.jpeg"
-        )
-
-        var entranceList: ArrayList<EntranceModel> = ArrayList()
-        val entranceModel = EntranceModel("main gate", "1")
-        entranceList.add(entranceModel)
-
-        var openCloseTimeList: ArrayList<OpeningHoursSpecificationModel> = ArrayList()
-        val openingHoursSpecificationModel =
-            OpeningHoursSpecificationModel("11:00:00", "Monday", false, "08:00:00")
-        openCloseTimeList.add(openingHoursSpecificationModel)
-        val createAddress = CreateAddressModel(
-            2,
-            addressModel,
-            addressType,
-            locationModel,
-            landmarkModel,
-            entranceList,
-            openCloseTimeList
-        )
-        viewModel.insertAddress(database, createAddress)
-
-        getAddressCreated()
+    fun openImagePicker() {
+        MultiImagePicker.with(activity)
+            .setSelectionLimit(9)
+            .open()
     }
 
     companion object {
@@ -703,70 +585,6 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
     }
 
 
-    fun selectedLabel(position: Int) {
-        binding!!.addNewAdd!!.rlHomeIcon.setBackgroundResource(R.drawable.address_label_shape)
-        binding!!.addNewAdd!!.rlOfficeIcon.setBackgroundResource(R.drawable.address_label_shape)
-        binding!!.addNewAdd!!.rlAddLableIcon.setBackgroundResource(R.drawable.address_label_shape)
-        binding!!.addNewAdd!!.ivHome.setImageTintList(ColorStateList.valueOf(resources.getColor(R.color.black2)))
-        binding!!.addNewAdd!!.ivOffice.setImageTintList(ColorStateList.valueOf(resources.getColor(R.color.black2)))
-        binding!!.addNewAdd!!.ivAddLabel.setImageTintList(
-            ColorStateList.valueOf(
-                resources.getColor(
-                    R.color.black2
-                )
-            )
-        )
-        binding!!.addNewAdd!!.tvAddLabel.setTextColor(resources.getColor(R.color.black2))
-        binding!!.addNewAdd!!.tvOffice.setTextColor(resources.getColor(R.color.black2))
-        binding!!.addNewAdd!!.tvHome.setTextColor(resources.getColor(R.color.black2))
-        binding!!.addNewAdd!!.ivCheckAddLabel.setImageResource(R.drawable.labelunchecked)
-        binding!!.addNewAdd!!.ivCheckOffice.setImageResource(R.drawable.labelunchecked)
-        binding!!.addNewAdd!!.ivCheckHome.setImageResource(R.drawable.labelunchecked)
-
-        binding!!.addNewAdd.addLabelView.visibility = View.GONE
-
-        if (position == 0) {
-            addressType = "home"
-            binding!!.addNewAdd!!.rlHomeIcon.setBackgroundResource(R.drawable.label_selected_shape)
-            binding!!.addNewAdd!!.ivHome.setImageTintList(
-                ColorStateList.valueOf(
-                    resources.getColor(
-                        R.color.purple1
-                    )
-                )
-            )
-            binding!!.addNewAdd!!.tvHome.setTextColor(resources.getColor(R.color.purple1))
-            binding!!.addNewAdd!!.ivCheckHome.setImageResource(R.drawable.labelcheck)
-        } else if (position == 1) {
-            addressType = "office"
-            binding!!.addNewAdd!!.rlOfficeIcon.setBackgroundResource(R.drawable.label_selected_shape)
-            binding!!.addNewAdd!!.ivOffice.setImageTintList(
-                ColorStateList.valueOf(
-                    resources.getColor(
-                        R.color.purple1
-                    )
-                )
-            )
-            binding!!.addNewAdd!!.tvOffice.setTextColor(resources.getColor(R.color.purple1))
-            binding!!.addNewAdd!!.ivCheckOffice.setImageResource(R.drawable.labelcheck)
-        } else if (position == 2) {
-
-            binding!!.addNewAdd.addLabelView.visibility = View.VISIBLE
-            addressType = "other"
-            binding!!.addNewAdd!!.rlAddLableIcon.setBackgroundResource(R.drawable.label_selected_shape)
-            binding!!.addNewAdd!!.ivAddLabel.setImageTintList(
-                ColorStateList.valueOf(
-                    resources.getColor(
-                        R.color.purple1
-                    )
-                )
-            )
-            binding!!.addNewAdd!!.tvAddLabel.setTextColor(resources.getColor(R.color.purple1))
-            binding!!.addNewAdd!!.ivCheckAddLabel.setImageResource(R.drawable.labelcheck)
-        }
-    }
-
-
     private fun getMetadataFromMenifest() {
         /*  val info: ApplicationInfo = context!!.getPackageManager().getApplicationInfo(
               activity.packageName,
@@ -788,6 +606,7 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
 
     override fun onLocationChanged(location: Location) {
         updateCurrentLocation(location)
+
     }
 
     private fun requestPermissions() {
@@ -795,7 +614,10 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
         requestPermissions(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_MEDIA_LOCATION,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             ),
             permissionsRequestCode
         )
@@ -890,8 +712,6 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
             if (locationByGps != null && locationByNetwork != null) {
                 if (locationByGps!!.accuracy > locationByNetwork!!.accuracy) {
                     updateCurrentLocation(locationByGps!!)
-
-
                 } else {
                     updateCurrentLocation(locationByNetwork!!)
                 }
@@ -944,56 +764,63 @@ class HomeFragment : Fragment(), SearchItemClickListner, LifecycleOwner, Locatio
 
     }
 
-    private fun setCurrentAddress() {
-        currentAddressText =
-            reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.place.name
-        binding!!.addNewAdd!!.currentAddress.text = currentAddressText
+    override fun landmarkItemClick(reverseGeoCodeResponse: ReverseGeoCodeResponse) {
+        selectedLandmark = reverseGeoCodeResponse
+        binding!!.addLandmark!!.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
+        binding!!.addLandmark!!.tvConfirm.isClickable = true
+    }
+
+    override fun uploadLandmarkPic(position: Int, resulttList: ArrayList<LandmarkDataList>) {
+        selectImageForEntrance = false
+        selectImageForLandmakr = true
+        showLandmarkPictureDialog(position, resulttList)
+    }
+
+    override fun addressImageClick() {
+        openImagePicker()
+    }
+
+    override fun dayClick(day: String) {
+        daysType = day
+        setFromAndToTime()
+    }
+
+    override fun itemClick(hour: String, type: String) {
+        if (type.equals(FROM_HOURS))
+        {
+            fromHours = hour
+        }else if (type.equals(FROM_MINS))
+        {
+            fromMins = hour
+        }else if (type.equals(TO_HOURS))
+        {
+            toHours = hour
+        }else if (type.equals(TO_MINS))
+        {
+            toMins = hour
+        }
 
     }
 
-
-    private fun setAddressFromCurrentLcation() {
-
-        binding!!.addNewAdd!!.edtUnit.setText(
-            reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).house_number
-        )
-        binding!!.addNewAdd!!.edtStreet.setText(
-            reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).street_address
-        )
-        binding!!.addNewAdd!!.edtCity.setText(
-            reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).city_district
-        )
-        binding!!.addNewAdd!!.edtPincode.setText(
-            reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).postal_code
-        )
-        binding!!.addNewAdd!!.edtState.setText(
-            reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).state_district
-        )
-        binding!!.addNewAdd!!.edtCountry.setText(
-            reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(
-                0
-            ).country_code
-        )
+    override fun entranceEditClick(position: Int, entranceModel: ArrayList<EntranceModel>) {
+        editeEntrance(position,entranceModel)
     }
 
-    fun clearAddressFields() {
-        binding!!.addNewAdd!!.edtUnit.setText("")
-        binding!!.addNewAdd!!.edtStreet.setText("")
-        binding!!.addNewAdd!!.edtCity.setText("")
-        binding!!.addNewAdd!!.edtPincode.setText("")
-        binding!!.addNewAdd!!.edtState.setText("")
-        binding!!.addNewAdd!!.edtCountry.setText("")
+    override fun entranceDeleteClick(position: Int,entranceModel: ArrayList<EntranceModel>) {
+        removeEntrance(position,entranceModel)
+    }
+
+    override fun entranceImageClick(position: Int, entranceModel: ArrayList<EntranceModel>) {
+        selectImageForEntrance = true
+        selectImageForLandmakr = false
+        showEntrancePictureDialog(position,entranceModel)
     }
 
 
+    override fun addressItemClick(createAddressModel: CreateAddressModel) {
+
+    }
 }
+
+
+

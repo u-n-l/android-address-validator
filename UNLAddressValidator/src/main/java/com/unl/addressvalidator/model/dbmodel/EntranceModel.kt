@@ -5,6 +5,14 @@ import androidx.room.TypeConverters
 
 
 data class EntranceModel(
-    val entrance_name : String,
-    val entrance_no : String
+    var entranceName : String,
+    var entranceNo : String,
+    var entranceCategory : String,
+    var entranceInfo : String,
+    var  imgCount : String,
+    var entranceId : String,
+    var lattitude : Double,
+    var longitude : Double,
+    var url : String,
+    var imageArray : ArrayList<String>
 )

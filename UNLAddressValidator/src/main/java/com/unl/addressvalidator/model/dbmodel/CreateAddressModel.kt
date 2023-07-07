@@ -8,14 +8,17 @@ import com.google.gson.JsonObject
 
 @Entity(tableName = "create_address")
 data class CreateAddressModel(
-    @PrimaryKey(autoGenerate = true)
-    val createAddressId: Long =0,
-    val addressModel: AddressModel?= null,
-    val addressType: String?=null,
-    val locationModel: LocationModel?= null,
-    val landmarkModel: LandmarkModel?= null,
-    val entranceModel: ArrayList<EntranceModel>? =null,
-    val openingHoursSpecificationModel: ArrayList<OpeningHoursSpecificationModel>?= null
-
-
+    var addressModel: AddressModel?= null,
+    var addressType: String?=null,
+    var address: String?=null,
+    var locationModel: LocationModel?= null,
+    var landmarkModel: LandmarkModel?= null,
+    var entranceModel: ArrayList<EntranceModel>? =null,
+    var images: ArrayList<String>? =null,
+    var openingHoursSpecificationModel: ArrayList<OpeningHoursSpecificationModel>?= null
 )
+{
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+}
+

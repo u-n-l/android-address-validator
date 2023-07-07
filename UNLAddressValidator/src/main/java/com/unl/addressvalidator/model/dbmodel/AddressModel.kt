@@ -3,14 +3,14 @@ package com.example.roomdatabasewithmodelclassess.model
 
 
 data class AddressModel(
-    val houseNumber : String,
-    val floor : String,
-    val builingNumber : String,
-    val builingName : String,
-    val street : String,
-    val neighbourhood : String,
-    val city : String,
-    val state : String,
-    val country : String,
-    val postalCode : String,
+    var houseNumber : String?,
+    var floor : String?,
+    var builingNumber : String?,
+    var builingName : String?,
+    var street : String?,
+    var neighbourhood : String?,
+    var city : String?,
+    var state : String?,
+    var country : String?,
+    var postalCode : String?,
 )

@@ -12,7 +12,7 @@
     <string name="delivery_address">Your Delivery Address:</string>
     <string name="current_location">Use current location</string>
     <string name="current_location1">Galvanistraat, 3029 AD, Rotterdam, Netherland</string>
-    <string name="digits">1 of 9</string>
+    <string name="digits">0 of 9</string>
     <string name="unit">Unit Number</string>
     <string name="floor">Floor</string>
     <string name="building_num">Building No.</string>
@@ -26,12 +26,18 @@
     <string name="address_label">Address Label</string>
     <string name="zip">Zip/Postal Code*</string>
     <string name="home">Home</string>
+    <string name="wheelchair">Wheelchair</string>
     <string name="office">Office</string>
+    <string name="elevator">Elevator</string>
     <string name="addLabel">Add Label</string>
     <string name="search">Search </string>
-    <string name="confirm_text1">Confirm </string>
+    <string name="confirm">Confirm </string>
+    <string name="done">Done </string>
     <string name="skip_text">Skip</string>
     <string name="markEntrance">Mark Entrance(s)</string>
+    <string name="deleteEntrance">Delete Entrance?</string>
+    <string name="delete">Delete</string>
+    <string name="entranceDeleteConfirm">Are you sure you want to delete “Entrance No. 1” from your saved Entrances?</string>
     <string name="entrance1">Entrance No.1</string>
     <string name="locationId">Location ID: 973628</string>
     <string name="keep">Keep</string>
@@ -40,16 +46,22 @@
     <string name="entrancePara1">Add additional information to earn points and
 help drivers deliver to the right location</string>
     <string name="entrance">Entrance</string>
+    <string name="entrance_detail">Entrance(s) Detail : </string>
     <string name="update">Update</string>
     <string name="landmark">Landmark</string>
+    <string name="historical_place">Historical Place</string>
     <string name="restaurant">Restaurant</string>
     <string name="coffeeShop">Coffee Shop</string>
     <string name="clubHouse">Clubhouse</string>
     <string name="searchLandmark">Search Nearby Landmark</string>
     <string name="homeland">Homeland</string>
-    <string name="landmarkPara1">Add additional information to earn points and
+    <string name="locationAccessbility">Location Accessbility</string>
+    <string name="deliveryHours">Delivery Hours</string>
+    <string name="yourDeliveryAdd">Your Delivery Address</string>
+    <string name="landmarkDesText">Add additional information to earn points and
 help drivers deliver to the right location</string>
     <string name="selectLandmark">Select Nearby Landmark(s)</string>
+    <string name="addmoreInfo">Add More Information</string>
     <string name="your_add">Your Address</string>
     <string name="updateAdd">Update Address Form</string>
     <string name="dialogText1">You\'ve moved the pin outside the current grid dimension.</string>
@@ -73,5 +85,17 @@ help drivers deliver to the right location</string>
     <string name="exposed_dropdown_menu_content_description">Show dropdown menu</string>
     <!-- Content description for the error icon. [CHAR LIMIT=NONE] -->
     <string name="error_icon_content_description">Error</string>
+
+    <string name="select_photos">Select Photos</string>
+    <string name="title_image_selected">%d selected</string>
+    <string name="select_max_photo_error">You can select max %d photos</string>
+    <string name="menu_gallery_done">Done</string>
+
+    <string name="addPhoto">Add photo</string>
+    <string name="remove">Remove</string>
+    <string name="save">Save</string>
+
+
+
 
 </resources>

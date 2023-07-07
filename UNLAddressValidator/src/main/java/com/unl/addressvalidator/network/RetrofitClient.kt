@@ -1,6 +1,7 @@
 package com.unl.addressvalidator.network
 
 import com.unl.addressvalidator.util.Constant.BASE_URL
+import com.unl.addressvalidator.util.Constant.IMAGE_UPLOAD_BASE_URL
 import com.unl.map.sdk.data.API_KEY
 import com.unl.map.sdk.data.VPM_ID
 import com.unl.map.sdk.networks.UnlMapApi
@@ -13,6 +14,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 object RetrofitClient
 {
@@ -24,7 +26,8 @@ object RetrofitClient
     private val retrofit by lazy {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client = OkHttpClient.Builder()
+        val client = OkHttpClient.Builder() .connectTimeout(100, TimeUnit.SECONDS)
+            .readTimeout(100,TimeUnit.SECONDS)
             .addInterceptor(object : Interceptor {
                 @Throws(IOException::class)
                 override fun intercept(chain: Interceptor.Chain): Response {
@@ -39,6 +42,7 @@ object RetrofitClient
                     return chain.proceed(request)
                 } })
             .build()
+
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -46,7 +50,5 @@ object RetrofitClient
             .build()
     }
 
-    val RetrofitClient by lazy {
-        retrofit.create(APIInterface::class.java)
-    }
+
 }

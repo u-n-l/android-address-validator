@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/address_dialog_shape1"
+    android:orientation="vertical"
+    android:padding="@dimen/_16sdp">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/headerTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:text="@string/addPicture"
+        android:textColor="@color/black2"
+        android:textSize="@dimen/_17ssp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_6sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/fork_img" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/addressType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_bold"
+                android:text="@string/restaurant"
+                android:textColor="@color/black2"
+                android:textSize="@dimen/_9ssp" />
+
+            <TextView
+                android:id="@+id/tv_homeLand1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_light"
+                android:text="@string/homeland"
+                android:textColor="@color/black2"
+                android:textSize="@dimen/_9ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvAddPhotos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/add_photo_img"
+                android:drawablePadding="@dimen/_5sdp"
+                android:fontFamily="@font/poppins_light"
+                android:text="@string/addPhoto"
+                android:textColor="@color/purple1"
+                android:textSize="@dimen/_9ssp" />
+        </LinearLayout>
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/digits"
+            android:padding="@dimen/_5sdp"
+            android:textColor="@color/gray3"
+            android:textSize="@dimen/_7sdp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/removePicture"
+            android:fontFamily="@font/poppins_bold"
+            android:padding="@dimen/_5sdp"
+           android:layout_alignParentEnd="true"
+            android:text="@string/remove"
+            android:textColor="@color/purple1"
+            android:textSize="@dimen/_7ssp" />
+    </RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAddPictures"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_10sdp" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_11sdp"
+        android:background="@drawable/save_btn_shape"
+        android:fontFamily="@font/poppins_bold"
+        android:paddingVertical="@dimen/_8sdp"
+        android:text="@string/save"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_11ssp" />
+    <TextView
+        android:id="@+id/tvSkip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_16sdp"
+        android:background="@drawable/skip_btn_shape"
+        android:fontFamily="@font/poppins_bold"
+        android:paddingVertical="@dimen/_8sdp"
+        android:text="@string/skip_text"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/purple1"
+        android:textSize="@dimen/_11ssp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</ScrollView>
+</RelativeLayout>
+
+    <!--
+    <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/rvAddPictures"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+
+
+
+    <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/add_photos"/>
+    -->

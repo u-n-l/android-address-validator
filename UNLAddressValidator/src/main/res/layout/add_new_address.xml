@@ -10,7 +10,6 @@
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/_10sdp">
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -110,6 +109,93 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/addressView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_weight="10"
+                    android:layout_marginBottom="@dimen/_15sdp"
+                    android:background="@drawable/rounded_gray_bg"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    tools:ignore="MissingConstraints">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:weightSum="10"
+                        android:layout_marginHorizontal="@dimen/_5sdp"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:id="@+id/addImage"
+                            android:layout_weight="8"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/photos" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:id="@+id/imageCount"
+                            android:layout_weight="2"
+                            android:text="@string/digits"
+                            android:layout_gravity="center_horizontal"
+                            android:textColor="@color/gray3"
+                            android:textSize="@dimen/_10ssp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textAlignment="center" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_weight="7.2"
+                        android:layout_marginHorizontal="@dimen/_6sdp"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tvaddressType"
+                            android:drawableStart="@drawable/home"
+                            android:drawablePadding="@dimen/_5sdp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="@string/home"
+                            android:textColor="@color/black2"
+                            android:textSize="@dimen/_9ssp" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tvAddressText"
+                            android:fontFamily="@font/poppins_light"
+                            android:text=""
+                            android:textColor="@color/black2"
+                            android:textSize="@dimen/_9ssp" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="0dp"
+                        android:id="@+id/deleteAddress"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_weight="0.8"
+                        android:src="@drawable/ic_delete" />
+                </LinearLayout>
+
+
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"

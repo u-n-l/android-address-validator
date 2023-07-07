@@ -29,33 +29,147 @@
                 android:textSize="@dimen/_15ssp"
                 android:text="Your Address"/>
         </RelativeLayout>
+
         <com.unl.map.sdk.views.UnlMapView
             android:id="@+id/mapView"
             android:layout_below="@+id/header"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_above="@+id/bottomDialog"/>
 
-        <include
-            android:id="@+id/confirmAddress"
-            layout="@layout/dialog_address"
-            android:layout_width="match_parent"
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_alignParentBottom="true"
-            />
+            android:id="@+id/cvPintHint"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_20sdp"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardBackgroundColor="#E5DEFA">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:src="@drawable/ic_location_pin"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/pinHint"
+                    android:textSize="@dimen/_9ssp"
+                    android:textColor="@color/text_color"
+                    android:fontFamily="@font/poppins_regular"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:text="Move the pin to your location"/>
 
-        <include
-            android:id="@+id/addNewAdd"
-            layout="@layout/add_new_address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_200sdp"
-            android:visibility="gone"
-            android:layout_alignParentBottom="true"
-            />
+                <ImageView
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:padding="@dimen/_2sdp"
+                    android:id="@+id/hidePinHint"
+                    android:layout_marginEnd="@dimen/_7sdp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_cross_slim"/>
 
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:id="@+id/ivShowAddreess"
+           android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/show_addresses"/>
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentBottom="true"
+          android:id="@+id/bottomDialog">
+          <include
+              android:id="@+id/confirmAddress"
+              layout="@layout/dialog_address"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:visibility="gone"
+
+              />
+
+          <include
+              android:id="@+id/addNewAdd"
+              layout="@layout/add_new_address"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/_400sdp"
+              android:visibility="gone"
+
+              />
+
+          <include
+              android:id="@+id/addLandmark"
+              layout="@layout/add_landmark_popup"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/_400sdp"
+              android:visibility="gone"
+
+              />
+
+          <include
+              android:id="@+id/addEntrances"
+              layout="@layout/add_entrance_popup"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/_400sdp"
+              android:visibility="gone"
+
+              />
+
+          <include
+              android:id="@+id/operationalHours"
+              layout="@layout/delivery_hours_popup"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:visibility="gone"
+
+              />
+
+          <include
+              android:id="@+id/addPicture"
+              layout="@layout/add_pictures_popup"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/_400sdp"
+              android:visibility="gone"
+
+              />
+
+          <include
+              android:id="@+id/addressesView"
+              layout="@layout/address_list"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:visibility="gone"
+
+              />
+
+      </RelativeLayout>
 
     </RelativeLayout>
+
+
+    <ProgressBar
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

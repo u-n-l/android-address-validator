@@ -4,6 +4,6 @@ import androidx.room.TypeConverters
 
 
 data class LocationModel(
-    val lattitude : Double?,
-    val longitude : Double?,
+    var lattitude : Double?,
+    var longitude : Double?,
 )

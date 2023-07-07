@@ -5,5 +5,5 @@
         android:radius="@dimen/_5sdp" />
     <stroke
         android:width="@dimen/_1sdp"
-        android:color="@color/white"/>
+        android:color="@color/gray1"/>
 </shape>

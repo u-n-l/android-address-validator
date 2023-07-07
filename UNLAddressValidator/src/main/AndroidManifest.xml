@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.unl.addressvalidator">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <application>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
+    <application
+        android:requestLegacyExternalStorage="true">
+
+        <activity
+            android:name=".ui.imagepicker.GalleryActivity"
+            android:exported="false"
+            android:configChanges="orientation"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            />
+        <activity
+            android:name=".ui.imagepicker.StartImagePickerActivity"
+            android:theme="@style/DialogThemeAppCompat"
+            android:configChanges="orientation"
+            android:exported="false" />
 
     </application>
 

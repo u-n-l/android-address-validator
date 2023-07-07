@@ -84,4 +84,23 @@ class TypeConverters {
         else
             return null
     }
+
+    @TypeConverter
+    fun fromImages(imageArray: ArrayList<String>?): String? {
+        if(imageArray!= null)
+            return Gson().toJson(imageArray)
+        else
+            return null
+    }
+
+
+
+    @TypeConverter
+    fun toImages(imageList: String?): ArrayList<String>? {
+        if(imageList!= null)
+            return Gson().fromJson(imageList, ArrayList<String>()::class.java)
+        else
+            return null
+    }
+
 }

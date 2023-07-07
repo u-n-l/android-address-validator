@@ -76,20 +76,24 @@
                 android:layout_marginHorizontal="@dimen/_5sdp"
                 android:orientation="vertical">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/addImage"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/photos" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/imageCount"
                     android:text="@string/digits"
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/gray3"
                     android:textSize="@dimen/_10ssp"
                     android:fontFamily="@font/poppins_regular"
                     android:textAlignment="center" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -100,7 +104,7 @@
                 android:layout_marginHorizontal="@dimen/_6sdp"
                 android:orientation="vertical">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/home"
@@ -120,7 +124,7 @@
                     android:textSize="@dimen/_9ssp" />
             </LinearLayout>
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="0dp"
                 android:id="@+id/editAddress"
                 android:layout_height="match_parent"
@@ -129,9 +133,6 @@
                 android:layout_weight="0.8"
                 android:src="@drawable/ic_edit" />
         </LinearLayout>
-
-
-
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvConfirm"

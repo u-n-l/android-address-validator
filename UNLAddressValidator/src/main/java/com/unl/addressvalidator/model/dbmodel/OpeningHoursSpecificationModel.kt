@@ -4,8 +4,8 @@ import androidx.room.TypeConverters
 
 
 data class OpeningHoursSpecificationModel(
-    val closes : String,
-    val dayOfWeek : String,
-    val isHoliday : Boolean,
-    val opens : String,
+    var opens : String,
+    var dayOfWeek : String,
+    var isHoliday : Boolean,
+    var closes : String,
 )
