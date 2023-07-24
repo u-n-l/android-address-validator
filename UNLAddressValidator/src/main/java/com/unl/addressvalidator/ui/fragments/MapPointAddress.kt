@@ -18,12 +18,12 @@ import org.json.JSONObject
 
 
 fun HomeFragment.setMapPointAddress() {
-    var houseNumber =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).house_number
-    var streetAddress =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).street_address
-    var city =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).city_district
-    var pincode =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).postal_code
-    var state =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).state_district
-    var countryCode =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).country_code
+    var houseNumber =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).house_number
+    var streetAddress =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).street_address
+    var city =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).city_district
+    var pincode =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).postal_code
+    var state =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).state_district
+    var countryCode =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).country_code
 
     binding!!.addNewAdd!!.edtUnit.setText(houseNumber)
     binding!!.addNewAdd!!.edtStreet.setText(streetAddress)
@@ -41,20 +41,15 @@ fun HomeFragment.setMapPointAddress() {
 
 fun HomeFragment.setAddressObject() {
 
-
-    var houseNo =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).house_number
-    var streetName =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).street_address
-    var city =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).city_district
-    var pincode =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).postal_code
-    var state =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).state_district
-    var country =  reverseGeoCodeResponse!!.features!!.get(0).properties.postal_address.get(0).country_code
-
+    var houseNo =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).house_number
+    var streetName =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).street_address
+    var city =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).city_district
+    var pincode =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).postal_code
+    var state =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).state_district
+    var country =  reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).country_code
 
     var address  = Utility.returnFullAddress(houseNo,"","",streetName,city,state,pincode)
     binding!!.addNewAdd.tvAddressText.text  = address
-
-
-
 
     var floor = ""
     var buildingNum = ""
@@ -84,7 +79,8 @@ fun HomeFragment.setAddressObject() {
         "",
         "00.00",
         "00.00",
-        ""
+        "",
+        ArrayList<String>()
     )
 
     var entranceList: ArrayList<EntranceModel> = ArrayList()
@@ -125,7 +121,7 @@ fun HomeFragment.setAddressObject() {
         binding!!.confirmAddress!!.root.visibility = View.VISIBLE
         binding!!.addNewAdd!!.root.visibility = View.GONE
 
-        binding!!.confirmAddress!!.tvAddressText!!.text = reverseGeoCodeResponse!!.features!!.get(0).properties.place.name
+        binding!!.confirmAddress!!.tvAddressText!!.text = reverseGeoCodeResponse!!.features!!.get(0).properties!!.place!!.name
         binding!!.confirmAddress!!.tvConfirm.setOnClickListener {
             binding!!.confirmAddress!!.root.visibility = View.GONE
             openLandmarkPopup()

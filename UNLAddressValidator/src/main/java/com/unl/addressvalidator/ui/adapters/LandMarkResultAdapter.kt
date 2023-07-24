@@ -1,5 +1,6 @@
 package com.unl.addressvalidator.ui.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,7 @@ class LandMarkResultAdapter(
     // -------------------------------------------------------------------------------------------
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvCategory: TextView = view.findViewById(R.id.tvCategory)
         val tvPlaceName: TextView = view.findViewById(R.id.tvPlaceName)
         val llMain: LinearLayout = view.findViewById(R.id.llMain)
         val landmarkPic: ImageView = view.findViewById(R.id.landmarkPic)
@@ -43,13 +45,25 @@ class LandMarkResultAdapter(
 
     // ---------------------------------------------------------------------------------------------
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
 
         viewHolder.run {
             // image.setImageBitmap(dataSet[position].imageAsBitmap(imageSize))
-            tvPlaceName.text = resulttList.get(position).addressInfo.features.get(0).properties.category_name
+           try {
+
+               //tvCategory.text =resulttList.get(position).addressInfo.features.get(0).properties!!.category_name
+
+               tvPlaceName.text = resulttList.get(position).addressInfo.features.get(0).properties!!.businessName
+           }
+           catch (e :java.lang.Exception)
+           {
+               e.printStackTrace()
+           }
           if(resulttList.get(position).imgCount!= null && !resulttList.get(position).imgCount.equals(""))
             imgCount.text = ""+resulttList.get(position).imgCount + " of 9"
+            else
+              imgCount.text =  "0 of 9"
 
             if (selectedIndex == position)
                 llMain.setBackgroundResource(R.drawable.label_selected_shape)
@@ -57,7 +71,7 @@ class LandMarkResultAdapter(
                 llMain.setBackgroundResource(R.drawable.address_label_shape)
 
                 llMain.setOnClickListener {
-                    itemClickListner.landmarkItemClick(resulttList.get(position).addressInfo)
+                    itemClickListner.landmarkItemClick(resulttList.get(position))
                     llMain.setBackgroundResource(R.drawable.label_selected_shape)
                     selectedIndex = position
                     notifyDataSetChanged()
@@ -66,8 +80,15 @@ class LandMarkResultAdapter(
             {
                 Glide.with(itemView)
                     .load(resulttList.get(position).url)
-                    .placeholder(R.drawable.add_photos) // Set a placeholder image if needed
-                    .error(R.drawable.add_photos) // Set an error image if loading fails
+                    .placeholder(R.drawable.photos) // Set a placeholder image if needed
+                    .error(R.drawable.photos) // Set an error image if loading fails
+                    .into(landmarkPic)
+            }else
+            {
+                Glide.with(itemView)
+                    .load(R.drawable.photos)
+                    .placeholder(R.drawable.photos) // Set a placeholder image if needed
+                    .error(R.drawable.photos) // Set an error image if loading fails
                     .into(landmarkPic)
             }
 

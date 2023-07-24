@@ -22,12 +22,12 @@ fun HomeFragment.nodatafund()
 
 fun HomeFragment.setAddressFromCurrentLcation() {
 
-    var houseNumber =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(0).house_number
-    var streetAddress =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(0).street_address
-    var city =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(0).city_district
-    var pincode =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(0).postal_code
-    var state =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(0).state_district
-    var countryCode =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.postal_address.get(0).country_code
+    var houseNumber =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties!!.postal_address.get(0).house_number
+    var streetAddress =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties!!.postal_address.get(0).street_address
+    var city =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties!!.postal_address.get(0).city_district
+    var pincode =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties!!.postal_address.get(0).postal_code
+    var state =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties!!.postal_address.get(0).state_district
+    var countryCode =  reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties!!.postal_address.get(0).country_code
 
     binding!!.addNewAdd!!.edtUnit.setText(houseNumber)
     binding!!.addNewAdd!!.edtStreet.setText(streetAddress)
@@ -212,7 +212,8 @@ fun HomeFragment.createAddress() {
         "schood",
         "22.56765434",
         "75.324565432",
-        "https://www.image.jpeg"
+        "https://www.image.jpeg",
+        ArrayList<String>()
     )
 
 
@@ -406,7 +407,7 @@ fun HomeFragment.clearAddressFields() {
 
 fun HomeFragment.setCurrentAddress() {
     currentAddressText =
-        reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties.place.name
+        reverseGeoCodeCurrentLocationResponse!!.features!!.get(0).properties!!.place!!.name
     binding!!.addNewAdd!!.currentAddress.text = currentAddressText
 
 }

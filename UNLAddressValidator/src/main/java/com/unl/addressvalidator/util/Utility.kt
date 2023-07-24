@@ -2,11 +2,24 @@ package com.unl.addressvalidator.util
 
 import android.content.Context
 import android.database.Cursor
+import android.graphics.Color
 import android.net.Uri
 import android.provider.MediaStore
+import android.view.Gravity
+import android.view.View
 import com.google.gson.JsonObject
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLngBounds
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.unl.addressvalidator.R
 import com.unl.addressvalidator.model.reversegeocode.*
+import com.unl.map.sdk.data.CellPrecision
+import com.unl.map.sdk.helpers.grid_controls.loadGrids
+import com.unl.map.sdk.helpers.grid_controls.setGridControls
+import com.unl.map.sdk.helpers.tile_controls.enableTileSelector
+import com.unl.map.sdk.helpers.tile_controls.setTileSelectorGravity
+import com.unl.map.sdk.views.UnlMapView
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -76,7 +89,8 @@ object Utility {
 
                     var propertiesData: JSONObject = featureJson.getJSONObject("geojson:properties")
 
-                    var name: String = propertiesData.getString("vocabulary:name")
+                    var categoryType: String = propertiesData.getString("@type")
+                    var businessName: String = propertiesData.getString("vocabulary:name")
                     //Address Parsing
                     val addressArray: JSONArray = propertiesData.getJSONArray("vocabulary:address")
                     var AddressObject: String = addressArray.getString(0)
@@ -112,7 +126,7 @@ object Utility {
                     var contributorInfoData = ArrayList<ContributorInfoData>()
                     contributorInfoData.add(ContributorInfoData("",""))
 
-                    featuresData.add(FeaturesData(addressType,geomateryData, PropertiesData("",name,
+                    featuresData.add(FeaturesData(addressType,geomateryData, PropertiesData("",categoryType,businessName,
                         PlaceData("",""),
                         postaAddList,UnlLocationData("",""),contributorInfoData)))
 
@@ -145,4 +159,44 @@ object Utility {
         return result;
     }
 
+    fun changeCameraPosition(latlng: LatLng,mapbox : MapboxMap? ) {
+        val latLngBounds = LatLngBounds.Builder()
+            .include(latlng)
+            .include(latlng)
+            .build()
+
+       mapbox!!.animateCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                latLngBounds,
+                50
+            )
+        )
+        mapbox!!.setMaxZoomPreference(21.00)
+    }
+
+    fun configureMap(mapView : UnlMapView, context : Context)
+    {
+        mapView.enableTileSelector(true)
+        mapView.setGridControls(context, true)
+        mapView.setTileSelectorGravity(Gravity.END)
+        mapView.ivTile.setImageResource(R.drawable.ic_tile)
+        mapView.ivTile.setBackgroundColor(Color.parseColor("#00000000"))
+        mapView.mapbox!!.uiSettings.setCompassFadeFacingNorth(true)
+        mapView.mapbox!!.uiSettings.setCompassImage(context.resources.getDrawable(R.drawable.transparent_bg))
+        mapView.isVisibleGrids = true
+        mapView.cellPrecision = CellPrecision.GEOHASH_LENGTH_9
+        mapView.mapbox?.loadGrids(true, mapView, CellPrecision.GEOHASH_LENGTH_9)
+        mapView.ivGrid.visibility = View.GONE
+    }
+
+     fun convert(coord: Double): String? {
+        var coord = coord
+        coord = Math.abs(coord)
+        val degrees = coord.toInt()
+        coord = (coord - degrees) * 60
+        val minutes = coord.toInt()
+        coord = (coord - minutes) * 60
+        val seconds = (coord * 1000).toInt()
+        return "$degrees/1,$minutes/1,$seconds/1000"
+    }
 }

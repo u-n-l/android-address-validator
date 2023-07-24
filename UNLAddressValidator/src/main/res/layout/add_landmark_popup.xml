@@ -46,25 +46,12 @@
             android:textColor="@color/gray1"
             android:textSize="@dimen/_10ssp" />
 
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvLandmark"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_200sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        tools:listitem="@layout/landmark_item"
-        android:layout_marginBottom="@dimen/_10sdp" />
-
-
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_35sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:background="@drawable/search_bg"
             android:paddingVertical="@dimen/_10sdp"
             android:weightSum="10">
@@ -88,6 +75,26 @@
                 android:textColorHint="@color/gray3"
                 android:textSize="@dimen/_10ssp" />
         </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSearchResult"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_150sdp"
+            android:background="@color/transparent"
+            android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvLandmark"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        tools:listitem="@layout/landmark_item"
+        android:layout_marginBottom="@dimen/_10sdp" />
+
+
+
 
 
         <androidx.appcompat.widget.AppCompatTextView

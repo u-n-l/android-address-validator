@@ -55,10 +55,15 @@ class AddressListAdapter(
                 imgCount.text = "" + resulttList.get(position)!!.images!!.size + " of 9"
                 Glide.with(itemView)
                     .load(resulttList.get(position).images!!.get(0))
-                    .placeholder(R.drawable.add_photos) // Set a placeholder image if needed
-                    .error(R.drawable.add_photos) // Set an error image if loading fails
+                    .placeholder(R.drawable.photos) // Set a placeholder image if needed
+                    .error(R.drawable.photos) // Set an error image if loading fails
                     .into(addressPic)
             } else {
+                Glide.with(itemView)
+                    .load(R.drawable.photos)
+                    .placeholder(R.drawable.photos) // Set a placeholder image if needed
+                    .error(R.drawable.photos) // Set an error image if loading fails
+                    .into(addressPic)
                 imgCount.text = "0 of 9"
             }
 

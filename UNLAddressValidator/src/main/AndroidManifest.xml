@@ -4,24 +4,48 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
-    <application
-        android:requestLegacyExternalStorage="true">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
+    <application android:requestLegacyExternalStorage="true">
+        <activity
+            android:name=".ui.addressdetail.AddressListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.addressdetail.AddressDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.deliveryhours.DeliveryHoursActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.entrances.EntrancesActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.landmark.LandmarkActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.homescreen.UnlValidatorActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.imagepicker.GalleryActivity"
-            android:exported="false"
             android:configChanges="orientation"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".ui.imagepicker.StartImagePickerActivity"
-            android:theme="@style/DialogThemeAppCompat"
             android:configChanges="orientation"
-            android:exported="false" />
-
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/DialogThemeAppCompat" />
     </application>
 
 </manifest>

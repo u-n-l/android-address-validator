@@ -8,5 +8,6 @@ data class LandmarkModel(
     var type : String,
     var lattitude : String,
     var longitude : String,
-    var img_url : String
+    var img_url : String,
+    var imageList : ArrayList<String>
 )

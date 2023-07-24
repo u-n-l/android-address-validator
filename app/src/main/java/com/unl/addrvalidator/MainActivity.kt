@@ -6,8 +6,8 @@ import android.app.FragmentTransaction
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.unl.addressvalidator.ui.fragments.HomeFragment
+import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity
 import com.unl.addressvalidator.ui.imagepicker.builder.MultiImagePicker.Companion.REQUEST_PICK_MULTI_IMAGES
 
 
@@ -19,9 +19,19 @@ class MainActivity : AppCompatActivity() {
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        addFragment()
+        initValidator()
+        //addFragment()
     }
 
+    private fun initValidator()
+    {
+        try {
+            val intent = Intent(this, UnlValidatorActivity::class.java)
+            startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
     private fun addFragment()
     {
         try {
@@ -41,6 +51,5 @@ class MainActivity : AppCompatActivity() {
             fragment!!.onActivityResult(requestCode, resultCode, data)
         }
     }
-
 
 }

@@ -59,7 +59,7 @@ fun HomeFragment.showNearbyLandmark(landmarkList: ArrayList<ReverseGeoCodeRespon
             var landmarkDataList = ArrayList<LandmarkDataList>()
 
             landmarkList.forEach {
-                landmarkDataList.add(LandmarkDataList("","",it!!))
+                landmarkDataList.add(LandmarkDataList("","",it!!,ArrayList<String>()))
             }
             initLandmarkList()
             binding!!.addLandmark.rvLandmark.adapter = LandMarkResultAdapter(landmarkDataList, this)
@@ -90,11 +90,11 @@ fun HomeFragment.updateLandmark()
 {
 
     val landmarkModel = LandmarkModel(
-        selectedLandmark!!.features.get(0).properties.postal_address.get(0).house_number,
-        selectedLandmark!!.features.get(0).type,
-        ""+selectedLandmark!!.features.get(0).geometry.coordinates.get(0),
-        ""+selectedLandmark!!.features.get(0).geometry.coordinates.get(0),
-        ""
+        selectedLandmark!!.addressInfo!!.features.get(0).properties!!.postal_address.get(0).house_number,
+        selectedLandmark!!.addressInfo!!.features.get(0).type,
+        ""+selectedLandmark!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
+        ""+selectedLandmark!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
+        "",selectedLandmark!!.imageList
     )
 
   /*  var entranceList: ArrayList<EntranceModel> = ArrayList()

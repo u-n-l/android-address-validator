@@ -19,6 +19,8 @@ import java.io.File
 interface APIInterface {
     @GET("autocomplete")
     suspend fun getAutocompleteResult(@Query("query") query : String, @Query("location") location: JsonObject?): Response<AutocompleteResponse>
+    @GET("autocomplete")
+    suspend fun getAutocompleteResult(@Query("query") query : String): Response<AutocompleteResponse>
 
     @GET("geocode/reverse")
     suspend  fun getReverseGeocode(@Query("location") param: JsonObject?) : Response<ReverseGeoCodeResponse>
@@ -29,11 +31,9 @@ interface APIInterface {
     @GET("search")
     suspend  fun getLandmark(@Query("query") query: String? , @Query("boundary") boundary: JsonObject? ) : Response<JsonObject>
 
-
     @Multipart
     @POST("upload/asset")
     suspend  fun uploadImage(@Part ("file") file : File? ) : Response<String>
-
 
     @Multipart
     @POST("upload/asset")

@@ -32,9 +32,14 @@
             </intent-filter>
         </activity>
 
+
+
         <meta-data
             android:name="com.unl.global.vpmid"
-            android:value="123456" />
+            android:value="@string/vpm_id" />
+        <meta-data
+            android:name="com.unl.global.apikey"
+            android:value="@string/api_key" />
     </application>
 
 </manifest>

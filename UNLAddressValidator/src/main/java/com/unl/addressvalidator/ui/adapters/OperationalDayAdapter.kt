@@ -50,9 +50,9 @@ class OperationalDayAdapter(
                 tvDays.setTextColor( Color.parseColor("#444444"))
             }
 
-            tvDays . setOnClickListener {
-                itemClickListner.dayClick(DaysList.get(position))
+            tvDays.setOnClickListener {
                 selectedIndex = position
+                itemClickListner.dayClick(DaysList.get(position))
                 notifyDataSetChanged()
             }
         }

@@ -56,6 +56,8 @@ class EntrancesAdapter(
 
           if(resulttList.get(position).imgCount!= null && !resulttList.get(position).imgCount.equals(""))
             imgCount.text = ""+resulttList.get(position).imgCount + " of 9"
+            else
+              imgCount.text =  "0 of 9"
 
             entrancePic.setOnClickListener {
                     itemClickListner.entranceImageClick(position,resulttList)
@@ -65,8 +67,15 @@ class EntrancesAdapter(
             {
                 Glide.with(itemView)
                     .load(resulttList.get(position).url)
-                    .placeholder(R.drawable.add_photos) // Set a placeholder image if needed
-                    .error(R.drawable.add_photos) // Set an error image if loading fails
+                    .placeholder(R.drawable.photos) // Set a placeholder image if needed
+                    .error(R.drawable.photos) // Set an error image if loading fails
+                    .into(entrancePic)
+            }else
+            {
+                Glide.with(itemView)
+                    .load(R.drawable.photos)
+                    .placeholder(R.drawable.photos) // Set a placeholder image if needed
+                    .error(R.drawable.photos) // Set an error image if loading fails
                     .into(entrancePic)
             }
             ivDelete.setOnClickListener {

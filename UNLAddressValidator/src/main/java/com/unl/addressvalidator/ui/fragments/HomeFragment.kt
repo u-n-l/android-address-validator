@@ -114,7 +114,7 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
     lateinit var adapter: AddPicturesAdapter
     val dataListSize = 9
     var replaceIndex: Int = 0
-    var selectedLandmark: ReverseGeoCodeResponse? = null
+    var selectedLandmark: LandmarkDataList? = null
     private var apiKey: String? = null
     private var vpmId: String? = null
     lateinit var viewModel: HomeViewModel
@@ -153,8 +153,6 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
     var toMins = "00"
     var toAMPM = "AM"
 
-
-
     // list for add marker reference
     private var markerViewList: ArrayList<View> = ArrayList()
 
@@ -176,7 +174,6 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
             landMakrImageList.add(AddPicturesModel(Uri.EMPTY))
             entranceImageList.add(AddPicturesModel(Uri.EMPTY))
         }
-
     }
 
     override fun onCreateView(
@@ -482,7 +479,6 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
                 is ApiCallBack.Success -> {
                     response.data
                     reverseGeoCodeResponse = response.data
-
                     showReverseGeoAddress()
                 }
 
@@ -577,10 +573,7 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
                 lifecycleOwner = lifecycleOwner1
                 viewModelStoreOwner = viewModelStoreOwner1
                 supportFragmentManager = supportFragmentManager1
-                /*arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }*/
+
             }
     }
 
@@ -764,8 +757,8 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
 
     }
 
-    override fun landmarkItemClick(reverseGeoCodeResponse: ReverseGeoCodeResponse) {
-        selectedLandmark = reverseGeoCodeResponse
+    override fun landmarkItemClick(landmarkDataList: LandmarkDataList) {
+        selectedLandmark = landmarkDataList
         binding!!.addLandmark!!.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
         binding!!.addLandmark!!.tvConfirm.isClickable = true
     }

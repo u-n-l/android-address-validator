@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
-                android:layout_weight="10"
+                android:layout_weight="100"
                 android:background="@drawable/rounded_gray_bg"
                 android:orientation="horizontal"
                 android:padding="@dimen/_5sdp"
@@ -68,14 +68,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_5sdp"
-                    android:layout_weight="2"
+                    android:layout_weight="25"
                     android:orientation="vertical">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/addImage"
                         android:layout_width="@dimen/_60sdp"
                         android:layout_height="@dimen/_60sdp"
-                        android:scaleType="centerCrop"
+
                         android:src="@drawable/photos" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -94,9 +94,9 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/_6sdp"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:layout_weight="7.2"
+                    android:layout_weight="67"
                     android:orientation="vertical">
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -122,11 +122,11 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/editAddress"
                     android:layout_width="0dp"
-                    android:visibility="invisible"
+                    android:visibility="visible"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="@dimen/_5sdp"
-                    android:layout_weight="0.8"
+                    android:layout_weight="8"
                     android:src="@drawable/ic_edit" />
             </LinearLayout>
 
@@ -372,7 +372,7 @@
                                             android:layout_marginStart="@dimen/_5sdp"
                                             android:id="@+id/tvFromHoursText"
                                             android:fontFamily="@font/poppins_regular"
-                                            android:text="00"
+                                            android:text="09"
                                             android:textAlignment="center"
                                             android:textColor="@color/text_color"
                                             android:textSize="@dimen/_10ssp" />
@@ -401,6 +401,7 @@
                                             android:layout_height="wrap_content"
                                             android:id="@+id/tvFromAMPMText"
                                             android:layout_marginStart="@dimen/_5sdp"
+                                            android:visibility="gone"
                                             android:fontFamily="@font/poppins_regular"
                                             android:text="AM"
                                             android:textAlignment="center"
@@ -459,7 +460,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/_3sdp"
-                                        android:layout_weight="1"
+                                        android:layout_weight="1.5"
                                         android:orientation="vertical">
 
                                         <ImageView
@@ -493,7 +494,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/_3sdp"
-                                        android:layout_weight="1"
+                                        android:layout_weight="1.5"
                                         android:orientation="vertical">
 
                                         <ImageView
@@ -527,6 +528,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/_3sdp"
                                         android:layout_weight="1"
+                                        android:visibility="gone"
                                         android:orientation="vertical">
 
                                         <ImageView
@@ -682,7 +684,7 @@
                                             android:layout_marginStart="@dimen/_5sdp"
                                             android:id="@+id/tvToHoursText"
                                             android:fontFamily="@font/poppins_regular"
-                                            android:text="00"
+                                            android:text="18"
                                             android:textAlignment="center"
                                             android:textColor="@color/text_color"
                                             android:textSize="@dimen/_10ssp" />
@@ -712,7 +714,8 @@
                                             android:id="@+id/tvAMPMText"
                                             android:layout_marginStart="@dimen/_5sdp"
                                             android:fontFamily="@font/poppins_regular"
-                                            android:text="AM"
+                                            android:text="PM"
+                                            android:visibility="gone"
                                             android:textAlignment="center"
                                             android:textColor="@color/text_color"
                                             android:textSize="@dimen/_10ssp" />
@@ -766,7 +769,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/_5sdp"
-                                        android:layout_weight="1"
+                                        android:layout_weight="1.5"
                                         android:orientation="vertical">
 
                                         <ImageView
@@ -799,7 +802,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/_5sdp"
-                                        android:layout_weight="1"
+                                        android:layout_weight="1.5"
                                         android:orientation="vertical">
 
                                         <ImageView
@@ -833,7 +836,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/_5sdp"
-
+                                        android:visibility="gone"
                                         android:layout_weight="1"
                                         android:orientation="vertical">
 
@@ -923,8 +926,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_11sdp"
-                android:background="@drawable/theme_round_btn"
+                android:background="@drawable/bg_button_disable"
                 android:clickable="false"
+                android:enabled="false"
                 android:fontFamily="@font/poppins_bold"
                 android:gravity="center"
                 android:paddingVertical="@dimen/_8sdp"

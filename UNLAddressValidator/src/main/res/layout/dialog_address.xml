@@ -8,19 +8,42 @@
     android:background="@drawable/top_rounded_shape"
     android:paddingHorizontal="@dimen/_16sdp">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/bottomsheet_anchor"/>
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_bold"
+        android:fontFamily="@font/poppins_semibold"
         android:text="@string/address"
         android:textColor="@color/black2"
-
         android:textSize="@dimen/_17ssp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/black2"
+        android:textSize="@dimen/_17ssp"
+        android:src="@drawable/ic_cross"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.1" />
 
@@ -42,10 +65,10 @@
         android:id="@+id/textView6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_bold"
+        android:fontFamily="@font/poppins_semibold"
         android:text="@string/delivery_address"
         android:textColor="@color/gray1"
-        android:textSize="@dimen/_10ssp"
+        android:textSize="@dimen/_9ssp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -90,7 +113,7 @@
                     android:text="@string/digits"
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/gray3"
-                    android:textSize="@dimen/_10ssp"
+                    android:textSize="@dimen/_8ssp"
                     android:fontFamily="@font/poppins_regular"
                     android:textAlignment="center" />
 
@@ -118,7 +141,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvAddressText"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/poppins_regular"
                     android:text=""
                     android:textColor="@color/black2"
                     android:textSize="@dimen/_9ssp" />
@@ -140,12 +163,12 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/_16sdp"
         android:background="@drawable/theme_round_btn"
-        android:fontFamily="@font/poppins_bold"
+        android:fontFamily="@font/poppins_semibold"
         android:gravity="center"
         android:paddingVertical="@dimen/_8sdp"
         android:text="@string/confirm_text"
         android:textColor="@color/white"
-        android:textSize="@dimen/_12ssp"
+        android:textSize="@dimen/_10ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
@@ -155,14 +178,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/white_round_btn"
-        android:fontFamily="@font/poppins_bold"
+        android:fontFamily="@font/poppins_semibold"
         android:paddingVertical="@dimen/_8sdp"
         android:layout_marginBottom="@dimen/_21sdp"
         android:text="@string/add_new_add"
         android:textAlignment="center"
         android:gravity="center"
         android:textColor="@color/purple1"
-        android:textSize="@dimen/_12ssp"
+        android:textSize="@dimen/_10ssp"
         android:layout_marginTop="@dimen/_15sdp"
         app:layout_constraintTop_toBottomOf="@+id/tvConfirm"
         app:layout_constraintBottom_toBottomOf="parent"

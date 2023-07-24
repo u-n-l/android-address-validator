@@ -39,3 +39,6 @@ dependencyResolutionManagement {
 rootProject.name = "UNL Address Validator"
 include ':app'
 include ':UNLAddressValidator'
+include ':UNL_Map_sdk'
+
+project(":UNL_Map_sdk").projectDir=new File("/Users/lokeshpanchal/Documents/F/UNL_GLOBAL/UNL_ADDRESS_VALIDATOR/sdk")

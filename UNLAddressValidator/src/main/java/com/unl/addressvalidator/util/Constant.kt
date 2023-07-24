@@ -1,6 +1,13 @@
 package com.unl.addressvalidator.util
 
 object Constant {
+
+    const val META_VPM_ID_KEY = "com.unl.global.vpmid"
+    const val META_API_KEY = "com.unl.global.apikey"
+
+    const val ADD_ADDRESS = "Add Address"
+    const val EDIT_ADDRESS = "Edit Address"
+
     const val BASE_URL = "https://sandbox.api.unl.global/v2/"
     const val IMAGE_UPLOAD_BASE_URL = "https://r-asset.api.unl.global/v1/"
     const val FROM_HOURS = "fromHours"
