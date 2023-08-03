@@ -12,9 +12,10 @@ data class CreateAddressModel(
     var addressType: String?=null,
     var address: String?=null,
     var locationModel: LocationModel?= null,
-    var landmarkModel: LandmarkModel?= null,
+    var landmarkModel: ArrayList<LandmarkModel>?= null,
     var entranceModel: ArrayList<EntranceModel>? =null,
     var images: ArrayList<String>? =null,
+    var accessibility: ArrayList<String>? =null,
     var openingHoursSpecificationModel: ArrayList<OpeningHoursSpecificationModel>?= null
 )
 {

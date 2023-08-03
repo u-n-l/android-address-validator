@@ -74,6 +74,7 @@ fun HomeFragment.setAddressObject() {
     )
 
     val locationModel = LocationModel(pinLat!!, pinLong!!)
+    var landmarkModelList = ArrayList<LandmarkModel>()
     val landmarkModel = LandmarkModel(
         "",
         "",
@@ -82,7 +83,7 @@ fun HomeFragment.setAddressObject() {
         "",
         ArrayList<String>()
     )
-
+    landmarkModelList.add(landmarkModel)
     var entranceList: ArrayList<EntranceModel> = ArrayList()
 
 
@@ -107,9 +108,10 @@ fun HomeFragment.setAddressObject() {
         addressType,
         address,
         locationModel,
-        landmarkModel,
+        landmarkModelList,
         entranceList,
         imageList,
+        ArrayList<String>(),
         openCloseTimeList
     )
 }

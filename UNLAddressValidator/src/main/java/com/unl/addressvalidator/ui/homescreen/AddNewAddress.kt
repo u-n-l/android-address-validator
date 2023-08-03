@@ -215,6 +215,7 @@ fun UnlValidatorActivity.createAddress() {
     )
 
     val locationModel = LocationModel(pinLat!!, pinLong!!)
+    var landmarkModelList = ArrayList<LandmarkModel>()
     val landmarkModel = LandmarkModel(
         "Gyan Sagar school",
         "schood",
@@ -222,7 +223,7 @@ fun UnlValidatorActivity.createAddress() {
         "75.324565432",
         "https://www.image.jpeg",ArrayList<String>()
     )
-
+    landmarkModelList.add(landmarkModel)
 
 
 
@@ -247,9 +248,10 @@ fun UnlValidatorActivity.createAddress() {
         addressType,
         address,
         locationModel,
-        landmarkModel,
+        landmarkModelList,
         entranceList,
         imageList,
+        ArrayList<String>(),
         openCloseTimeList
     )
    // viewModel.insertAddress(database, createAddress)
@@ -296,7 +298,6 @@ fun UnlValidatorActivity.parseSearchResultJson(rawData: JsonObject) {
         var lattitude: Double = geoLocJson.getDouble("vocabulary:latitude")
         var longitude: Double = geoLocJson.getDouble("vocabulary:longitude")
 
-        isChangeMarker = false
         clearMap()
         showMarker(LatLng(lattitude, longitude), "addressType")
         changeCameraPosition(LatLng(lattitude, longitude),mapBoxMap)

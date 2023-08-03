@@ -1,6 +1,7 @@
 package com.unl.addressvalidator.ui.homescreen
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -9,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -18,13 +20,13 @@ import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,11 +40,13 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.unl.addressvalidator.R
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.databinding.ActivityHomeBinding
+import com.unl.addressvalidator.databinding.AddPicturesPopupBinding
 import com.unl.addressvalidator.model.autocomplet.AutocompleteData
 import com.unl.addressvalidator.model.dbmodel.CreateAddressModel
 import com.unl.addressvalidator.model.reversegeocode.ReverseGeoCodeResponse
 import com.unl.addressvalidator.network.ApiCallBack
 import com.unl.addressvalidator.ui.adapters.AddressListAdapter
+import com.unl.addressvalidator.ui.adapters.EntrancesAdapter
 import com.unl.addressvalidator.ui.adapters.SearchResultAdapter
 import com.unl.addressvalidator.ui.addressdetail.AddressListActivity
 import com.unl.addressvalidator.ui.imagepicker.adapter.AddPicturesAdapter
@@ -87,6 +91,7 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
 
     val dataListSize = 9
     var replaceIndex: Int = 0
+    var isReplace:Boolean = false
 
     var cityText = ""
     var stateText = ""
@@ -96,8 +101,8 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
     var currLat: Double = 0.0
     var currLong: Double = 0.0
 
+    var isMoveMarker = true
     var moveCounter: Int = 0
-    var isChangeMarker = true
     var updateLocation = true
 
     private val permissionsRequestCode = 123
@@ -110,6 +115,7 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
     var entranceList: ArrayList<EntranceModel> = ArrayList()
     var currentAddressText = ""
     lateinit var database: UnlAddressDatabase
+    lateinit  var bind : AddPicturesPopupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -164,7 +170,7 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
                     Log.v("TOUCHPINT", "MOVE" + MotionEvent.ACTION_MOVE)
                 } else if (action == MotionEvent.ACTION_UP) {
                     Log.v("TOUCHPINT", "Counter" + moveCounter)
-                    if (isChangeMarker && moveCounter < 4) {
+                    if (isMoveMarker && moveCounter < 4) {
 
                         val currentZoomLevel =  binding!!.mapView.mapbox!!.getCameraPosition().zoom
                         if(currentZoomLevel>18.00)
@@ -173,12 +179,19 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
                                 binding!!.mapView.mapbox!!.getProjection().fromScreenLocation(
                                     PointF(event.x, event.y - 50)
                                 )
-                            binding!!.cvPintHint.visibility = View.GONE
-                            clearMap()
+                            binding!!.cvPintHint!!.visibility = View.GONE
                             pinLat = new_position.latitude
                             pinLong = new_position.longitude
+                            clearMap()
                             showMarker(new_position, "home")
-                            callReverseGeoCode(new_position)
+                            if(binding!!.addNewAdd.root.isVisible)
+                            {
+                                pinMovedPopup()
+                            }else
+                            {
+                                callReverseGeoCode(new_position)
+                            }
+
                         }
 
                     }
@@ -238,6 +251,9 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             }
         })
 
+        binding!!.cvPinEnableDisable.setOnClickListener {
+            updateMoveMarkerBtn()
+        }
         requestPermissions()
         initiateViewModel()
         setSearchListView()
@@ -250,7 +266,20 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
 
     }
 
-
+fun updateMoveMarkerBtn()
+{
+    if(isMoveMarker)
+    {
+        binding!!.crossLine.visibility = View.VISIBLE
+        binding!!.ivMovePin.alpha = "0.5".toFloat()
+        isMoveMarker = false
+    }else
+    {
+        binding!!.ivMovePin.alpha = "1.0".toFloat()
+        binding!!.crossLine.visibility = View.GONE
+        isMoveMarker = true
+    }
+}
     fun getAddressCreated() {
         viewModel.addresslist.observe(this, { users ->
             try {
@@ -336,7 +365,15 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
                 is ApiCallBack.Success -> {
                     response.data
                     reverseGeoCodeResponse = response.data
-                    showReverseGeoAddress()
+                    if(binding!!.addNewAdd.root.isVisible)
+                    {
+                        clearAddressFields()
+                        setMapPointAddress()
+                    }else
+                    {
+                        showReverseGeoAddress()
+                    }
+
                 }
 
                 is ApiCallBack.Error -> {
@@ -371,7 +408,7 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             var address =
                 Utility.returnFullAddress(houseNo, "", "", streetName, city, state, pincode)
             binding!!.addNewAdd.tvAddressText.text = address
-          //  binding!!.addNewAdd.edtBuildingName.setText(reverseGeoCodeResponse!!.features!!.get(0).properties.place.name)
+            binding!!.addNewAdd.edtBuildingName.setText(reverseGeoCodeResponse!!.features!!.get(0).properties!!.place!!.name)
 
             binding!!.confirmAddress!!.tvAddressText!!.text = address
             //   reverseGeoCodeResponse!!.features!!.get(0).properties.place.name
@@ -440,19 +477,20 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             addressType = binding!!.addNewAdd!!.edtLabelName.text!!.toString()
         }
         val addressModel = AddressModel(
-            houseNo,
-            floor,
-            buildingNum,
-            buildingName,
-            streetName,
-            neighbour,
-            cityText,
-            stateText,
-            country,
-            pincodeText
+            houseNo.trim(),
+            floor.trim(),
+            buildingNum.trim(),
+            buildingName.trim(),
+            streetName.trim(),
+            neighbour.trim(),
+            cityText.trim(),
+            stateText.trim(),
+            country.trim(),
+            pincodeText.trim()
         )
 
         val locationModel = LocationModel(pinLat!!, pinLong!!)
+        var landmarkModelList = ArrayList<LandmarkModel>()
         val landmarkModel = LandmarkModel(
             "",
             "",
@@ -460,7 +498,7 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             "00.00",
             "", ArrayList<String>()
         )
-
+        landmarkModelList.add(landmarkModel)
         var entranceList: ArrayList<EntranceModel> = ArrayList()
 
         var openCloseTimeList: ArrayList<OpeningHoursSpecificationModel> = ArrayList()
@@ -484,9 +522,10 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             addressType,
             address,
             locationModel,
-            landmarkModel,
+            landmarkModelList,
             entranceList,
             imageList,
+            ArrayList<String>(),
             openCloseTimeList
         )
     }
@@ -514,13 +553,11 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
         binding!!.addNewAdd.addressView.visibility = View.VISIBLE
         binding!!.addNewAdd.tvAddressText.text =
             Utility.returnFullAddress(houseNumber, "", "", streetAddress, city, state, pincode)
+
+        binding!!.addNewAdd.edtBuildingName.setText(reverseGeoCodeResponse!!.features!!.get(0).properties!!.place!!.name)
+
     }
 
-    fun openImagePicker() {
-        MultiImagePicker.with(this)
-            .setSelectionLimit(dataListSize)
-            .open()
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -534,13 +571,29 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
                     uriList.add(AddPicturesModel(uri))
                 }
                 val uriListSize = uriList.size
-                for (i in replaceIndex until dataListSize) {
-                    if (i - replaceIndex < uriListSize) {
-                        addressImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
-                    } else {
-                        addressImageList[i] = AddPicturesModel(Uri.EMPTY)
-                    }
-                }
+           try {
+               if(isReplace)
+               {
+                   addressImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
+               }else
+               {
+                   for (i in replaceIndex until dataListSize) {
+                       if (i - replaceIndex < uriListSize) {
+                           addressImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                       } else {
+                           addressImageList[i] = AddPicturesModel(Uri.EMPTY)
+                       }
+                   }
+               }
+
+               if(uriListSize >0)
+                   updateAddPictureSavebtn(true)
+
+           }
+           catch (e:java.lang.Exception)
+           {
+               e.printStackTrace()
+           }
                 adapter.notifyDataSetChanged()
             }
         }
@@ -567,9 +620,22 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
         var pinLong: Double = 0.0
     }
 
-    override fun addressImageClick() {
-        replaceIndex = addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
-        openImagePicker()
+    override fun addressImageClick(index : Int, isReplaceImage : Boolean) {
+        isReplace = isReplaceImage
+        if(isReplaceImage) {
+            replaceIndex = index
+            openImagePicker(1)
+        }
+        else {
+            replaceIndex = addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+            openImagePicker(dataListSize -replaceIndex)
+        }
+    }
+
+    fun openImagePicker(imageLimit : Int) {
+        MultiImagePicker.with(this)
+            .setSelectionLimit(imageLimit)
+            .open()
     }
 
     override fun onLocationChanged(location: Location) {
@@ -769,7 +835,8 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
     }
 
     fun updateAddressButton() {
-        if (cityText.isNotEmpty() && stateText.isNotEmpty() && pincodeText.isNotEmpty()) {
+
+        if (cityText.trim().isNotEmpty() && stateText.trim().isNotEmpty() && pincodeText.trim().isNotEmpty()) {
             binding!!.addNewAdd!!.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
             binding!!.addNewAdd!!.tvConfirm.isClickable = true
         } else {
@@ -814,7 +881,6 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             binding!!.ivShowAddreess.visibility = View.VISIBLE
             binding!!.addressesView.root.visibility = View.GONE
         }
-
     }
 
     override fun addressItemClick(createAddressModel: CreateAddressModel) {
@@ -822,7 +888,41 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-       finishAffinity()
+        if(binding!!.addNewAdd.root.isVisible)
+        {
+            binding!!.confirmAddress!!.root.visibility = View.VISIBLE
+            binding!!.addNewAdd!!.root.visibility = View.GONE
+            binding!!.backBtn!!.visibility = View.GONE
+            clearAddressFields()
+        }else
+        {
+            super.onBackPressed()
+            finishAffinity()
+        }
+
+
+    }
+
+
+    fun pinMovedPopup()
+    {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.edit_location_popup)
+        dialog.show()
+        dialog.window!!.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.setGravity(Gravity.CENTER)
+
+        dialog.findViewById<TextView>(R.id.tvUpdate).setOnClickListener {
+            dialog.dismiss()
+            callReverseGeoCode(LatLng(pinLat, pinLong))
+        }
+        dialog.findViewById<TextView>(R.id.tvKeep).setOnClickListener {
+            dialog.dismiss()
+        }
     }
 }

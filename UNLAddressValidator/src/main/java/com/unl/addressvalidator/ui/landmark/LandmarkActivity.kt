@@ -24,6 +24,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.unl.addressvalidator.R
 
 import com.unl.addressvalidator.databinding.ActivityLandmarkBinding
+import com.unl.addressvalidator.databinding.AddPicturesPopupBinding
 import com.unl.addressvalidator.model.autocomplet.AutocompleteData
 import com.unl.addressvalidator.model.landmark.LandmarkDataList
 import com.unl.addressvalidator.model.reversegeocode.*
@@ -57,18 +58,20 @@ import com.unl.map.sdk.prefs.DataManager
 import org.json.JSONArray
 import org.json.JSONObject
 
-class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImageClickListner ,
+class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImageClickListner,
     SearchItemClickListner {
     var mapBoxMap: MapboxMap? = null
     var binding: ActivityLandmarkBinding? = null
     lateinit var viewModel: LandmarkViewModel
-    var selectedLandmark: LandmarkDataList? = null
+
     val landmarkImageList = ArrayList<AddPicturesModel>()
     val dataListSize = 9
     var replaceIndex: Int = 0
     lateinit var adapter: AddPicturesAdapter
     var landmarkDataList = ArrayList<LandmarkDataList>()
-
+    var isReplace: Boolean = false
+    lateinit  var bind : AddPicturesPopupBinding
+    var selectedLandmarkDataList  = ArrayList<LandmarkDataList>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         UnlMap(this, DataManager.getApiKey()!!, DataManager.getVpmId()!!, EnvironmentType.SANDBOX)
@@ -126,9 +129,7 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
             finish()
         }
 
-        for (i in 0 until 9) {
-            landmarkImageList.add(AddPicturesModel(Uri.EMPTY))
-        }
+
         setSearchListView()
         initiateViewModel()
         initLandmarkList()
@@ -141,14 +142,14 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
 
         binding!!.addLandmark!!.tvConfirm.setOnClickListener {
 
-         //   initEntrance()
+            //   initEntrance()
             updateLandmark()
-            startActivity(Intent(this,EntrancesActivity::class.java))
+            startActivity(Intent(this, EntrancesActivity::class.java))
         }
 
         binding!!.addLandmark!!.tvSkip.setOnClickListener {
             binding!!.addLandmark!!.root.visibility = View.GONE
-            startActivity(Intent(this,EntrancesActivity::class.java))
+            startActivity(Intent(this, EntrancesActivity::class.java))
             //initEntrance()
         }
 
@@ -168,11 +169,10 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
         viewModel = ViewModelProvider(this)[LandmarkViewModel::class.java]
     }
 
-    fun setMapData()
-    {
+    fun setMapData() {
         var latlng = LatLng(UnlValidatorActivity.pinLat, UnlValidatorActivity.pinLong)
-        changeCameraPosition(latlng,mapBoxMap!!)
-        showMarker(latlng,"home")
+        changeCameraPosition(latlng, mapBoxMap!!)
+        showMarker(latlng, "home")
     }
 
 
@@ -197,8 +197,7 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
         }
     }
 
-    private fun callNearbyLandMark()
-    {
+    private fun callNearbyLandMark() {
         var circleObject = JsonObject()
         var jsonObject = JsonObject()
         var jsonArray = JsonArray()
@@ -206,29 +205,32 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
         jsonArray.add(pinLat)
         jsonArray.add(5000)
         jsonObject.add("Point", jsonArray)
-        circleObject.add("Circle",jsonObject)
+        circleObject.add("Circle", jsonObject)
         viewModel.getNearbyLandmark(circleObject)
     }
 
-  fun  showNearbyLandmark(landmarkList: ArrayList<ReverseGeoCodeResponse>) {
-
+    fun showNearbyLandmark(landmarkList: ArrayList<ReverseGeoCodeResponse>) {
         try {
-            if(landmarkList.size <= 0)
-            {
-                binding!!.addLandmark!!.root.visibility = View.GONE
+            if (landmarkList.size <= 0) {
+                //binding!!.addLandmark!!.root.visibility = View.GONE
 
-            }else
-            {
+            } else {
                 landmarkDataList.clear()
 
                 landmarkList.forEach {
-                    landmarkDataList.add(LandmarkDataList("","",it!!, ArrayList<String>()))
+                    landmarkDataList.add(LandmarkDataList("", "", it!!, ArrayList<String>()))
                 }
 
-                binding!!.addLandmark.rvLandmark.adapter = LandMarkResultAdapter(landmarkDataList, this)
+                binding!!.addLandmark.rvLandmark.adapter =
+                    LandMarkResultAdapter(landmarkDataList, this)
                 binding!!.addLandmark.rvLandmark.adapter!!.notifyDataSetChanged()
                 landmarkList.forEach {
-                    showLandmarkMarker(LatLng(it.features.get(0).geometry.coordinates.get(0),it.features.get(0).geometry.coordinates.get(1)),it.features.get(0).properties!!.category_name)
+                    showLandmarkMarker(
+                        LatLng(
+                            it.features.get(0).geometry.coordinates.get(0),
+                            it.features.get(0).geometry.coordinates.get(1)
+                        ), it.features.get(0).properties!!.category_name
+                    )
                 }
 
             }
@@ -238,25 +240,29 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
         }
     }
 
-    fun initLandmarkList()
-    {
+    fun initLandmarkList() {
         val layoutManager = LinearLayoutManager(this)
         binding!!.addLandmark!!.rvLandmark.layoutManager = layoutManager
         binding!!.addLandmark!!.rvLandmark.setBackgroundResource(R.color.white)
     }
 
-    fun updateLandmark()
-    {
+    fun updateLandmark() {
 
-        val landmarkModel = LandmarkModel(
-            selectedLandmark!!.addressInfo!!.features.get(0).properties!!.postal_address.get(0).house_number,
-            selectedLandmark!!.addressInfo!!.features.get(0).type,
-            ""+selectedLandmark!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
-            ""+selectedLandmark!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
-            "",selectedLandmark!!.imageList
-        )
+        var landmarkModelList = ArrayList<LandmarkModel>()
 
-        createAddressModel!!.landmarkModel = landmarkModel
+        selectedLandmarkDataList.forEach {
+            val landmarkModel = LandmarkModel(
+                it!!.addressInfo!!.features.get(0).properties!!.postal_address.get(0).house_number,
+                it!!.addressInfo!!.features.get(0).type,
+                "" + it!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
+                "" + it!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
+                "", it!!.imageList
+            )
+            landmarkModelList.add(landmarkModel)
+        }
+
+
+        createAddressModel!!.landmarkModel = landmarkModelList
     }
 
     private fun getNearbyLandmarkResponse() {
@@ -282,25 +288,69 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
     }
 
     override fun landmarkItemClick(landmarkModel: LandmarkDataList) {
-        selectedLandmark = landmarkModel
-        binding!!.addLandmark!!.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
-        binding!!.addLandmark!!.tvConfirm.isEnabled = true
+        if(selectedLandmarkDataList.contains(landmarkModel))
+        {
+            selectedLandmarkDataList.remove(landmarkModel)
+        }
+        else
+        {
+            selectedLandmarkDataList.add(landmarkModel)
+        }
+        if(selectedLandmarkDataList.size >0)
+        {
+            binding!!.addLandmark!!.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
+            binding!!.addLandmark!!.tvConfirm.isEnabled = true
+        }else
+        {
+            binding!!.addLandmark!!.tvConfirm.setBackgroundResource(R.drawable.bg_button_disable)
+            binding!!.addLandmark!!.tvConfirm.isEnabled = false
+        }
     }
 
     override fun uploadLandmarkPic(position: Int, resulttList: ArrayList<LandmarkDataList>) {
 
-        showLandmarkPictureDialog(position, resulttList)
+        landmarkImageList.clear()
+        if (resulttList.get(position).imageList != null && resulttList.get(position).imageList.size > 0) {
+            for (i in 0..resulttList.get(position).imageList.size - 1) {
+                landmarkImageList.add(
+                    AddPicturesModel(
+                        Uri.parse(
+                            resulttList.get(position).imageList.get(
+                                i
+                            )
+                        )
+                    )
+                )
+            }
+            for (i in resulttList.get(position).imageList.size until 9) {
+                landmarkImageList.add(AddPicturesModel(Uri.EMPTY))
+            }
+            showLandmarkPictureDialog(position, resulttList)
+            updateAddPictureSavebtn(true)
+        } else {
+            for (i in 0 until 9) {
+                landmarkImageList.add(AddPicturesModel(Uri.EMPTY))
+            }
+            showLandmarkPictureDialog(position, resulttList)
+        }
+
+
     }
 
-    override fun addressImageClick() {
-        replaceIndex = landmarkImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
-        openImagePicker()
+    override fun addressImageClick(index: Int, isReplaceImage: Boolean) {
+        isReplace = isReplaceImage
+        if (isReplace) {
+            replaceIndex = index
+            openImagePicker(1)
+        } else {
+            replaceIndex = landmarkImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+            openImagePicker(dataListSize - replaceIndex)
+        }
     }
 
-
-    fun openImagePicker() {
+    fun openImagePicker(imageLimit: Int) {
         MultiImagePicker.with(this)
-            .setSelectionLimit(dataListSize)
+            .setSelectionLimit(imageLimit)
             .open()
     }
 
@@ -316,18 +366,32 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
                     uriList.add(AddPicturesModel(uri))
                 }
                 val uriListSize = uriList.size
-                for (i in replaceIndex until dataListSize) {
-                    if (i - replaceIndex < uriListSize) {
-                        landmarkImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+
+
+                try {
+                    if (isReplace) {
+                        landmarkImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
                     } else {
-                        landmarkImageList[i] = AddPicturesModel(Uri.EMPTY)
+                        for (i in replaceIndex until dataListSize) {
+                            if (i - replaceIndex < uriListSize) {
+                                landmarkImageList[i] =
+                                    AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                            } else {
+                                landmarkImageList[i] = AddPicturesModel(Uri.EMPTY)
+                            }
+                        }
                     }
+
+                    if(uriListSize >0)
+                        updateAddPictureSavebtn(true)
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
                 }
+
                 adapter.notifyDataSetChanged()
             }
         }
     }
-
 
 
     private fun getAutocompleteResponse() {
@@ -335,7 +399,7 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
             when (response) {
                 is ApiCallBack.Success -> {
                     response.data
-                   binding!!.addLandmark.rvSearchResult.adapter =
+                    binding!!.addLandmark.rvSearchResult.adapter =
                         SearchResultAdapter(response.data!!, this)
                     binding!!.addLandmark.rvSearchResult.visibility = View.VISIBLE
                 }
@@ -398,7 +462,7 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
         })
     }
 
-  fun  parseSearchResultJson(rawData: JsonObject) {
+    fun parseSearchResultJson(rawData: JsonObject) {
 
         try {
             val parsed = JSONObject(rawData.toString())
@@ -432,31 +496,48 @@ class LandmarkActivity : AppCompatActivity() , LandmarkClickListner, AddressImag
             var lattitude: Double = geoLocJson.getDouble("vocabulary:latitude")
             var longitude: Double = geoLocJson.getDouble("vocabulary:longitude")
 
-            val features : ArrayList<FeaturesData> = ArrayList<FeaturesData>()
+            val features: ArrayList<FeaturesData> = ArrayList<FeaturesData>()
 
-           var coordinates : ArrayList<Double> = ArrayList()
+            var coordinates: ArrayList<Double> = ArrayList()
 
             coordinates.add(lattitude)
             coordinates.add(longitude)
-            val geomateryData : GeomateryData= GeomateryData(addressType,coordinates)
+            val geomateryData: GeomateryData = GeomateryData(addressType, coordinates)
 
-            var postalAddrArray : ArrayList<PostalAddressData> = ArrayList()
+            var postalAddrArray: ArrayList<PostalAddressData> = ArrayList()
 
-            val postalAddress : PostalAddressData= PostalAddressData(countryCode,stateDistrict,cityDistrict,addressRegion,streetAddress,postalCode,houseNumber)
+            val postalAddress: PostalAddressData = PostalAddressData(
+                countryCode,
+                stateDistrict,
+                cityDistrict,
+                addressRegion,
+                streetAddress,
+                postalCode,
+                houseNumber
+            )
 
             postalAddrArray.add(postalAddress)
-            var properties : PropertiesData = PropertiesData("",categoryType,businessName,null,postalAddrArray,null,null)
+            var properties: PropertiesData =
+                PropertiesData("", categoryType, businessName, null, postalAddrArray, null, null)
 
-            features.add(FeaturesData(addressType,geomateryData,properties))
-            var reverseGeoCodeResponse: ReverseGeoCodeResponse = ReverseGeoCodeResponse(addressType,features)
+            features.add(FeaturesData(addressType, geomateryData, properties))
+            var reverseGeoCodeResponse: ReverseGeoCodeResponse =
+                ReverseGeoCodeResponse(addressType, features)
 
-            landmarkDataList.add(LandmarkDataList("","",reverseGeoCodeResponse, ArrayList<String>()))
+            landmarkDataList.add(
+                LandmarkDataList(
+                    "",
+                    "",
+                    reverseGeoCodeResponse,
+                    ArrayList<String>()
+                )
+            )
 
             binding!!.addLandmark.rvLandmark.adapter = LandMarkResultAdapter(landmarkDataList, this)
             binding!!.addLandmark.rvLandmark.adapter!!.notifyDataSetChanged()
 
 
-            showLandmarkMarker(LatLng(lattitude,longitude),addressType)
+            showLandmarkMarker(LatLng(lattitude, longitude), addressType)
 
 //            clearAddressFields()
 //            setAddressFromSearchResult(

@@ -14,10 +14,7 @@
             android:name=".ui.addressdetail.AddressListActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".ui.addressdetail.AddressDetailActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.deliveryhours.DeliveryHoursActivity"
             android:exported="false"

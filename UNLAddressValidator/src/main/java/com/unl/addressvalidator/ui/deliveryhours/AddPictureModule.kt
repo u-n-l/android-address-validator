@@ -17,6 +17,7 @@ import com.unl.addressvalidator.databinding.AddPicturesPopupBinding
 import com.unl.addressvalidator.network.ApiCallBack
 import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity
 import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity.Companion.addressImageList
+import com.unl.addressvalidator.ui.homescreen.updateAddPictureSavebtn
 import com.unl.addressvalidator.ui.imagepicker.adapter.AddPicturesAdapter
 import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
 import com.unl.addressvalidator.util.Utility.getImagePathFromUri
@@ -30,7 +31,7 @@ import java.io.File
 fun DeliveryHoursActivity.showAddPictureDialog() {
 
     val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    val bind :AddPicturesPopupBinding = AddPicturesPopupBinding.inflate(inflater)
+     bind  = AddPicturesPopupBinding.inflate(inflater)
 
 
     val bottomSheetDialog = BottomSheetDialog(this)
@@ -45,11 +46,11 @@ fun DeliveryHoursActivity.showAddPictureDialog() {
     bind!!.rvAddPictures.adapter = adapter
     bind!!.rvAddPictures.layoutManager = GridLayoutManager(this, 4)
 
-    bind!!.tvAddPhotos!!.setOnClickListener {
+/*    bind!!.tvAddPhotos!!.setOnClickListener {
         replaceIndex = addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
       //  selectImageForLandmakr = false
         openImagePicker()
-    }
+    }*/
 
     bind!!.tvSave.setOnClickListener {
       // binding!!.addPicture!!.root.visibility = View.GONE
@@ -103,7 +104,26 @@ fun DeliveryHoursActivity.showAddPictureDialog() {
             for (i in addressImageList.size until 9) {
                 addressImageList.add(AddPicturesModel(Uri.EMPTY))
             }
-            showAddPictureDialog()
+
+            bind!!.rvAddPictures.adapter!!.notifyDataSetChanged()
+            adapter!!.removedIndex!!.clear()
+
+
+            var count = 0
+            addressImageList.forEach() {
+                var str: String = it.ivPhotos.toString()
+
+                if (str != null && !str.equals(""))
+                {
+                    count++
+                }
+
+            }
+
+            if(count <= 0)
+            {
+                updateAddPictureSavebtn(false)
+            }
         }
 
     }
@@ -113,13 +133,26 @@ fun DeliveryHoursActivity.showAddPictureDialog() {
         for (i in 0 until 9) {
             addressImageList.add(AddPicturesModel(Uri.EMPTY))
         }
-
+        bottomSheetDialog.dismiss()
     }
 
     bottomSheetDialog.show()
 }
 
 
+fun DeliveryHoursActivity.updateAddPictureSavebtn(status : Boolean)
+{
+    if(status)
+    {
+        bind!!.tvSave!!.setBackgroundResource(R.drawable.theme_round_btn)
+        bind!!.tvSave!!.isEnabled = true
+    }else
+    {
+        bind!!.tvSave!!.setBackgroundResource(R.drawable.bg_button_disable)
+        bind!!.tvSave!!.isEnabled = false
+    }
+
+}
 
 fun UnlValidatorActivity.getAddressImageUploadResponse() {
     viewModel?.imageUploadResponseData?.observe(this, { response ->

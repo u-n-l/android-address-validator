@@ -20,6 +20,7 @@ import com.unl.addressvalidator.ui.adapters.LandMarkResultAdapter
 import com.unl.addressvalidator.ui.fragments.showLandmarkPictureDialog
 import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity
 import com.unl.addressvalidator.ui.homescreen.showAddPictureDialog
+import com.unl.addressvalidator.ui.homescreen.updateAddPictureSavebtn
 import com.unl.addressvalidator.ui.imagepicker.adapter.AddPicturesAdapter
 import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
 import com.unl.addressvalidator.util.Utility.getImagePathFromUri
@@ -35,12 +36,9 @@ fun LandmarkActivity.showLandmarkPictureDialog(
     resulttList: ArrayList<LandmarkDataList>
 ) {
 
-    landmarkImageList.clear()
-    for (i in 0 until 9) {
-        landmarkImageList.add(AddPicturesModel(Uri.EMPTY))
-    }
+
     val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    val bind :AddPicturesPopupBinding = AddPicturesPopupBinding.inflate(inflater)
+     bind  = AddPicturesPopupBinding.inflate(inflater)
     val bottomSheetDialog = BottomSheetDialog(this)
     bottomSheetDialog.setContentView(bind.root)
     bind!!.headerTitle.text = "Add Picture to the Landmark"
@@ -49,11 +47,11 @@ fun LandmarkActivity.showLandmarkPictureDialog(
     bind!!.rvAddPictures.adapter = adapter
     bind!!.rvAddPictures.layoutManager = GridLayoutManager(this, 4)
 
-    bind!!.tvAddPhotos!!.setOnClickListener {
+/*    bind!!.tvAddPhotos!!.setOnClickListener {
         replaceIndex = landmarkImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
        // selectImageForLandmakr = true
         openImagePicker()
-    }
+    }*/
 
     bind!!.tvSave.setOnClickListener {
 
@@ -96,8 +94,24 @@ fun LandmarkActivity.showLandmarkPictureDialog(
             for (i in landmarkImageList.size until 9) {
                 landmarkImageList.add(AddPicturesModel(Uri.EMPTY))
             }
-            showLandmarkPictureDialog( position
-                ,  resulttList)
+
+            bind!!.rvAddPictures.adapter!!.notifyDataSetChanged()
+            adapter!!.removedIndex!!.clear()
+
+            var count = 0
+            landmarkImageList.forEach() {
+                var str: String = it.ivPhotos.toString()
+
+                if (str != null && !str.equals(""))
+                {
+                    count++
+                }
+            }
+
+            if(count <= 0)
+            {
+                updateAddPictureSavebtn(false)
+            }
         }
     }
 
@@ -106,10 +120,25 @@ fun LandmarkActivity.showLandmarkPictureDialog(
         for (i in 0 until 9) {
             landmarkImageList.add(AddPicturesModel(Uri.EMPTY))
         }
+        bottomSheetDialog.dismiss()
     }
     bottomSheetDialog.show()
 }
 
+
+fun LandmarkActivity.updateAddPictureSavebtn(status : Boolean)
+{
+    if(status)
+    {
+        bind!!.tvSave!!.setBackgroundResource(R.drawable.theme_round_btn)
+        bind!!.tvSave!!.isEnabled = true
+    }else
+    {
+        bind!!.tvSave!!.setBackgroundResource(R.drawable.bg_button_disable)
+        bind!!.tvSave!!.isEnabled = false
+    }
+
+}
 
 fun LandmarkActivity.getAddressImageUploadResponse() {
     viewModel?.imageUploadResponseData?.observe(this, { response ->

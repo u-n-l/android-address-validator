@@ -51,8 +51,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
+            android:id="@+id/tvDetails"
+            android:visibility="gone"
             android:layout_marginBottom="@dimen/_5sdp"
-            android:fontFamily="@font/poppins_bold"
+            android:fontFamily="@font/poppins_semibold"
             android:text="@string/entrance_detail"
             android:textColor="@color/gray1"
             android:textSize="@dimen/_10ssp" />

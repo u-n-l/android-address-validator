@@ -5,21 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/_60sdp"
     android:layout_margin="@dimen/_4sdp"
-    android:background="@drawable/add_photos">
+    android:background="@color/transparent"
+  >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/_1sdp"
-        app:cardBackgroundColor="@color/gray1"
         app:cardCornerRadius="@dimen/_5sdp">
 
         <ImageView
             android:id="@+id/ivPhotos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/add_photos" />
+            android:padding="@dimen/_2sdp"
+            android:src="@drawable/add_picture" />
 
     </androidx.cardview.widget.CardView>
 

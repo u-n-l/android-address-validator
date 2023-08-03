@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/address_dialog_shape1"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/_16sdp">
 <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_10sdp"
     android:layout_marginBottom="@dimen/_20sdp"
     android:scrollbars="none">
@@ -74,6 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|end"
+            android:visibility="invisible"
             android:orientation="horizontal">
 
             <TextView
@@ -127,8 +128,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_11sdp"
-        android:background="@drawable/save_btn_shape"
+        android:background="@drawable/bg_button_disable"
         android:fontFamily="@font/poppins_bold"
+        android:enabled="false"
         android:paddingVertical="@dimen/_8sdp"
         android:text="@string/save"
         android:gravity="center"
@@ -147,8 +149,6 @@
         android:textAlignment="center"
         android:textColor="@color/purple1"
         android:textSize="@dimen/_11ssp" />
-
-
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </ScrollView>

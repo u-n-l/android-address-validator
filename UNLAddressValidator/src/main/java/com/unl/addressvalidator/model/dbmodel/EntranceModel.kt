@@ -10,7 +10,7 @@ data class EntranceModel(
     var entranceCategory : String,
     var entranceInfo : String,
     var  imgCount : String,
-    var entranceId : String,
+    var entranceId : Long,
     var lattitude : Double,
     var longitude : Double,
     var url : String,

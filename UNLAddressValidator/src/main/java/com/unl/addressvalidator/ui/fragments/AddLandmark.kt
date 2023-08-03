@@ -12,6 +12,7 @@ import com.unl.addressvalidator.R
 import com.unl.addressvalidator.model.landmark.LandmarkDataList
 import com.unl.addressvalidator.model.reversegeocode.ReverseGeoCodeResponse
 import com.unl.addressvalidator.ui.adapters.LandMarkResultAdapter
+import com.unl.addressvalidator.ui.landmark.LandmarkActivity
 
 fun HomeFragment.openLandmarkPopup() {
   //  binding!!.addNewAdd!!.root.visibility = View.GONE
@@ -89,17 +90,25 @@ fun HomeFragment.initLandmarkList()
 fun HomeFragment.updateLandmark()
 {
 
-    val landmarkModel = LandmarkModel(
-        selectedLandmark!!.addressInfo!!.features.get(0).properties!!.postal_address.get(0).house_number,
-        selectedLandmark!!.addressInfo!!.features.get(0).type,
-        ""+selectedLandmark!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
-        ""+selectedLandmark!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
-        "",selectedLandmark!!.imageList
-    )
+
+
+    var landmarkModelList = ArrayList<LandmarkModel>()
+
+    selectedLandmarkDataList.forEach {
+        val landmarkModel = LandmarkModel(
+            it!!.addressInfo!!.features.get(0).properties!!.postal_address.get(0).house_number,
+            it!!.addressInfo!!.features.get(0).type,
+            "" + it!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
+            "" + it!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
+            "", it!!.imageList
+        )
+        landmarkModelList.add(landmarkModel)
+    }
+
 
   /*  var entranceList: ArrayList<EntranceModel> = ArrayList()
     val entranceModel = EntranceModel("main gate", "1")
     entranceList.add(entranceModel)*/
 
-    createAddressModel!!.landmarkModel = landmarkModel
+    createAddressModel!!.landmarkModel = landmarkModelList
 }

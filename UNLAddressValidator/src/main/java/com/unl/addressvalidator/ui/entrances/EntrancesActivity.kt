@@ -25,6 +25,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.unl.addressvalidator.R
 import com.unl.addressvalidator.databinding.ActivityEntrancesBinding
 import com.unl.addressvalidator.databinding.ActivityLandmarkBinding
+import com.unl.addressvalidator.databinding.AddPicturesPopupBinding
 import com.unl.addressvalidator.ui.adapters.EntrancesAdapter
 import com.unl.addressvalidator.ui.deliveryhours.DeliveryHoursActivity
 import com.unl.addressvalidator.ui.fragments.HomeFragment
@@ -38,6 +39,7 @@ import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
 import com.unl.addressvalidator.ui.interfaces.AddressImageClickListner
 import com.unl.addressvalidator.ui.interfaces.EntranceClickListner
 import com.unl.addressvalidator.util.Utility
+import com.unl.addressvalidator.util.Utility.returnRandomDigit
 import com.unl.map.sdk.UnlMap
 import com.unl.map.sdk.data.EnvironmentType
 import com.unl.map.sdk.helpers.grid_controls.setGridControls
@@ -56,6 +58,8 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
     var entranceList: ArrayList<EntranceModel> = ArrayList()
     var entranceMarker: ArrayList<Marker> = ArrayList()
     val dataListSize = 9
+    var isReplace:Boolean = false
+    lateinit  var bind : AddPicturesPopupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,11 +134,13 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
     {
         if(entranceList.size > 0)
         {
+            binding!!.addEntrances.tvDetails.visibility = View.VISIBLE
             binding!!.addEntrances.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
             binding!!.addEntrances.tvConfirm.isClickable = true
             binding!!.addEntrances.tvConfirm.isEnabled = true
         }else
         {
+            binding!!.addEntrances.tvDetails.visibility = View.GONE
             binding!!.addEntrances.tvConfirm.setBackgroundResource(R.drawable.bg_button_disable)
             binding!!.addEntrances.tvConfirm.isClickable = false
             binding!!.addEntrances.tvConfirm.isEnabled = false
@@ -145,7 +151,7 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
 
  fun addEntrancePoint(lattitude : Double, longitude : Double)
     {
-        val entranceModel = EntranceModel("Entrance", ""+(entranceList.size+1).toString(),"","","0","",lattitude,longitude,"",ArrayList<String>())
+        val entranceModel = EntranceModel("Entrance", ""+(entranceList.size+1).toString(),"","","0",returnRandomDigit(),lattitude,longitude,"",ArrayList<String>())
         entranceList.add(entranceModel)
         binding!!.addEntrances.rvEntrances.visibility = View.VISIBLE
         binding!!.addEntrances.rvEntrances.adapter = EntrancesAdapter(entranceList, this)
@@ -192,14 +198,33 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
 
     override fun entranceImageClick(position: Int, entranceModel: ArrayList<EntranceModel>) {
 
-        showEntrancePictureDialog(position,entranceModel)
+        entranceImageList.clear()
+        if (entranceModel.get(position).imageArray != null && entranceModel.get(position).imageArray.size > 0) {
+            for (i in 0..entranceModel.get(position).imageArray.size - 1) {
+                entranceImageList.add(
+                    AddPicturesModel(
+                        Uri.parse(
+                            entranceModel.get(position).imageArray.get(
+                                i
+                            )
+                        )
+                    )
+                )
+            }
+            for (i in entranceModel.get(position).imageArray.size until 9) {
+                entranceImageList.add(AddPicturesModel(Uri.EMPTY))
+            }
+            showEntrancePictureDialog(position,entranceModel)
+            updateAddPictureSavebtn(true)
+        } else {
+            for (i in 0 until 9) {
+                entranceImageList.add(AddPicturesModel(Uri.EMPTY))
+            }
+            showEntrancePictureDialog(position,entranceModel)
+        }
+
     }
 
-    fun openImagePicker() {
-        MultiImagePicker.with(this)
-            .setSelectionLimit(dataListSize)
-            .open()
-    }
 
 
     fun editeEntrance(position : Int, resulttList: ArrayList<EntranceModel>)
@@ -233,10 +258,7 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
         dialog.findViewById<TextView>(R.id.tvCancel).setOnClickListener {
             dialog.dismiss()
         }
-
     }
-
-
     fun removeEntrance(position : Int,resulttList: ArrayList<EntranceModel>)
     {
         val dialog = Dialog(this)
@@ -249,6 +271,10 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
         )
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.setGravity(Gravity.CENTER)
+
+        var name  = resulttList.get(position).entranceName + " No. "+ resulttList.get(position).entranceNo
+
+        dialog.findViewById<TextView>(R.id.entranceDetails).setText("Are you sure you want to delete"+ " “"+ name+ "“ " + "from your saved Entrances?")
 
         dialog.findViewById<TextView>(R.id.tvDelete).setOnClickListener {
             dialog.dismiss()
@@ -264,10 +290,24 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
             dialog.dismiss()
         }
     }
-    override fun addressImageClick() {
-        replaceIndex = entranceImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
-        openImagePicker()
+    override fun addressImageClick(index : Int, isReplaceImage : Boolean) {
+        isReplace = isReplaceImage
+        if(isReplace) {
+            replaceIndex = index
+            openImagePicker(1)
+        }
+        else {
+            replaceIndex = entranceImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+            openImagePicker(dataListSize -replaceIndex)
+        }
     }
+
+    fun openImagePicker(imageLimit : Int) {
+        MultiImagePicker.with(this)
+            .setSelectionLimit(imageLimit)
+            .open()
+    }
+
 
     fun updateEntrance()
     {
@@ -287,16 +327,31 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
                     uriList.add(AddPicturesModel(uri))
                 }
                 val uriListSize = uriList.size
-                for (i in replaceIndex until dataListSize) {
-                    if (i - replaceIndex < uriListSize) {
-                        entranceImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
-                    } else {
-                        entranceImageList[i] = AddPicturesModel(Uri.EMPTY)
+                try {
+                    if(isReplace)
+                    {
+                        entranceImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
+                    }else
+                    {
+                        for (i in replaceIndex until dataListSize) {
+                            if (i - replaceIndex < uriListSize) {
+                                entranceImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                            } else {
+                                entranceImageList[i] = AddPicturesModel(Uri.EMPTY)
+                            }
+                        }
                     }
+                    if(uriListSize >0)
+                        updateAddPictureSavebtn(true)
+                }
+                catch (e:java.lang.Exception)
+                {
+                    e.printStackTrace()
                 }
                 adapter.notifyDataSetChanged()
             }
         }
     }
+
 
 }

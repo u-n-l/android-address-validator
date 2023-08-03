@@ -22,6 +22,7 @@ import com.unl.addressvalidator.ui.adapters.EntrancesAdapter
 import com.unl.addressvalidator.ui.adapters.LandMarkResultAdapter
 import com.unl.addressvalidator.ui.imagepicker.adapter.AddPicturesAdapter
 import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
+import com.unl.addressvalidator.util.Utility
 
 
 fun HomeFragment.initEntrance() {
@@ -63,7 +64,8 @@ fun HomeFragment.updateEntrance()
 }
 fun HomeFragment.addEntrancePoint(lattitude : Double, longitude : Double)
 {
-    val entranceModel = EntranceModel("Entrance", ""+(entranceList.size+1).toString(),"","","0","",lattitude,longitude,"",ArrayList<String>())
+    val entranceModel = EntranceModel("Entrance", ""+(entranceList.size+1).toString(),"","","0",
+        Utility.returnRandomDigit(),lattitude,longitude,"",ArrayList<String>())
     entranceList.add(entranceModel)
     binding!!.addEntrances.rvEntrances.visibility = View.VISIBLE
     binding!!.addEntrances.rvEntrances.adapter = EntrancesAdapter(entranceList, this)

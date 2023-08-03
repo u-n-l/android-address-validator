@@ -38,12 +38,38 @@
                 android:text="Your Address"/>
         </RelativeLayout>
 
-        <com.unl.map.sdk.views.UnlMapView
-            android:id="@+id/mapView"
-            android:layout_below="@+id/header"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/bottomDialog"/>
+            android:layout_below="@+id/header"
+            android:layout_above="@+id/bottomDialog">
+            <com.unl.map.sdk.views.UnlMapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+              />
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="@dimen/_10sdp"
+                android:background="@color/white"
+                android:alpha=".8"
+                app:cardCornerRadius="@dimen/_2sdp">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="@dimen/_8ssp"
+                    android:text="© 2023 HERE"/>
+            </androidx.cardview.widget.CardView>
+
+
+
+        </RelativeLayout>
+
 
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -92,10 +118,35 @@
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
             android:id="@+id/ivShowAddreess"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:padding="@dimen/_10sdp"
             android:src="@drawable/show_addresses"/>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            app:cardCornerRadius="@dimen/_15sdp"
+            android:id="@+id/cvPinEnableDisable"
+            android:layout_below="@+id/header"
+            android:layout_margin="@dimen/_15sdp"
+            android:background="@color/white">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/ivMovePin"
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/ic_location_pin"/>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:id="@+id/crossLine"
+                android:rotation="45"
+                android:visibility="gone"
+              android:background="@color/gray1"/>
+
+        </androidx.cardview.widget.CardView>
 
         <RelativeLayout
             android:layout_width="match_parent"

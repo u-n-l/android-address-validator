@@ -21,7 +21,7 @@ class LandMarkResultAdapter(
     private val itemClickListner: LandmarkClickListner,
 ) : RecyclerView.Adapter<LandMarkResultAdapter.ViewHolder>() {
 
-    var selectedIndex = -1
+    var selectedIndex = ArrayList<Int>()
     // --
     // -------------------------------------------------------------------------------------------
 
@@ -65,15 +65,21 @@ class LandMarkResultAdapter(
             else
               imgCount.text =  "0 of 9"
 
-            if (selectedIndex == position)
+            if (selectedIndex.contains(position))
                 llMain.setBackgroundResource(R.drawable.label_selected_shape)
             else
                 llMain.setBackgroundResource(R.drawable.address_label_shape)
 
                 llMain.setOnClickListener {
                     itemClickListner.landmarkItemClick(resulttList.get(position))
-                    llMain.setBackgroundResource(R.drawable.label_selected_shape)
-                    selectedIndex = position
+                   if(selectedIndex.contains(position))
+                   {
+                       selectedIndex.remove(position)
+                   }else
+                   {
+                       selectedIndex.add(position)
+                   }
+
                     notifyDataSetChanged()
                 }
             if(resulttList.get(position).url!= null && !resulttList.get(position).url.equals(""))

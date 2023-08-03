@@ -37,12 +37,37 @@
                 android:text="Landmark"/>
         </RelativeLayout>
 
-        <com.unl.map.sdk.views.UnlMapView
-            android:id="@+id/mapView"
-            android:layout_below="@+id/header"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/bottomDialog"/>
+            android:layout_below="@+id/header"
+            android:layout_above="@+id/bottomDialog">
+            <com.unl.map.sdk.views.UnlMapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="@dimen/_10sdp"
+                android:background="@color/white"
+                android:alpha=".8"
+                app:cardCornerRadius="@dimen/_2sdp">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="@dimen/_8ssp"
+                    android:text="© 2023 HERE"/>
+            </androidx.cardview.widget.CardView>
+
+
+
+        </RelativeLayout>
 
 
         <androidx.appcompat.widget.AppCompatImageView

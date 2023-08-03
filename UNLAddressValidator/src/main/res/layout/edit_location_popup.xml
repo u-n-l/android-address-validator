@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_20sdp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/theme_round_btn"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/_5sdp"
+    android:paddingHorizontal="@dimen/_16sdp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/headerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_12sdp"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/poppins_bold"
+           android:text="Update Address Form"
+            android:textColor="@color/black2"
+            android:textSize="@dimen/_15ssp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:fontFamily="@font/poppins_regular"
+            android:text="You've moved the pin outside the current grid dimension. \n\n Update your address with the new pin location?"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/_11ssp" />
+
+
+       <androidx.appcompat.widget.LinearLayoutCompat
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_10sdp"
+           android:weightSum="2"
+           android:orientation="horizontal">
+
+           <TextView
+               android:id="@+id/tvKeep"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_weight="1"
+               android:layout_marginBottom="@dimen/_16sdp"
+               android:layout_margin="@dimen/_10sdp"
+               android:background="@drawable/skip_btn_shape"
+               android:fontFamily="@font/poppins_bold"
+               android:paddingVertical="@dimen/_5sdp"
+               android:text="@string/keep"
+               android:gravity="center"
+               android:textAlignment="center"
+               android:textColor="@color/purple1"
+               android:textSize="@dimen/_10ssp" />
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/tvUpdate"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_weight="1"
+               android:layout_marginBottom="@dimen/_11sdp"
+               android:background="@drawable/theme_round_btn"
+               android:fontFamily="@font/poppins_bold"
+               android:layout_margin="@dimen/_10sdp"
+               android:paddingVertical="@dimen/_5sdp"
+               android:clickable="false"
+               android:text="@string/update"
+               android:gravity="center"
+               android:textAlignment="center"
+               android:textColor="@color/white"
+               android:textSize="@dimen/_10ssp" />
+
+       </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</RelativeLayout>
+
+

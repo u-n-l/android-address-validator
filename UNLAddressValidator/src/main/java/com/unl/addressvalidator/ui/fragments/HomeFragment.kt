@@ -56,6 +56,7 @@ import com.unl.addressvalidator.network.ApiCallBack
 import com.unl.addressvalidator.ui.adapters.AddressListAdapter
 import com.unl.addressvalidator.ui.adapters.LandMarkResultAdapter
 import com.unl.addressvalidator.ui.adapters.SearchResultAdapter
+import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity
 import com.unl.addressvalidator.ui.imagepicker.adapter.AddPicturesAdapter
 import com.unl.addressvalidator.ui.imagepicker.builder.MultiImagePicker
 import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
@@ -114,7 +115,7 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
     lateinit var adapter: AddPicturesAdapter
     val dataListSize = 9
     var replaceIndex: Int = 0
-    var selectedLandmark: LandmarkDataList? = null
+
     private var apiKey: String? = null
     private var vpmId: String? = null
     lateinit var viewModel: HomeViewModel
@@ -155,6 +156,8 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
 
     // list for add marker reference
     private var markerViewList: ArrayList<View> = ArrayList()
+
+    var selectedLandmarkDataList  = ArrayList<LandmarkDataList>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -758,9 +761,23 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
     }
 
     override fun landmarkItemClick(landmarkDataList: LandmarkDataList) {
-        selectedLandmark = landmarkDataList
-        binding!!.addLandmark!!.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
-        binding!!.addLandmark!!.tvConfirm.isClickable = true
+
+
+        if(selectedLandmarkDataList.contains(landmarkDataList))
+        {
+            selectedLandmarkDataList.remove(landmarkDataList)
+        }
+        if(selectedLandmarkDataList.size >0)
+        {
+            binding!!.addLandmark!!.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
+            binding!!.addLandmark!!.tvConfirm.isEnabled = true
+        }else
+        {
+            binding!!.addLandmark!!.tvConfirm.setBackgroundResource(R.drawable.bg_button_disable)
+            binding!!.addLandmark!!.tvConfirm.isEnabled = false
+        }
+
+
     }
 
     override fun uploadLandmarkPic(position: Int, resulttList: ArrayList<LandmarkDataList>) {
@@ -769,9 +786,24 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
         showLandmarkPictureDialog(position, resulttList)
     }
 
-    override fun addressImageClick() {
-        openImagePicker()
+
+    override fun addressImageClick(index : Int, isReplace : Boolean) {
+        if(isReplace) {
+            replaceIndex = index
+            openImagePicker(1)
+        }
+        else {
+            replaceIndex = UnlValidatorActivity.addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+            openImagePicker(dataListSize -replaceIndex)
+        }
     }
+
+    fun openImagePicker(imageLimit : Int) {
+        MultiImagePicker.with(activity)
+            .setSelectionLimit(imageLimit)
+            .open()
+    }
+
 
     override fun dayClick(day: String) {
         daysType = day

@@ -53,6 +53,7 @@ class EntrancesAdapter(
         viewHolder.run {
             // image.setImageBitmap(dataSet[position].imageAsBitmap(imageSize))
             tvEntranceName.text = resulttList.get(position).entranceName + " No. "+ resulttList.get(position).entranceNo
+            tvEntranceID.text = ""+resulttList.get(position).entranceId
 
           if(resulttList.get(position).imgCount!= null && !resulttList.get(position).imgCount.equals(""))
             imgCount.text = ""+resulttList.get(position).imgCount + " of 9"

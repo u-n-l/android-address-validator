@@ -176,19 +176,34 @@ object Utility {
 
     fun configureMap(mapView : UnlMapView, context : Context)
     {
-        mapView.enableTileSelector(true)
-        mapView.setGridControls(context, true)
-        mapView.setTileSelectorGravity(Gravity.END)
-        mapView.ivTile.setImageResource(R.drawable.ic_tile)
-        mapView.ivTile.setBackgroundColor(Color.parseColor("#00000000"))
-        mapView.mapbox!!.uiSettings.setCompassFadeFacingNorth(true)
-        mapView.mapbox!!.uiSettings.setCompassImage(context.resources.getDrawable(R.drawable.transparent_bg))
-        mapView.isVisibleGrids = true
-        mapView.cellPrecision = CellPrecision.GEOHASH_LENGTH_9
-        mapView.mapbox?.loadGrids(true, mapView, CellPrecision.GEOHASH_LENGTH_9)
-        mapView.ivGrid.visibility = View.GONE
+       try {
+           mapView.enableTileSelector(true)
+           mapView.setGridControls(context, true)
+           mapView.setTileSelectorGravity(Gravity.END)
+           mapView.ivTile.setImageResource(R.drawable.ic_tile)
+           mapView.ivTile.setBackgroundColor(Color.parseColor("#00000000"))
+           mapView.mapbox!!.uiSettings.setCompassFadeFacingNorth(true)
+           mapView.mapbox!!.uiSettings.setCompassImage(context.resources.getDrawable(R.drawable.transparent_bg))
+           mapView.isVisibleGrids = true
+           mapView.isVisibleTiles = false
+           mapView.cellPrecision = CellPrecision.GEOHASH_LENGTH_9
+           mapView.mapbox?.loadGrids(true, mapView, CellPrecision.GEOHASH_LENGTH_9)
+           mapView.ivGrid.visibility = View.GONE
+       }
+       catch (e:Exception)
+       {
+           e.printStackTrace()
+       }
     }
 
+    fun returnRandomDigit() : Long
+    {
+        var randomNum : Long = 0
+        var fromNumber : Long = 10000000
+        var toNumber : Long = 99999999
+        randomNum =   (fromNumber.rangeTo(toNumber)).random()
+        return randomNum
+    }
      fun convert(coord: Double): String? {
         var coord = coord
         coord = Math.abs(coord)

@@ -207,6 +207,7 @@ fun HomeFragment.createAddress() {
     )
 
     val locationModel = LocationModel(pinLat!!, pinLong!!)
+    var landmarkModelList = ArrayList<LandmarkModel>()
     val landmarkModel = LandmarkModel(
         "Gyan Sagar school",
         "schood",
@@ -215,7 +216,7 @@ fun HomeFragment.createAddress() {
         "https://www.image.jpeg",
         ArrayList<String>()
     )
-
+    landmarkModelList.add(landmarkModel)
 
 
 
@@ -240,9 +241,10 @@ fun HomeFragment.createAddress() {
         addressType,
         address,
         locationModel,
-        landmarkModel,
+        landmarkModelList,
         entranceList,
         imageList,
+        ArrayList<String>(),
         openCloseTimeList
     )
    // viewModel.insertAddress(database, createAddress)

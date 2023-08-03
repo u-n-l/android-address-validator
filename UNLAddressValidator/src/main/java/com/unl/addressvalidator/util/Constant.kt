@@ -8,6 +8,9 @@ object Constant {
     const val ADD_ADDRESS = "Add Address"
     const val EDIT_ADDRESS = "Edit Address"
 
+    const val ELEVATOR_ACCESSIBILITY = "Elevator"
+    const val WHEELCHAIR_ACCESSIBILITY = "Wheelchair"
+
     const val BASE_URL = "https://sandbox.api.unl.global/v2/"
     const val IMAGE_UPLOAD_BASE_URL = "https://r-asset.api.unl.global/v1/"
     const val FROM_HOURS = "fromHours"

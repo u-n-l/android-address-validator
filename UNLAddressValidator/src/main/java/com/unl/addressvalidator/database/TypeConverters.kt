@@ -38,7 +38,7 @@ class TypeConverters {
     }
 
     @TypeConverter
-    fun fromLandmarkModel(landmarkModel: LandmarkModel?): String? {
+    fun fromLandmarkModel(landmarkModel: ArrayList<LandmarkModel>?): String? {
         if(landmarkModel!= null)
         return Gson().toJson(landmarkModel)
         else
@@ -46,9 +46,9 @@ class TypeConverters {
     }
 
     @TypeConverter
-    fun toLandmarkModel(landmarkModelJson: String?): LandmarkModel? {
+    fun toLandmarkModel(landmarkModelJson: String?): ArrayList<LandmarkModel>? {
         if(landmarkModelJson!= null)
-        return Gson().fromJson(landmarkModelJson, LandmarkModel::class.java)
+        return Gson().fromJson(landmarkModelJson, ArrayList<LandmarkModel>()::class.java)
         else
             return null
     }
@@ -93,8 +93,6 @@ class TypeConverters {
             return null
     }
 
-
-
     @TypeConverter
     fun toImages(imageList: String?): ArrayList<String>? {
         if(imageList!= null)
@@ -102,5 +100,6 @@ class TypeConverters {
         else
             return null
     }
+
 
 }

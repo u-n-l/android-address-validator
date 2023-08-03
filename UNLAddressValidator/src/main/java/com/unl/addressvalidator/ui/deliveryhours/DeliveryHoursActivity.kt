@@ -17,6 +17,7 @@ import com.example.roomdatabasewithmodelclassess.model.OpeningHoursSpecification
 import com.unl.addressvalidator.R
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.databinding.ActivityDeliveryHoursBinding
+import com.unl.addressvalidator.databinding.AddPicturesPopupBinding
 import com.unl.addressvalidator.ui.adapters.OperationalDayAdapter
 import com.unl.addressvalidator.ui.adapters.OperationalHoursAdapter
 import com.unl.addressvalidator.ui.fragments.HomeFragment
@@ -44,6 +45,7 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
     lateinit var viewModel: DeliveryHoursViewModel
     lateinit var database: UnlAddressDatabase
     lateinit var operationalDayAdapter : OperationalDayAdapter
+    var isReplace: Boolean = false
 
     var openCloseTimeList: ArrayList<OpeningHoursSpecificationModel> = ArrayList()
     var weekDays = arrayOf(
@@ -56,7 +58,7 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
         Constant.SATURDAY,
         Constant.SUNDAY
     )
-    var daysType = Constant.ALL_DAYS
+    var daysType = ""
     var fromHours = "09"
     var fromMins = "00"
     var fromAMPM = "AM"
@@ -69,6 +71,7 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
     var replaceIndex: Int = 0
     var isWheelchairSelected = false
     var isElevatorSelected = false
+    lateinit  var bind : AddPicturesPopupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -285,7 +288,6 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
                         .placeholder(R.drawable.photos) // Set a placeholder image if needed
                         .error(R.drawable.photos) // Set an error image if loading fails
                         .into(binding!!.operationalHours!!.addImage)
-
                 }
 
                 var count = 0
@@ -845,13 +847,34 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
             }
         }
         createAddressModel!!.openingHoursSpecificationModel = openCloseTimeList
+
+        var accessbilityArray = ArrayList<String>()
+        if(isElevatorSelected)
+            accessbilityArray.add(Constant.ELEVATOR_ACCESSIBILITY)
+        if(isWheelchairSelected)
+            accessbilityArray.add(Constant.WHEELCHAIR_ACCESSIBILITY)
+
+        createAddressModel!!.accessibility = accessbilityArray
         viewModel.insertAddress(database, createAddressModel!!)
     }
 
+    var lastIndex = -1
     override fun dayClick(day: String) {
-        daysType = day
-        setFromAndToTime()
-        updateButtonStatus()
+        if(lastIndex!= operationalDayAdapter.selectedIndex)
+        {
+            lastIndex = operationalDayAdapter.selectedIndex
+            daysType = day
+            setFromAndToTime()
+            updateButtonStatus()
+        }else
+        {
+            daysType = ""
+            lastIndex = -1
+            operationalDayAdapter.selectedIndex = -2
+            operationalDayAdapter.notifyDataSetChanged()
+            updateButtonStatus()
+        }
+
     }
 
     fun updateButtonStatus()
@@ -884,14 +907,22 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
     }
 
 
-    override fun addressImageClick() {
-        replaceIndex = UnlValidatorActivity.addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
-        openImagePicker()
+
+    override fun addressImageClick(index : Int, isReplaceImage : Boolean) {
+        isReplace = isReplaceImage
+        if(isReplace) {
+            replaceIndex = index
+            openImagePicker(1)
+        }
+        else {
+            replaceIndex = UnlValidatorActivity.addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+            openImagePicker(dataListSize -replaceIndex)
+        }
     }
 
-    fun openImagePicker() {
+    fun openImagePicker(imageLimit : Int) {
         MultiImagePicker.with(this)
-            .setSelectionLimit(dataListSize)
+            .setSelectionLimit(imageLimit)
             .open()
     }
 
@@ -907,14 +938,25 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
                     uriList.add(AddPicturesModel(uri))
                 }
                 val uriListSize = uriList.size
-                for (i in replaceIndex until dataListSize) {
-                    if (i - replaceIndex < uriListSize) {
-                        UnlValidatorActivity.addressImageList[i] =
-                            AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                try {
+                    if (isReplace) {
+                        UnlValidatorActivity.addressImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
                     } else {
-                        UnlValidatorActivity.addressImageList[i] = AddPicturesModel(Uri.EMPTY)
+                        for (i in replaceIndex until dataListSize) {
+                            if (i - replaceIndex < uriListSize) {
+                                UnlValidatorActivity.addressImageList[i] =
+                                    AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                            } else {
+                                UnlValidatorActivity.addressImageList[i] = AddPicturesModel(Uri.EMPTY)
+                            }
+                        }
                     }
+                    if(uriListSize >0)
+                     updateAddPictureSavebtn(true)
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
                 }
+
                 adapter.notifyDataSetChanged()
             }
         }

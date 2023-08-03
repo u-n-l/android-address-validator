@@ -153,6 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="100"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:background="@drawable/address_label_shape"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -167,6 +168,7 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/accessibilityHeading"
                         android:fontFamily="@font/poppins_semibold"
                         android:text="Location Accessibility"
                         android:textColor="@color/text_color" />
@@ -174,6 +176,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
+                        android:id="@+id/accessibilityValue"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:weightSum="2">
 
@@ -181,6 +184,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:id="@+id/wheelChairView"
                             android:orientation="horizontal">
 
                             <androidx.appcompat.widget.AppCompatImageView
@@ -199,6 +203,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:id="@+id/elevatorView"
                             android:orientation="horizontal">
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="wrap_content"
@@ -274,6 +279,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="15"
+                    android:visibility="invisible"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_edit"
                    />

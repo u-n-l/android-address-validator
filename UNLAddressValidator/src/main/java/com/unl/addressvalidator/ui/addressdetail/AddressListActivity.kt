@@ -15,6 +15,8 @@ import com.unl.addressvalidator.databinding.ActivityAddressListBinding
 import com.unl.addressvalidator.model.dbmodel.CreateAddressModel
 import com.unl.addressvalidator.ui.adapters.AddressListAdapter
 import com.unl.addressvalidator.ui.interfaces.AddressItemClickListner
+import com.unl.addressvalidator.util.Constant.ELEVATOR_ACCESSIBILITY
+import com.unl.addressvalidator.util.Constant.WHEELCHAIR_ACCESSIBILITY
 import java.util.*
 
 
@@ -57,6 +59,11 @@ class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
     }
     fun initAddressList(addresses: List<CreateAddressModel>) {
         val layoutManager = LinearLayoutManager(this)
+        if(addresses.size<2)
+        binding!!.addressesView!!.addressCount.text = ""+addresses.size + " result found"
+        else
+            binding!!.addressesView!!.addressCount.text = ""+addresses.size + " results found"
+
         binding!!.addressesView!!.rvAddress.layoutManager = layoutManager
         binding!!.addressesView!!.rvAddress.setBackgroundResource(R.color.white)
         binding!!.addressesView!!.rvAddress.adapter = AddressListAdapter(addresses!!, this)
@@ -105,6 +112,30 @@ class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
                val closes = t["closes"].toString()
 
                binding!!.addressesDetailView.tvOpenClosehours.text = ""+ opens+"-"+closes
+           }
+           if(addresses!!.accessibility!= null && addresses!!.accessibility!!.size>0)
+           {
+               if(addresses!!.accessibility!!.contains(WHEELCHAIR_ACCESSIBILITY))
+               {
+                   binding!!.addressesDetailView.wheelChairView.visibility = View.VISIBLE
+               }else
+               {
+                   binding!!.addressesDetailView.wheelChairView.visibility = View.GONE
+               }
+               if(addresses!!.accessibility!!.contains(ELEVATOR_ACCESSIBILITY))
+               {
+                   binding!!.addressesDetailView.elevatorView.visibility = View.VISIBLE
+               }else
+               {
+                   binding!!.addressesDetailView.elevatorView.visibility = View.GONE
+               }
+
+               binding!!.addressesDetailView.accessibilityHeading.visibility = View.VISIBLE
+               binding!!.addressesDetailView.accessibilityValue.visibility = View.VISIBLE
+           }else
+           {
+               binding!!.addressesDetailView.accessibilityHeading.visibility = View.GONE
+               binding!!.addressesDetailView.accessibilityValue.visibility = View.GONE
            }
        }
        catch (e:java.lang.Exception)

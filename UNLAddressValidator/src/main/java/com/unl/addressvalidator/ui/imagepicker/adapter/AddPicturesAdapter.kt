@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.os.persistableBundleOf
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.unl.addressvalidator.R
+import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity
 
 import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
 import com.unl.addressvalidator.ui.interfaces.AddressImageClickListner
@@ -24,6 +26,8 @@ class AddPicturesAdapter(
     RecyclerView.Adapter<AddPicturesAdapter.ViewHolder>() {
 
     var removedIndex = ArrayList<AddPicturesModel>()
+    var count = 0
+    var position = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -31,13 +35,22 @@ class AddPicturesAdapter(
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val data = dataList[position]
+    override fun onBindViewHolder(holder: ViewHolder, index: Int) {
+        val data = dataList[index]
+        position = index
         holder.bind(data)
     }
 
     override fun getItemCount(): Int {
-        return dataList.size
+        count = 0
+        dataList.forEach {
+            var str: String = it.ivPhotos.toString()
+            if(str!= null && !str.equals(""))
+                count++
+        }
+        if(count<9)
+            count++
+        return count
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,13 +64,23 @@ class AddPicturesAdapter(
 
             Glide.with(itemView)
                 .load(imageUri)
-                .placeholder(R.drawable.add_photos) // Set a placeholder image if needed
-                .error(R.drawable.add_photos) // Set an error image if loading fails
+                .placeholder(R.drawable.add_picture) // Set a placeholder image if needed
+                .error(R.drawable.add_picture) // Set an error image if loading fails
                 .into(imageView)
+
+
+            checkBox.isChecked = removedIndex.contains(data)
 
             imageView.scaleType = ImageView.ScaleType.CENTER_CROP
             imageView.setOnClickListener {
-                addressImageClickLlistner.addressImageClick()
+
+               Log.v("AddPicture","Count : "+ count)
+               Log.v("AddPicture","Position : "+ position)
+
+                if((count-1) == position )
+                    addressImageClickLlistner.addressImageClick(position,false)
+                else
+                    addressImageClickLlistner.addressImageClick(position,true)
             }
             var str: String = imageUri.toString()
 
