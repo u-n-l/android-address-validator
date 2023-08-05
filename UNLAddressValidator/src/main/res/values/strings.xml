@@ -37,7 +37,9 @@
     <string name="markEntrance">Mark Entrance(s)</string>
     <string name="deleteEntrance">Delete Entrance?</string>
     <string name="delete">Delete</string>
+    <string name="settings">Settings</string>
     <string name="entranceDeleteConfirm">Are you sure you want to delete “Entrance No. 1” from your saved Entrances?</string>
+
     <string name="entrance1">Entrance No.1</string>
     <string name="locationId">Location ID: 973628</string>
     <string name="keep">Keep</string>

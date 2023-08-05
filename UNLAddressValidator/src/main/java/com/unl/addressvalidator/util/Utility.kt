@@ -1,10 +1,13 @@
 package com.unl.addressvalidator.util
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
 import android.provider.MediaStore
+import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import com.google.gson.JsonObject
@@ -214,4 +217,6 @@ object Utility {
         val seconds = (coord * 1000).toInt()
         return "$degrees/1,$minutes/1,$seconds/1000"
     }
+
+
 }

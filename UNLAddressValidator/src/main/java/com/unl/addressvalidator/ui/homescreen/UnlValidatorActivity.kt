@@ -1,6 +1,7 @@
 package com.unl.addressvalidator.ui.homescreen
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -17,6 +18,7 @@ import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -117,6 +119,14 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
     lateinit var database: UnlAddressDatabase
     lateinit  var bind : AddPicturesPopupBinding
 
+    private val isLocationEnabled: Boolean
+        get() {
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            return locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager!!.isProviderEnabled(
+                LocationManager.NETWORK_PROVIDER
+            )
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getMetadataFromMenifest()
@@ -159,9 +169,6 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
         binding!!.mapView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
                 updateLocation = false
-
-
-
 
                 val action = event.actionMasked
                 if (action == MotionEvent.ACTION_MOVE) {
@@ -273,6 +280,7 @@ fun updateMoveMarkerBtn()
         binding!!.crossLine.visibility = View.VISIBLE
         binding!!.ivMovePin.alpha = "0.5".toFloat()
         isMoveMarker = false
+        clearMap()
     }else
     {
         binding!!.ivMovePin.alpha = "1.0".toFloat()
@@ -477,16 +485,16 @@ fun updateMoveMarkerBtn()
             addressType = binding!!.addNewAdd!!.edtLabelName.text!!.toString()
         }
         val addressModel = AddressModel(
-            houseNo.trim(),
-            floor.trim(),
-            buildingNum.trim(),
-            buildingName.trim(),
-            streetName.trim(),
-            neighbour.trim(),
-            cityText.trim(),
-            stateText.trim(),
-            country.trim(),
-            pincodeText.trim()
+            houseNo?.trim(),
+            floor?.trim(),
+            buildingNum?.trim(),
+            buildingName?.trim(),
+            streetName?.trim(),
+            neighbour?.trim(),
+            cityText?.trim(),
+            stateText?.trim(),
+            country?.trim(),
+            pincodeText?.trim()
         )
 
         val locationModel = LocationModel(pinLat!!, pinLong!!)
@@ -644,12 +652,16 @@ fun updateMoveMarkerBtn()
 
     override fun onResume() {
         super.onResume()
+        if(isLocationEnabled)
         iniitLocatinoManager()
+        else
+            showAlert()
+
     }
 
     private fun iniitLocatinoManager() {
         try {
-            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+          //  locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val hasGps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
             val hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
             val gpsLocationListener: LocationListener = object : LocationListener {
@@ -924,5 +936,31 @@ fun updateMoveMarkerBtn()
         dialog.findViewById<TextView>(R.id.tvKeep).setOnClickListener {
             dialog.dismiss()
         }
+    }
+
+    private fun showAlert() {
+
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.enable_location_popup)
+        dialog.show()
+        dialog.window!!.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.setGravity(Gravity.CENTER)
+
+
+        dialog.findViewById<TextView>(R.id.tvSettings).setOnClickListener {
+            dialog.dismiss()
+            val myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(myIntent)
+        }
+        dialog.findViewById<TextView>(R.id.tvSkip).setOnClickListener {
+            dialog.dismiss()
+            finish()
+        }
+
     }
 }

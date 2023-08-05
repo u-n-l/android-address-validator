@@ -1,5 +1,6 @@
 package com.unl.addressvalidator.network
 
+import com.example.roomdatabasewithmodelclassess.model.ImageUploadResponse
 import com.google.gson.JsonObject
 import com.unl.addressvalidator.model.autocomplet.AutocompleteResponse
 import com.unl.addressvalidator.model.reversegeocode.ReverseGeoCodeResponse
@@ -37,7 +38,7 @@ interface APIInterface {
 
     @Multipart
     @POST("upload/asset")
-    suspend  fun uploadImagewithPart(@Part  file : MultipartBody.Part ) : Response<String>
+    suspend  fun uploadImagewithPart(@Part  file : MultipartBody.Part ) : Response<ImageUploadResponse>
 
 
 }

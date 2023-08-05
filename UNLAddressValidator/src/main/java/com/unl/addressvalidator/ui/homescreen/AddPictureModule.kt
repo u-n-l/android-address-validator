@@ -63,7 +63,6 @@ fun UnlValidatorActivity.showAddPictureDialog() {
 
             if (str != null && !str.equals(""))
             {
-
               var path =   getImagePathFromUri(it.ivPhotos!!, this)
 
                /* val exifInterface = ExifInterface(path!!)

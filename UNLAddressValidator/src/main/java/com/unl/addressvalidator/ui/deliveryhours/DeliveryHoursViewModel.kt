@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.roomdatabasewithmodelclassess.model.ImageUploadResponse
 import com.google.gson.JsonObject
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.model.autocomplet.AutocompleteResponse
@@ -23,7 +24,7 @@ import java.io.File
 class DeliveryHoursViewModel : ViewModel()
 {
 
-    val imageUploadResponseData : MutableLiveData<ApiCallBack<String>> = MutableLiveData()
+    val imageUploadResponseData : MutableLiveData<ApiCallBack<ImageUploadResponse>> = MutableLiveData()
 
     fun insertAddress(database : UnlAddressDatabase, addressmodel : CreateAddressModel)
     {
@@ -52,7 +53,7 @@ class DeliveryHoursViewModel : ViewModel()
     }
 
 
-    private fun handleImageUploadResponse(response: Response<String>): ApiCallBack<String> {
+    private fun handleImageUploadResponse(response: Response<ImageUploadResponse>): ApiCallBack<ImageUploadResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 return ApiCallBack.Success(resultResponse)

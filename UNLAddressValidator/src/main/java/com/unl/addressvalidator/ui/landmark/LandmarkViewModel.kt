@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.roomdatabasewithmodelclassess.model.ImageUploadResponse
 import com.google.gson.JsonObject
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.model.autocomplet.AutocompleteResponse
@@ -24,7 +25,7 @@ class LandmarkViewModel : ViewModel()
 {
 
     val nearbyLandmark : MutableLiveData<ApiCallBack<JsonObject>> = MutableLiveData()
-    val imageUploadResponseData : MutableLiveData<ApiCallBack<String>> = MutableLiveData()
+    val imageUploadResponseData : MutableLiveData<ApiCallBack<ImageUploadResponse>> = MutableLiveData()
     val autoCompleteData : MutableLiveData<ApiCallBack<AutocompleteResponse>> = MutableLiveData()
     val addressJson : MutableLiveData<ApiCallBack<JsonObject>> = MutableLiveData()
 
@@ -98,7 +99,7 @@ class LandmarkViewModel : ViewModel()
         return ApiCallBack.Error(response.message())
     }
 
-    private fun handleImageUploadResponse(response: Response<String>): ApiCallBack<String> {
+    private fun handleImageUploadResponse(response: Response<ImageUploadResponse>): ApiCallBack<ImageUploadResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 return ApiCallBack.Success(resultResponse)

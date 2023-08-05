@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.roomdatabasewithmodelclassess.model.ImageUploadResponse
 import com.google.gson.JsonObject
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.model.autocomplet.AutocompleteResponse
@@ -22,7 +23,7 @@ import java.io.File
 
 class HomeViewModel : ViewModel()
 {
-    val imageUploadResponseData : MutableLiveData<ApiCallBack<String>> = MutableLiveData()
+    val imageUploadResponseData : MutableLiveData<ApiCallBack<ImageUploadResponse>> = MutableLiveData()
     val addressJson : MutableLiveData<ApiCallBack<JsonObject>> = MutableLiveData()
     val autoCompleteData : MutableLiveData<ApiCallBack<AutocompleteResponse>> = MutableLiveData()
     val reverseGeocodeData : MutableLiveData<ApiCallBack<ReverseGeoCodeResponse>> = MutableLiveData()
@@ -101,13 +102,6 @@ class HomeViewModel : ViewModel()
         val response = RetrofitClient.apiInterface.getLandmark("LandmarksOrHistoricalBuildings",location)
         nearbyLandmark.postValue(handleNearbyLandmarkResponse(response))
     }
-
-    private suspend fun uploadImageFile(file : File){
-        imageUploadResponseData.postValue(ApiCallBack.Loading())
-        val response = RetrofitImageUploadClient.apiInterface.uploadImage(file)
-        imageUploadResponseData.postValue(handleImageUploadResponse(response))
-    }
-
     private suspend fun uploadImageWithPart(file : MultipartBody.Part){
        try {
            imageUploadResponseData.postValue(ApiCallBack.Loading())
@@ -156,7 +150,7 @@ class HomeViewModel : ViewModel()
     }
 
 
-    private fun handleImageUploadResponse(response: Response<String>): ApiCallBack<String> {
+    private fun handleImageUploadResponse(response: Response<ImageUploadResponse>): ApiCallBack<ImageUploadResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 return ApiCallBack.Success(resultResponse)
