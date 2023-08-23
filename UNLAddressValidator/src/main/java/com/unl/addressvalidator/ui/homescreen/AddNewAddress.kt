@@ -101,7 +101,7 @@ fun UnlValidatorActivity.setNewAddressClick() {
     binding!!.addNewAdd!!.edtCity.addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             try {
-                if (s!!.isNotEmpty() && s!!.toString().length > 1) {
+                if (s!!.isNotEmpty() && s!!.toString().length > 0) {
                     cityText = s.toString()
                 } else
                     cityText = ""
@@ -130,7 +130,7 @@ fun UnlValidatorActivity.setNewAddressClick() {
     binding!!.addNewAdd!!.edtState.addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             try {
-                if (s!!.isNotEmpty() && s!!.toString().length > 1) {
+                if (s!!.isNotEmpty() && s!!.toString().length > 0) {
                     stateText = s.toString()
                 } else
                     stateText = ""
@@ -158,7 +158,7 @@ fun UnlValidatorActivity.setNewAddressClick() {
     binding!!.addNewAdd!!.edtPincode.addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             try {
-                if (s!!.isNotEmpty() && s!!.toString().length > 1) {
+                if (s!!.isNotEmpty() && s!!.toString().length > 0) {
                     pincodeText = s.toString()
                 } else
                     pincodeText = ""
@@ -196,7 +196,7 @@ fun UnlValidatorActivity.createAddress() {
     var country = binding!!.addNewAdd!!.edtCountry.text!!.toString()
 
 
-    var address  = Utility.returnFullAddress(houseNo,floor,buildingName,streetName,cityText,stateText,pincodeText)
+    var address  = Utility.returnUNLFullAddress(houseNo,floor,buildingNum,buildingName,streetName,neighbour,cityText,stateText,pincodeText,country)
 
     if (addressType.equals("other")) {
         addressType = binding!!.addNewAdd!!.edtLabelName.text!!.toString()

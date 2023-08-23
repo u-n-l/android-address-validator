@@ -55,8 +55,17 @@ import com.unl.map.sdk.helpers.grid_controls.setGridControls
 import com.unl.map.sdk.helpers.tile_controls.enableTileSelector
 import com.unl.map.sdk.helpers.tile_controls.setTileSelectorGravity
 import com.unl.map.sdk.prefs.DataManager
+import com.unl.map.sdk.views.UnlMapView
 import org.json.JSONArray
 import org.json.JSONObject
+
+/**
+ * [LandmarkActivity] provide functionality to add Landmarks.
+ * You can add landmark by search
+ * You can select landmakr from default list
+ * @constructor
+ *
+ */
 
 class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImageClickListner,
     SearchItemClickListner {
@@ -89,6 +98,8 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
             Utility.configureMap(binding!!.mapView, this)
             setMapData()
         }
+
+        landmarkActivity = this
 
         binding!!.addLandmark.edtSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -170,7 +181,7 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
     }
 
     fun setMapData() {
-        var latlng = LatLng(UnlValidatorActivity.pinLat, UnlValidatorActivity.pinLong)
+        var latlng = LatLng(pinLat,pinLong)
         changeCameraPosition(latlng, mapBoxMap!!)
         showMarker(latlng, "home")
     }
@@ -203,7 +214,7 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
         var jsonArray = JsonArray()
         jsonArray.add(pinLong)
         jsonArray.add(pinLat)
-        jsonArray.add(5000)
+        jsonArray.add(1000)
         jsonObject.add("Point", jsonArray)
         circleObject.add("Circle", jsonObject)
         viewModel.getNearbyLandmark(circleObject)
@@ -561,5 +572,9 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
         }
     }
 
+    companion object
+    {
+        var landmarkActivity : LandmarkActivity? = null
+    }
 
 }

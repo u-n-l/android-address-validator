@@ -52,6 +52,23 @@ fun DeliveryHoursActivity.showAddPictureDialog() {
         openImagePicker()
     }*/
 
+    var count = 0
+    addressImageList.forEach() {
+        var str: String = it.ivPhotos.toString()
+
+        if (str != null && !str.equals(""))
+        {
+            count++
+        }
+
+    }
+
+    if(count >0)
+    {
+        updateAddPictureSavebtn(true)
+    }else
+        updateAddPictureSavebtn(false)
+
     bind!!.tvSave.setOnClickListener {
       // binding!!.addPicture!!.root.visibility = View.GONE
         bottomSheetDialog.dismiss()
@@ -92,6 +109,11 @@ fun DeliveryHoursActivity.showAddPictureDialog() {
                 .error(R.drawable.add_photos) // Set an error image if loading fails
                 .into(binding!!.operationalHours!!.addImage)
         }
+
+        if(count <= 0)
+        {
+            clearAddressImageList()
+        }
     }
 
    bind!!.removePicture.setOnClickListener {
@@ -109,21 +131,8 @@ fun DeliveryHoursActivity.showAddPictureDialog() {
             adapter!!.removedIndex!!.clear()
 
 
-            var count = 0
-            addressImageList.forEach() {
-                var str: String = it.ivPhotos.toString()
 
-                if (str != null && !str.equals(""))
-                {
-                    count++
-                }
 
-            }
-
-            if(count <= 0)
-            {
-                updateAddPictureSavebtn(false)
-            }
         }
 
     }

@@ -75,6 +75,70 @@ object Utility {
         return address
     }
 
+    fun returnUNLFullAddress(
+        houseNo: String?,
+        floorNo: String?,
+        builingNo: String?,
+        builingName: String?,
+        street: String?,
+        neighbour: String?,
+        city: String?,
+        state: String?,
+        pincode: String?,
+        countryCode: String?
+    ): String? {
+        var address = ""
+
+        if(!houseNo.isNullOrEmpty() )
+        {
+            address = houseNo + ", "
+        }
+
+        if(!floorNo.isNullOrEmpty() )
+        {
+            address = address + floorNo + " floor, "
+        }
+        if(!builingNo.isNullOrEmpty() )
+        {
+            address = address + builingNo + ", "
+        }
+        if(!builingName.isNullOrEmpty() )
+        {
+            address = address + builingName + ", "
+        }
+        if(!street.isNullOrEmpty() )
+        {
+            address = address + street + ", "
+        }
+
+        if(!neighbour.isNullOrEmpty() )
+        {
+            address = address + neighbour + ", "
+        }
+
+        if(!city.isNullOrEmpty() )
+        {
+            address = address + city + ", "
+        }
+
+        if(!state.isNullOrEmpty() )
+        {
+            address = address + state + ", "
+        }
+        if(!countryCode.isNullOrEmpty() )
+        {
+            address = address + countryCode + ", "
+        }
+        if(!pincode.isNullOrEmpty() )
+        {
+            address = address + pincode + ", "
+        }
+
+        return address
+    }
+
+
+
     fun parseNearbyLandmarkJson(rawData: JsonObject) : ArrayList<ReverseGeoCodeResponse>{
 
         var landmarkList = ArrayList<ReverseGeoCodeResponse>()

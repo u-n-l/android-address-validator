@@ -24,6 +24,7 @@ dependencyResolutionManagement {
                 /* username = System.getenv("OSS_USERNAME")
                  password = System.getenv("OSS_PASSWORD")*/
             }
+            maven { url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven" }
             maven {
                 url "https://jitpack.io"
                /* credentials {

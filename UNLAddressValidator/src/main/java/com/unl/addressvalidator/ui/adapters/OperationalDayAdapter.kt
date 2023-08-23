@@ -7,18 +7,20 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.roomdatabasewithmodelclassess.model.DaySelectionModel
 import com.unl.addressvalidator.R
 import com.unl.addressvalidator.model.autocomplet.AutocompleteData
 import com.unl.addressvalidator.ui.interfaces.OperationHoursClickListner
 import com.unl.addressvalidator.ui.interfaces.SearchItemClickListner
+import com.unl.addressvalidator.util.Constant
 
 
 class OperationalDayAdapter(
-    private val DaysList: ArrayList<String>,
+     val daysList: ArrayList<DaySelectionModel>,
     private val itemClickListner: OperationHoursClickListner,
 ) : RecyclerView.Adapter<OperationalDayAdapter.ViewHolder>() {
 
-    var selectedIndex = -1
+   // var selectedIndex = -1
     // --
     // -------------------------------------------------------------------------------------------
 
@@ -41,8 +43,8 @@ class OperationalDayAdapter(
 
         viewHolder.run {
             // image.setImageBitmap(dataSet[position].imageAsBitmap(imageSize))
-            tvDays.text = DaysList.get(position)
-            if (selectedIndex == position) {
+            tvDays.text = daysList.get(position).days
+            if (daysList.get(position).isSelected) {
                 tvDays.setBackgroundResource(R.drawable.theme_round_btn)
                 tvDays.setTextColor( Color.parseColor("#ffffff"))
             } else {
@@ -51,8 +53,30 @@ class OperationalDayAdapter(
             }
 
             tvDays.setOnClickListener {
-                selectedIndex = position
-                itemClickListner.dayClick(DaysList.get(position))
+               // selectedIndex = position
+                if(daysList.get(position).days.equals(Constant.ALL_DAYS) && daysList.get(position).isSelected == false)
+                {
+                    daysList.get(position).isSelected = true
+                    for (i in 1.. daysList.size-1)
+                    {
+                        daysList.get(i).isSelected = false
+                    }
+                }else if(daysList.get(position).days.equals(Constant.ALL_DAYS) && daysList.get(position).isSelected == true)
+                {
+                    daysList.get(position).isSelected = false
+
+                }else
+                {
+                    daysList.get(0).isSelected = false
+                    if(daysList.get(position).isSelected)
+                    {
+                        daysList.get(position).isSelected = false
+                    }else
+                    {
+                        daysList.get(position).isSelected = true
+                    }
+                }
+                itemClickListner.dayClick(daysList.get(position).days)
                 notifyDataSetChanged()
             }
         }
@@ -61,7 +85,7 @@ class OperationalDayAdapter(
 
     // ---------------------------------------------------------------------------------------------
 
-    override fun getItemCount() = DaysList.size
+    override fun getItemCount() = daysList.size
 
     // ---------------------------------------------------------------------------------------------
 

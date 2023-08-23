@@ -2,10 +2,12 @@ package com.unl.addressvalidator.ui.fragments
 
 
 import android.Manifest
+import android.app.Activity
 import android.app.Dialog
 import android.app.Fragment
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
@@ -62,6 +64,7 @@ import com.unl.addressvalidator.ui.imagepicker.builder.MultiImagePicker
 import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
 import com.unl.addressvalidator.ui.interfaces.*
 import com.unl.addressvalidator.ui.viewmodel.HomeViewModel
+import com.unl.addressvalidator.util.Constant
 import com.unl.addressvalidator.util.Constant.ALL_DAYS
 import com.unl.addressvalidator.util.Constant.FRIDAY
 import com.unl.addressvalidator.util.Constant.FROM_HOURS
@@ -80,6 +83,7 @@ import com.unl.map.sdk.data.EnvironmentType
 import com.unl.map.sdk.helpers.grid_controls.setGridControls
 import com.unl.map.sdk.helpers.tile_controls.enableTileSelector
 import com.unl.map.sdk.helpers.tile_controls.setTileSelectorGravity
+import com.unl.map.sdk.prefs.DataManager
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -161,6 +165,7 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getMetadataFromMenifest()
         UnlMap(context!!, apiKey!!, vpmId!!, EnvironmentType.SANDBOX)
         initiateViewModel()
         getAutocompleteResponse()
@@ -564,17 +569,13 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
 
         @JvmStatic
         fun newInstance(
-            apiKey1: String,
-            vpmId1: String,
-            lifecycleOwner1: LifecycleOwner,
-            viewModelStoreOwner1: ViewModelStoreOwner,
+
+            lifecycleOwner1: Activity,
             supportFragmentManager1: FragmentManager
         ) =
             HomeFragment().apply {
-                apiKey = apiKey1
-                vpmId = vpmId1
-                lifecycleOwner = lifecycleOwner1
-                viewModelStoreOwner = viewModelStoreOwner1
+                lifecycleOwner = lifecycleOwner1 as LifecycleOwner
+                viewModelStoreOwner = lifecycleOwner1 as ViewModelStoreOwner
                 supportFragmentManager = supportFragmentManager1
 
             }
@@ -582,14 +583,13 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
 
 
     private fun getMetadataFromMenifest() {
-        /*  val info: ApplicationInfo = context!!.getPackageManager().getApplicationInfo(
-              activity.packageName,
-              PackageManager.GET_META_DATA
-          )
-          val bundle = info.metaData
-          val appId = bundle.getInt("com.unl.global.vpmid")
-          Toast.makeText(context, "" + appId, Toast.LENGTH_LONG).show()
-          Toast.makeText(context, "" + DataManager.getApiKey(), Toast.LENGTH_LONG).show()*/
+        val info: ApplicationInfo = context!!.getPackageManager().getApplicationInfo(
+            activity.packageName,
+            PackageManager.GET_META_DATA
+        )
+        val bundle = info.metaData
+        vpmId = bundle.getString(Constant.META_VPM_ID_KEY)
+        apiKey = bundle.getString(Constant.META_API_KEY)
     }
 
     override fun searchItemClick(searchResultDTO: AutocompleteData) {

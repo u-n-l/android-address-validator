@@ -40,16 +40,16 @@ import com.unl.map.sdk.data.VISIBILITY
 
 
 fun HomeFragment.setAdapters() {
-    var daysList = ArrayList<String>()
+    var daysList = ArrayList<DaySelectionModel>()
 
-    daysList.add(ALL_DAYS)
-    daysList.add(MONDAY)
-    daysList.add(TUESDAY)
-    daysList.add(WEDNESDAY)
-    daysList.add(THURSDAY)
-    daysList.add(FRIDAY)
-    daysList.add(SATURDAY)
-    daysList.add(SUNDAY)
+    daysList.add(DaySelectionModel(Constant.ALL_DAYS,false))
+    daysList.add(DaySelectionModel(Constant.MONDAY,false))
+    daysList.add(DaySelectionModel(Constant.TUESDAY,false))
+    daysList.add(DaySelectionModel(Constant.WEDNESDAY,false))
+    daysList.add(DaySelectionModel(Constant.THURSDAY,false))
+    daysList.add(DaySelectionModel(Constant.FRIDAY,false))
+    daysList.add(DaySelectionModel(Constant.SATURDAY,false))
+    daysList.add(DaySelectionModel(Constant.SUNDAY,false))
 
     binding!!.operationalHours.rvDays.adapter = OperationalDayAdapter(daysList, this)
     binding!!.operationalHours.rvDays.layoutManager =

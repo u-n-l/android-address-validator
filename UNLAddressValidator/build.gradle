@@ -4,6 +4,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
+   // id 'org.jetbrains.dokka'
+
 }
 
 android {
@@ -49,6 +51,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
 
+//    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.8.20")
     //UNL Map SDK
     //implementation 'com.github.u-n-l:unl-maps-sdk-android:1.1.5'
     implementation project(path: ':UNL_Map_sdk')
@@ -73,4 +76,9 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation 'io.reactivex.rxjava3:rxjava:3.1.2'
 
+
+    //firebase analytics
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
 }
+apply plugin: 'com.google.gms.google-services'

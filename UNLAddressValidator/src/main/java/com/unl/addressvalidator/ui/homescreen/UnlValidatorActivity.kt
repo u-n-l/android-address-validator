@@ -1,7 +1,6 @@
 package com.unl.addressvalidator.ui.homescreen
 
 import android.Manifest
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -17,7 +16,6 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
@@ -32,7 +30,12 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.roomdatabasewithmodelclassess.model.*
+import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.mapbox.mapboxsdk.annotations.IconFactory
@@ -40,6 +43,7 @@ import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.unl.addressvalidator.R
+import com.unl.addressvalidator.data.EnvironmentType
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.databinding.ActivityHomeBinding
 import com.unl.addressvalidator.databinding.AddPicturesPopupBinding
@@ -48,9 +52,9 @@ import com.unl.addressvalidator.model.dbmodel.CreateAddressModel
 import com.unl.addressvalidator.model.reversegeocode.ReverseGeoCodeResponse
 import com.unl.addressvalidator.network.ApiCallBack
 import com.unl.addressvalidator.ui.adapters.AddressListAdapter
-import com.unl.addressvalidator.ui.adapters.EntrancesAdapter
 import com.unl.addressvalidator.ui.adapters.SearchResultAdapter
 import com.unl.addressvalidator.ui.addressdetail.AddressListActivity
+import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity.Companion.envType
 import com.unl.addressvalidator.ui.imagepicker.adapter.AddPicturesAdapter
 import com.unl.addressvalidator.ui.imagepicker.builder.MultiImagePicker
 import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
@@ -63,14 +67,16 @@ import com.unl.addressvalidator.util.Utility
 import com.unl.addressvalidator.util.Utility.changeCameraPosition
 import com.unl.addressvalidator.util.Utility.configureMap
 import com.unl.map.sdk.UnlMap
-import com.unl.map.sdk.data.CellPrecision
-import com.unl.map.sdk.data.EnvironmentType
-import com.unl.map.sdk.helpers.grid_controls.loadGrids
-import com.unl.map.sdk.helpers.grid_controls.setGridControls
-import com.unl.map.sdk.helpers.tile_controls.enableTileSelector
-import com.unl.map.sdk.helpers.tile_controls.setTileSelectorGravity
 import java.util.*
-import kotlin.collections.ArrayList
+
+/**
+ * [UnlValidatorActivity] is an [Activity] for Authorization of UNL credentials and start the address validation process
+ *
+ * @property apiKey is fetched from AndroidManifest file
+ * @property vpmId is fetched from AndroidManifest file
+ * @property envType to set the environment type at the time of lanching the SDK
+ * @constructor
+ */
 
 class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, LocationListener,
     AddressItemClickListner,
@@ -119,6 +125,9 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
     lateinit var database: UnlAddressDatabase
     lateinit  var bind : AddPicturesPopupBinding
 
+    //Analytics
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
     private val isLocationEnabled: Boolean
         get() {
             locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -130,9 +139,13 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getMetadataFromMenifest()
-        UnlMap(this, apiKey!!, vpmId!!, EnvironmentType.SANDBOX)
+        UnlMap(this, apiKey!!, vpmId!!, envType)
         binding = ActivityHomeBinding.inflate(getLayoutInflater())
         setContentView(binding!!.root)
+
+        FirebaseApp.initializeApp(this)
+        firebaseAnalytics = Firebase.analytics
+
         binding!!.mapView.gridCellClickable = false
         binding!!.mapView.getMapAsync {
             mapBoxMap = it
@@ -142,28 +155,8 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             binding!!.mapView.enableIndoorMap = false
             binding!!.mapView.viewLifecycle = this
             configureMap(binding!!.mapView,this)
-           /* binding!!.mapView.enableTileSelector(true)
-            binding!!.mapView.setGridControls(this, true)
-            binding!!.mapView.setTileSelectorGravity(Gravity.END)
-            binding!!.mapView.ivTile.setImageResource(R.drawable.ic_tile)
-            binding!!.mapView.ivTile.setBackgroundColor(Color.parseColor("#00000000"))
-            binding!!.mapView.mapbox!!.uiSettings.setCompassFadeFacingNorth(true)
-            binding!!.mapView.mapbox!!.uiSettings.setCompassImage(resources.getDrawable(R.drawable.transparent_bg))
-            binding!!.mapView.isVisibleGrids = true
-            binding!!.mapView.cellPrecision = CellPrecision.GEOHASH_LENGTH_9
-            binding!!.mapView.mapbox?.loadGrids(true, binding!!.mapView, CellPrecision.GEOHASH_LENGTH_9)
-            binding!!.mapView.ivGrid.visibility = View.GONE*/
-
-/*          Handler().postDelayed(Runnable {
-              binding!!.mapView.cellPrecision = CellPrecision.GEOHASH_LENGTH_9
-              binding!!.mapView.mapbox?.loadGrids(true, binding!!.mapView, CellPrecision.GEOHASH_LENGTH_9)
-                                         },1000)*/
-
-
         }
-        for (i in 0 until 9) {
-            addressImageList.add(AddPicturesModel(Uri.EMPTY))
-        }
+
         database = UnlAddressDatabase.getInstance(this)
 
         binding!!.mapView.setOnTouchListener(object : View.OnTouchListener {
@@ -196,9 +189,10 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
                                 pinMovedPopup()
                             }else
                             {
+                                clearAddressImageList()
                                 callReverseGeoCode(new_position)
-                            }
 
+                            }
                         }
 
                     }
@@ -270,9 +264,36 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
         getSearchAddressResponse()
         selectedLabel(0)
         setNewAddressClick()
-
+        logEvetn()
+    }
+    fun logEvetn()
+    {
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Validator Activity")
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
     }
 
+    fun clearAddressImageList()
+    {
+        addressImageList.clear()
+        for (i in 0 until 9) {
+            addressImageList.add(AddPicturesModel(Uri.EMPTY))
+        }
+        binding!!.confirmAddress!!.imageCount.text =  "0 of 9"
+        binding!!.addNewAdd!!.imageCount.text =  "0 of 9"
+
+        Glide.with(this)
+            .load(R.drawable.photos)
+            .placeholder(R.drawable.photos) // Set a placeholder image if needed
+            .error(R.drawable.photos) // Set an error image if loading fails
+            .into(binding!!.confirmAddress!!.addImage)
+
+        Glide.with(this)
+            .load(R.drawable.photos)
+            .placeholder(R.drawable.photos) // Set a placeholder image if needed
+            .error(R.drawable.photos) // Set an error image if loading fails
+            .into(binding!!.addNewAdd!!.addImage)
+    }
 fun updateMoveMarkerBtn()
 {
     if(isMoveMarker)
@@ -286,6 +307,7 @@ fun updateMoveMarkerBtn()
         binding!!.ivMovePin.alpha = "1.0".toFloat()
         binding!!.crossLine.visibility = View.GONE
         isMoveMarker = true
+        showMarker(LatLng(pinLat,pinLong), "home")
     }
 }
     fun getAddressCreated() {
@@ -371,6 +393,10 @@ fun updateMoveMarkerBtn()
         viewModel?.reverseGeocodeData?.observe(this, { response ->
             when (response) {
                 is ApiCallBack.Success -> {
+                    binding!!.progressBar.visibility = View.GONE
+                    binding!!.confirmAddress!!.tvConfirm.visibility = View.VISIBLE
+                    binding!!.confirmAddress!!.textView6.visibility = View.VISIBLE
+                    binding!!.confirmAddress!!.linearLayout.visibility = View.VISIBLE
                     response.data
                     reverseGeoCodeResponse = response.data
                     if(binding!!.addNewAdd.root.isVisible)
@@ -385,11 +411,16 @@ fun updateMoveMarkerBtn()
                 }
 
                 is ApiCallBack.Error -> {
+                    binding!!.confirmAddress!!.root.visibility = View.VISIBLE
+                    binding!!.confirmAddress!!.tvConfirm.visibility = View.GONE
+                    binding!!.confirmAddress!!.textView6.visibility = View.GONE
+                    binding!!.confirmAddress!!.linearLayout.visibility = View.GONE
+                    binding!!.progressBar.visibility = View.GONE
                     Toast.makeText(this, "" + response.message, Toast.LENGTH_SHORT).show()
                 }
 
                 is ApiCallBack.Loading -> {
-
+                    binding!!.progressBar.visibility = View.VISIBLE
                 }
             }
         })
@@ -626,6 +657,7 @@ fun updateMoveMarkerBtn()
         val addressImageList = ArrayList<AddPicturesModel>()
         var pinLat: Double = 0.0
         var pinLong: Double = 0.0
+        var envType : String = EnvironmentType.PROD
     }
 
     override fun addressImageClick(index : Int, isReplaceImage : Boolean) {

@@ -31,20 +31,34 @@ import java.io.File
 fun UnlValidatorActivity.showAddPictureDialog() {
 
     val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-     bind  = AddPicturesPopupBinding.inflate(inflater)
+    bind = AddPicturesPopupBinding.inflate(inflater)
 
 
     val bottomSheetDialog = BottomSheetDialog(this)
     bottomSheetDialog.setContentView(bind.root)
 
 
-
-   // binding!!.addPicture!!.root.visibility = View.VISIBLE
+    // binding!!.addPicture!!.root.visibility = View.VISIBLE
     bind!!.headerTitle.text = "Add Picture to the Address"
     bind!!.addressType.text = addressType
     adapter = AddPicturesAdapter(addressImageList, this)
     bind!!.rvAddPictures.adapter = adapter
     bind!!.rvAddPictures.layoutManager = GridLayoutManager(this, 4)
+
+    var counter = 0
+    addressImageList.forEach() {
+        var str: String = it.ivPhotos.toString()
+
+        if (str != null && !str.equals("")) {
+            counter++
+        }
+
+    }
+    if (counter > 0)
+        updateAddPictureSavebtn(true)
+    else
+        updateAddPictureSavebtn(false)
+
 /*
 
     bind!!.tvAddPhotos!!.setOnClickListener {
@@ -55,45 +69,49 @@ fun UnlValidatorActivity.showAddPictureDialog() {
 */
 
     bind!!.tvSave.setOnClickListener {
-      // binding!!.addPicture!!.root.visibility = View.GONE
+        // binding!!.addPicture!!.root.visibility = View.GONE
         bottomSheetDialog.dismiss()
         var count = 0
         addressImageList.forEach() {
             var str: String = it.ivPhotos.toString()
 
-            if (str != null && !str.equals(""))
-            {
-              var path =   getImagePathFromUri(it.ivPhotos!!, this)
+            if (str != null && !str.equals("")) {
+                // var path =   getImagePathFromUri(it.ivPhotos!!, this)
 
-               /* val exifInterface = ExifInterface(path!!)
-                exifInterface.setAttribute(
-                    ExifInterface.TAG_GPS_LATITUDE,
-                    convert(pinLat)
-                )
-                exifInterface.setAttribute(
-                    ExifInterface.TAG_GPS_LATITUDE_REF,
-                    if (pinLat > 0) "N" else "S"
-                )
-                exifInterface.setAttribute(
-                    ExifInterface.TAG_GPS_LONGITUDE,
-                    convert(pinLong)
-                )
-                exifInterface.setAttribute(
-                    ExifInterface.TAG_GPS_LONGITUDE_REF,
-                    if (pinLong > 0) "E" else "W"
-                )
-                exifInterface.saveAttributes()*/
+                /* val exifInterface = ExifInterface(path!!)
+                 exifInterface.setAttribute(
+                     ExifInterface.TAG_GPS_LATITUDE,
+                     convert(pinLat)
+                 )
+                 exifInterface.setAttribute(
+                     ExifInterface.TAG_GPS_LATITUDE_REF,
+                     if (pinLat > 0) "N" else "S"
+                 )
+                 exifInterface.setAttribute(
+                     ExifInterface.TAG_GPS_LONGITUDE,
+                     convert(pinLong)
+                 )
+                 exifInterface.setAttribute(
+                     ExifInterface.TAG_GPS_LONGITUDE_REF,
+                     if (pinLong > 0) "E" else "W"
+                 )
+                 exifInterface.saveAttributes()*/
 
-                var file =  File(path)
-                val mFile: RequestBody =
-                    RequestBody.create("image/png".toMediaTypeOrNull(), file)
-                val fileName: String = "photo_" + System.currentTimeMillis() + ".png"
-                val fileToUpload: MultipartBody.Part? = MultipartBody.Part.createFormData("file", fileName, mFile)
-                viewModel.uploadImage(fileToUpload!!)
+                /*   var file =  File(path)
+                   val mFile: RequestBody =
+                       RequestBody.create("image/png".toMediaTypeOrNull(), file)
+                   val fileName: String = "photo_" + System.currentTimeMillis() + ".png"
+                   val fileToUpload: MultipartBody.Part? = MultipartBody.Part.createFormData("file", fileName, mFile)
+                   viewModel.uploadImage(fileToUpload!!)*/
 
                 count++
             }
 
+        }
+
+        if(count<= 0)
+        {
+            clearAddressImageList()
         }
 
         binding!!.confirmAddress!!.imageCount.text = "" + count + " of 9"
@@ -117,7 +135,7 @@ fun UnlValidatorActivity.showAddPictureDialog() {
         }
     }
 
-   bind!!.removePicture.setOnClickListener {
+    bind!!.removePicture.setOnClickListener {
 
         Log.v("CHECKBOX", "size : " + adapter!!.removedIndex.size)
         if (adapter!!.removedIndex!!.size > 0) {
@@ -135,17 +153,16 @@ fun UnlValidatorActivity.showAddPictureDialog() {
             addressImageList.forEach() {
                 var str: String = it.ivPhotos.toString()
 
-                if (str != null && !str.equals(""))
-                {
+                if (str != null && !str.equals("")) {
                     count++
                 }
 
             }
 
-            if(count <= 0)
-            {
+          /*  if (count <= 0) {
+
                 updateAddPictureSavebtn(false)
-            }
+            }*/
         }
 
     }
@@ -161,14 +178,11 @@ fun UnlValidatorActivity.showAddPictureDialog() {
     bottomSheetDialog.show()
 }
 
-fun UnlValidatorActivity.updateAddPictureSavebtn(status : Boolean)
-{
-    if(status)
-    {
+fun UnlValidatorActivity.updateAddPictureSavebtn(status: Boolean) {
+    if (status) {
         bind!!.tvSave!!.setBackgroundResource(R.drawable.theme_round_btn)
         bind!!.tvSave!!.isEnabled = true
-    }else
-    {
+    } else {
         bind!!.tvSave!!.setBackgroundResource(R.drawable.bg_button_disable)
         bind!!.tvSave!!.isEnabled = false
     }
@@ -180,8 +194,7 @@ fun UnlValidatorActivity.getAddressImageUploadResponse() {
         when (response) {
             is ApiCallBack.Success -> {
                 response.data
-                if(response.data!= null)
-                {
+                if (response.data != null) {
 
                 }
             }

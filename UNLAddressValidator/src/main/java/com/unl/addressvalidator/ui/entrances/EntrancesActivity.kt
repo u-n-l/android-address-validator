@@ -38,6 +38,7 @@ import com.unl.addressvalidator.ui.imagepicker.builder.MultiImagePicker
 import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
 import com.unl.addressvalidator.ui.interfaces.AddressImageClickListner
 import com.unl.addressvalidator.ui.interfaces.EntranceClickListner
+import com.unl.addressvalidator.ui.landmark.LandmarkActivity
 import com.unl.addressvalidator.util.Utility
 import com.unl.addressvalidator.util.Utility.returnRandomDigit
 import com.unl.map.sdk.UnlMap
@@ -47,6 +48,13 @@ import com.unl.map.sdk.helpers.tile_controls.enableTileSelector
 import com.unl.map.sdk.helpers.tile_controls.setTileSelectorGravity
 import com.unl.map.sdk.prefs.DataManager
 
+/**
+ * [EntrancesActivity] provide functionality to add Entrances.
+ * You can add entrance details
+ * You can select multiple Entrances with their picture
+ * @constructor
+ *
+ */
 class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImageClickListner {
 
     var binding: ActivityEntrancesBinding? = null
@@ -77,6 +85,7 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
             Utility.configureMap(binding!!.mapView, this)
             setMapData()
         }
+        entranceActivity = this
         binding!!.mapView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
 
@@ -130,6 +139,8 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
     }
 
 
+
+
     fun updateButtonStatus()
     {
         if(entranceList.size > 0)
@@ -163,8 +174,32 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
     {
         var latlng = LatLng(UnlValidatorActivity.pinLat, UnlValidatorActivity.pinLong)
         Utility.changeCameraPosition(latlng, mapBoxMap!!)
+        showHomeMarker(latlng, "home")
 
     }
+
+    //Create marker for Address
+    fun showHomeMarker(latLng: LatLng, address: String) {
+        try {
+
+            val iconFactory = IconFactory.getInstance(this)
+            val btmap: Bitmap = (ResourcesCompat.getDrawable(
+               resources,
+                R.drawable.home_marker,
+                null
+            ) as BitmapDrawable).getBitmap()
+            val icon: com.mapbox.mapboxsdk.annotations.Icon = iconFactory.fromBitmap(btmap)
+
+            var marker  = MarkerOptions()
+                .position(latLng)
+                .icon(icon)
+            mapBoxMap?.addMarker(marker)
+           // entranceMarker.add(mapBoxMap?.addMarker(marker)!!)
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
 
     //Create marker for Address
     fun showMarker(latLng: LatLng, address: String) {
@@ -354,4 +389,8 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
     }
 
 
+    companion object
+    {
+        var entranceActivity : EntrancesActivity? = null
+    }
 }

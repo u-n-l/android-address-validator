@@ -14,16 +14,26 @@ import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.databinding.ActivityAddressListBinding
 import com.unl.addressvalidator.model.dbmodel.CreateAddressModel
 import com.unl.addressvalidator.ui.adapters.AddressListAdapter
+import com.unl.addressvalidator.ui.adapters.DeliveryHoursAdapter
+import com.unl.addressvalidator.ui.adapters.OperationalDayAdapter
+import com.unl.addressvalidator.ui.deliveryhours.DeliveryHoursActivity
 import com.unl.addressvalidator.ui.interfaces.AddressItemClickListner
 import com.unl.addressvalidator.util.Constant.ELEVATOR_ACCESSIBILITY
 import com.unl.addressvalidator.util.Constant.WHEELCHAIR_ACCESSIBILITY
 import java.util.*
 
-
+/**
+ * [AddressListActivity] provide functionality to show your address
+ * You can see the details of each address
+ * @constructor
+ *
+ */
 class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
     var binding: ActivityAddressListBinding? = null
     lateinit var viewModel: AddressViewModel
     lateinit var database: UnlAddressDatabase
+    lateinit var deliveryHoursAdapter: DeliveryHoursAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddressListBinding.inflate(getLayoutInflater())
@@ -105,13 +115,23 @@ class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
               // var openTime = addresses.openingHoursSpecificationModel!!.get(0).opens
              //  var closeTime = addresses.openingHoursSpecificationModel!!.get(0).closes
 
-
+/*
                val getrow: Any = addresses.openingHoursSpecificationModel!!.get(0)
                val t: LinkedTreeMap<Any, Any> = getrow as LinkedTreeMap<Any, Any>
                val opens = t["opens"].toString()
                val closes = t["closes"].toString()
 
-               binding!!.addressesDetailView.tvOpenClosehours.text = ""+ opens+"-"+closes
+               binding!!.addressesDetailView.tvOpenClosehours.text = ""+ opens+"-"+closes*/
+
+
+               deliveryHoursAdapter = DeliveryHoursAdapter(addresses.openingHoursSpecificationModel!!)
+               binding!!.addressesDetailView.rvDeliverHours.adapter = deliveryHoursAdapter
+               val layoutManager = LinearLayoutManager(this)
+               binding!!.addressesDetailView.rvDeliverHours.layoutManager = layoutManager
+               binding!!.addressesDetailView.rvDeliverHours.setBackgroundResource(R.color.white)
+               binding!!.addressesDetailView.rvDeliverHours.adapter!!.notifyDataSetChanged()
+
+
            }
            if(addresses!!.accessibility!= null && addresses!!.accessibility!!.size>0)
            {
@@ -137,6 +157,10 @@ class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
                binding!!.addressesDetailView.accessibilityHeading.visibility = View.GONE
                binding!!.addressesDetailView.accessibilityValue.visibility = View.GONE
            }
+
+
+
+
        }
        catch (e:java.lang.Exception)
        {

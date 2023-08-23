@@ -2,6 +2,7 @@ package com.unl.addressvalidator.network
 
 import com.unl.addressvalidator.util.Constant.BASE_URL
 import com.unl.addressvalidator.util.Constant.IMAGE_UPLOAD_BASE_URL
+import com.unl.map.sdk.SigV4Interceptor
 import com.unl.map.sdk.data.API_KEY
 import com.unl.map.sdk.data.VPM_ID
 import com.unl.map.sdk.networks.UnlMapApi
@@ -28,19 +29,7 @@ object RetrofitClient
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
         val client = OkHttpClient.Builder() .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(100,TimeUnit.SECONDS)
-            .addInterceptor(object : Interceptor {
-                @Throws(IOException::class)
-                override fun intercept(chain: Interceptor.Chain): Response {
-                    val original: Request = chain.request()
-
-                    val requestBuilder: Request.Builder = original.newBuilder()
-                  // requestBuilder.addHeader("Authorization", "Client-ID 7c20820e4252d22")
-                    requestBuilder.addHeader("Accept", "application/json")
-                    requestBuilder.addHeader(API_KEY, DataManager.getApiKey()?:"")
-                    requestBuilder.addHeader(VPM_ID, DataManager.getVpmId()?:"")
-                    val request: Request = requestBuilder.build()
-                    return chain.proceed(request)
-                } })
+            .addInterceptor(SigV4Interceptor(DataManager.getApiKey()?:"", DataManager.getVpmId()?:""))
             .build()
 
         Retrofit.Builder()

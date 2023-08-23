@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "70713512176",
+    "project_id": "address-validator-aaf1b",
+    "storage_bucket": "address-validator-aaf1b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70713512176:android:f4fe1e2fdf2bdde6fd3235",
+        "android_client_info": {
+          "package_name": "com.unl.addressvalidator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70713512176-73jdj2rg9qkl3cqilvunh0vn6ohn1fti.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaJZ025miZqDjSXYlbKE5oxRKUfCDuje0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70713512176-73jdj2rg9qkl3cqilvunh0vn6ohn1fti.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
