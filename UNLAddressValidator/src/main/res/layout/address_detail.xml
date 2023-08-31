@@ -146,7 +146,45 @@
                     android:id="@+id/ivAddress"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_180sdp"
+                    android:visibility="gone"
                     android:scaleType="centerCrop" />
+
+                <RelativeLayout
+                    android:id="@+id/pagerLayout"
+                    android:layout_width="match_parent"
+                    android:layout_below="@+id/header"
+                    android:layout_height="@dimen/_180sdp">
+
+                    <androidx.viewpager.widget.ViewPager
+                        android:id="@+id/pager"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/transparent_layer"/>
+
+                    <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+                        android:id="@+id/tabDots"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        app:dotsColor="@color/white"
+                        app:dotsCornerRadius="@dimen/_3sdp"
+                        app:dotsSize="@dimen/_6sdp"
+                        app:dotsSpacing="@dimen/_3sdp"
+                        app:dotsStrokeColor="@color/colorPrimary"
+                        app:dotsStrokeWidth="@dimen/_3sdp"
+                        app:selectedDotColor="@color/black"
+                        app:stiffness="300" />
+
+                </RelativeLayout>
+
             </androidx.cardview.widget.CardView>
 
             <androidx.appcompat.widget.LinearLayoutCompat

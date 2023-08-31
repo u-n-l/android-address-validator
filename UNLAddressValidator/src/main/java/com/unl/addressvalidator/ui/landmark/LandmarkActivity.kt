@@ -263,7 +263,7 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
 
         selectedLandmarkDataList.forEach {
             val landmarkModel = LandmarkModel(
-                it!!.addressInfo!!.features.get(0).properties!!.postal_address.get(0).house_number,
+                it!!.addressInfo.features.get(0).properties!!.businessName,
                 it!!.addressInfo!!.features.get(0).type,
                 "" + it!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
                 "" + it!!.addressInfo!!.features.get(0).geometry.coordinates.get(0),
@@ -271,8 +271,6 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
             )
             landmarkModelList.add(landmarkModel)
         }
-
-
         createAddressModel!!.landmarkModel = landmarkModelList
     }
 

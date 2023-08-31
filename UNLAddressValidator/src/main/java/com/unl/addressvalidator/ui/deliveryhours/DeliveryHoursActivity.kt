@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.roomdatabasewithmodelclassess.model.AddressModel
 import com.example.roomdatabasewithmodelclassess.model.DaySelectionModel
 import com.example.roomdatabasewithmodelclassess.model.ImageUploadResponse
 import com.example.roomdatabasewithmodelclassess.model.OpeningHoursSpecificationModel
@@ -23,6 +24,8 @@ import com.unl.addressvalidator.R
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.databinding.ActivityDeliveryHoursBinding
 import com.unl.addressvalidator.databinding.AddPicturesPopupBinding
+import com.unl.addressvalidator.model.address.AddressRequestModel
+import com.unl.addressvalidator.model.dbmodel.CreateAddressModel
 import com.unl.addressvalidator.network.ApiCallBack
 import com.unl.addressvalidator.network.RetrofitImageUploadClient
 import com.unl.addressvalidator.ui.adapters.OperationalDayAdapter
@@ -43,6 +46,7 @@ import com.unl.addressvalidator.ui.interfaces.OperationHoursClickListner
 import com.unl.addressvalidator.ui.landmark.LandmarkActivity
 import com.unl.addressvalidator.util.Constant
 import com.unl.addressvalidator.util.Utility
+import com.unl.addressvalidator.util.Utility.convertObjIntoJson
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -928,6 +932,7 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
                 openCloseTimeList.get(i).isHoliday = true
             }
         }
+
         createAddressModel!!.openingHoursSpecificationModel = openCloseTimeList
         var accessbilityArray = ArrayList<String>()
         if (isElevatorSelected)
@@ -936,9 +941,32 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
             accessbilityArray.add(Constant.WHEELCHAIR_ACCESSIBILITY)
         createAddressModel!!.accessibility = accessbilityArray
 
+        prepareCreateAddressModel()
         viewModel.insertAddress(database, createAddressModel!!)
     }
+    var addressModel: AddressRequestModel? = null
+    fun prepareCreateAddressModel()
+    {
 
+        addressModel      = AddressRequestModel(
+            createAddressModel!!.addressModel,
+            createAddressModel!!.addressType,
+            createAddressModel!!.address,
+            createAddressModel!!.locationModel,
+            createAddressModel!!.landmarkModel,
+            createAddressModel!!.entranceModel,
+            createAddressModel!!.images,
+            ArrayList<String>(),
+            openCloseTimeList
+        )
+
+       var str =  convertObjIntoJson(addressModel!!)
+        if(str!= null)
+        {
+
+        }
+
+    }
     var lastIndex = -1
     override fun dayClick(day: String) {
         daysType = ""

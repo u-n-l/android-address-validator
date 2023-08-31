@@ -11,8 +11,11 @@ object Constant {
     const val ELEVATOR_ACCESSIBILITY = "Elevator"
     const val WHEELCHAIR_ACCESSIBILITY = "Wheelchair"
 
-    const val BASE_URL = "https://sandbox.api.unl.global/v2/"
+    const val BASE_URL_ALPHA = "https://alpha.api.unl.global/v2/"
+    const val BASE_URL_SANDBOX = "https://sandbox.api.unl.global/v2/"
+    const val BASE_URL = "https://api.unl.global/v2/"
     const val IMAGE_UPLOAD_BASE_URL = "https://alpha.api.unl.global/v1/"
+
     const val FROM_HOURS = "fromHours"
     const val FROM_MINS = "fromMins"
     const val TO_HOURS = "toHours"

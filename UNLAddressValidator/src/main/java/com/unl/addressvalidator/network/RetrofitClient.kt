@@ -1,6 +1,7 @@
 package com.unl.addressvalidator.network
 
 import com.unl.addressvalidator.util.Constant.BASE_URL
+import com.unl.addressvalidator.util.Constant.BASE_URL_SANDBOX
 import com.unl.addressvalidator.util.Constant.IMAGE_UPLOAD_BASE_URL
 import com.unl.map.sdk.SigV4Interceptor
 import com.unl.map.sdk.data.API_KEY
@@ -33,7 +34,7 @@ object RetrofitClient
             .build()
 
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_URL_SANDBOX)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

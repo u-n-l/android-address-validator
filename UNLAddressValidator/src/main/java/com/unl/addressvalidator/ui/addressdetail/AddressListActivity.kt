@@ -7,14 +7,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.google.gson.internal.LinkedTreeMap
+import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 import com.unl.addressvalidator.R
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.databinding.ActivityAddressListBinding
 import com.unl.addressvalidator.model.dbmodel.CreateAddressModel
 import com.unl.addressvalidator.ui.adapters.AddressListAdapter
 import com.unl.addressvalidator.ui.adapters.DeliveryHoursAdapter
+import com.unl.addressvalidator.ui.adapters.ImageAdapter
 import com.unl.addressvalidator.ui.adapters.OperationalDayAdapter
 import com.unl.addressvalidator.ui.deliveryhours.DeliveryHoursActivity
 import com.unl.addressvalidator.ui.interfaces.AddressItemClickListner
@@ -105,6 +108,14 @@ class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
                    .placeholder(R.drawable.photos) // Set a placeholder image if needed
                    .error(R.drawable.photos) // Set an error image if loading fails
                    .into(binding!!.addressesDetailView!!.ivAddress)
+
+
+               val adapter = ImageAdapter(this)
+               adapter.setData(addresses.images)
+               binding!!.addressesDetailView.pager.adapter = adapter
+               //viewPager.currentItem = adapter.count - 1
+               binding!!.addressesDetailView.tabDots.setViewPager( binding!!.addressesDetailView.pager)
+
            }else
            {
                binding!!.addressesDetailView!!.ivAddress.visibility = View.GONE

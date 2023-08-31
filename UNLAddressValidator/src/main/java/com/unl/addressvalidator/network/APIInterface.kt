@@ -32,9 +32,6 @@ interface APIInterface {
     @GET("search")
     suspend  fun getLandmark(@Query("query") query: String? , @Query("boundary") boundary: JsonObject? ) : Response<JsonObject>
 
-    @Multipart
-    @POST("upload/asset")
-    suspend  fun uploadImage(@Part ("file") file : File? ) : Response<String>
 
     @Multipart
     @POST("upload/asset")

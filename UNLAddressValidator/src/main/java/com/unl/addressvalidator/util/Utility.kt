@@ -1,21 +1,20 @@
 package com.unl.addressvalidator.util
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
 import android.provider.MediaStore
-import android.provider.Settings
 import android.view.Gravity
 import android.view.View
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.unl.addressvalidator.R
+import com.unl.addressvalidator.model.address.AddressRequestModel
 import com.unl.addressvalidator.model.reversegeocode.*
 import com.unl.map.sdk.data.CellPrecision
 import com.unl.map.sdk.helpers.grid_controls.loadGrids
@@ -280,6 +279,12 @@ object Utility {
         coord = (coord - minutes) * 60
         val seconds = (coord * 1000).toInt()
         return "$degrees/1,$minutes/1,$seconds/1000"
+    }
+
+    fun convertObjIntoJson(myObj: AddressRequestModel): String {
+        val gson = Gson()
+        val json = gson.toJson(myObj)
+        return json
     }
 
 
