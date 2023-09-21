@@ -786,6 +786,10 @@ class HomeFragment : Fragment(), SearchItemClickListner, LandmarkClickListner,Ad
         showLandmarkPictureDialog(position, resulttList)
     }
 
+    override fun viewLandMarkPic(position: Int, resulttList: ArrayList<LandmarkModel>) {
+
+    }
+
 
     override fun addressImageClick(index : Int, isReplace : Boolean) {
         if(isReplace) {

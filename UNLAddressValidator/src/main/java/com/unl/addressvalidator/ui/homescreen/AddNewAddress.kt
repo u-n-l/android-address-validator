@@ -91,8 +91,8 @@ fun UnlValidatorActivity.setNewAddressClick() {
         clearMap()
         clearAddressFields()
         setAddressFromCurrentLcation()
-        showMarker(LatLng(currLat, currLong), "Current Location")
-        changeCameraPosition(LatLng(currLat, currLong),mapBoxMap)
+        showMarker(LatLng(UnlValidatorActivity.currLat, UnlValidatorActivity.currLong), "Current Location")
+        changeCameraPosition(LatLng(UnlValidatorActivity.currLat, UnlValidatorActivity.currLong),mapBoxMap)
     }
 
     binding!!.addNewAdd.rlHomeIcon.setOnClickListener(View.OnClickListener { selectedLabel(0) })

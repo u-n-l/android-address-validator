@@ -1,5 +1,6 @@
 package com.unl.addressvalidator.ui.entrances
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
@@ -13,6 +14,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,6 +41,7 @@ import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
 import com.unl.addressvalidator.ui.interfaces.AddressImageClickListner
 import com.unl.addressvalidator.ui.interfaces.EntranceClickListner
 import com.unl.addressvalidator.ui.landmark.LandmarkActivity
+import com.unl.addressvalidator.util.Constant
 import com.unl.addressvalidator.util.Utility
 import com.unl.addressvalidator.util.Utility.returnRandomDigit
 import com.unl.map.sdk.UnlMap
@@ -112,6 +115,16 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
                 return false
             }
         })
+
+
+        binding!!.ivrecenter.setOnClickListener {
+            Utility.changeCameraPosition(
+                LatLng(
+                    UnlValidatorActivity.currLat,
+                    UnlValidatorActivity.currLong
+                ), mapBoxMap!!
+            )
+        }
 
         binding!!.backBtn.setOnClickListener {
             finish()
@@ -326,15 +339,7 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
         }
     }
     override fun addressImageClick(index : Int, isReplaceImage : Boolean) {
-        isReplace = isReplaceImage
-        if(isReplace) {
-            replaceIndex = index
-            openImagePicker(1)
-        }
-        else {
-            replaceIndex = entranceImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
-            openImagePicker(dataListSize -replaceIndex)
-        }
+        uploadImage(index,isReplaceImage)
     }
 
     fun openImagePicker(imageLimit : Int) {
@@ -385,8 +390,90 @@ class EntrancesActivity : AppCompatActivity(), EntranceClickListner, AddressImag
                 }
                 adapter.notifyDataSetChanged()
             }
+        }else {
+            if (requestCode == Constant.CAMERA_REQUEST_CODE) {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    val photo = data.extras!!["data"] as Bitmap?
+                    updateImagePickerUI(Utility.getImageUri(this@EntrancesActivity, photo!!)!!)
+                    adapter.notifyDataSetChanged()
+
+                }
+            }
         }
     }
+
+
+
+    fun updateImagePickerUI(uri: Uri) {
+        val uriList = java.util.ArrayList<AddPicturesModel>()
+        uriList.clear()
+        uriList.add(AddPicturesModel(uri))
+        val uriListSize = uriList.size
+        try {
+            if (isReplace) {
+                entranceImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
+            } else {
+                for (i in replaceIndex until dataListSize) {
+                    if (i - replaceIndex < uriListSize) {
+                        entranceImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                    } else {
+                        entranceImageList[i] = AddPicturesModel(Uri.EMPTY)
+                    }
+                }
+            }
+            if (uriListSize > 0)
+                updateAddPictureSavebtn(true)
+        }catch (e : java.lang.Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun uploadImage(index: Int, isReplaceImage: Boolean) {
+        // setup the alert builder
+
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.image_picker_popup)
+        dialog.show()
+        // dialog.setCanceledOnTouchOutside(true)
+        dialog.window!!.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.setGravity(Gravity.CENTER)
+
+        dialog.findViewById<ImageView>(R.id.dismissPopup).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.findViewById<TextView>(R.id.tvCameraOption).setOnClickListener {
+            isReplace = isReplaceImage
+            if (isReplaceImage) {
+                replaceIndex = index
+            } else {
+                replaceIndex = entranceImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+            }
+            Utility.askCameraPermissions(this)
+            dialog.dismiss()
+        }
+
+
+        dialog.findViewById<TextView>(R.id.tvGalleryOption).setOnClickListener {
+            isReplace = isReplaceImage
+            if (isReplaceImage) {
+                replaceIndex = index
+                openImagePicker(1)
+            } else {
+                replaceIndex = entranceImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+                openImagePicker(dataListSize - replaceIndex)
+            }
+            dialog.dismiss()
+        }
+
+    }
+
 
 
     companion object

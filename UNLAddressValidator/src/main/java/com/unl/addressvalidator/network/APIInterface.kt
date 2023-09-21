@@ -1,19 +1,15 @@
 package com.unl.addressvalidator.network
 
+import com.example.roomdatabasewithmodelclassess.model.CreateAddressResponse
 import com.example.roomdatabasewithmodelclassess.model.ImageUploadResponse
 import com.google.gson.JsonObject
 import com.unl.addressvalidator.model.autocomplet.AutocompleteResponse
 import com.unl.addressvalidator.model.reversegeocode.ReverseGeoCodeResponse
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Multipart
-import retrofit2.http.POST
-import retrofit2.http.Part
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 import java.io.File
 
 
@@ -32,10 +28,13 @@ interface APIInterface {
     @GET("search")
     suspend  fun getLandmark(@Query("query") query: String? , @Query("boundary") boundary: JsonObject? ) : Response<JsonObject>
 
-
     @Multipart
     @POST("upload/asset")
     suspend  fun uploadImagewithPart(@Part  file : MultipartBody.Part ) : Response<ImageUploadResponse>
+
+
+    @POST("create/address")
+    suspend  fun addNewAddress(@Body params : RequestBody) : Response<CreateAddressResponse>
 
 
 }

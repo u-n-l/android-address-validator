@@ -6,13 +6,14 @@
     android:layout_height="match_parent"
     android:background="@drawable/address_dialog_shape1"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/_16sdp"
-    android:paddingVertical="@dimen/_5sdp">
+ >
 
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_50sdp"
+        android:paddingHorizontal="@dimen/_16sdp"
+        android:paddingVertical="@dimen/_5sdp"
         android:background="@color/white">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -39,6 +40,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/header"
+        android:paddingHorizontal="@dimen/_16sdp"
+        android:paddingVertical="@dimen/_5sdp"
         android:scrollbars="none">
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -157,7 +160,6 @@
 
                     <androidx.viewpager.widget.ViewPager
                         android:id="@+id/pager"
-
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true" />
@@ -318,8 +320,6 @@
                             android:layout_marginStart="@dimen/_10sdp"
                             android:textColor="@color/themeColor"/>
                     </LinearLayout>
-
-
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -333,7 +333,93 @@
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Entrances:"
+                android:textColor="@color/gray1" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEntrances"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                tools:listitem="@layout/landmark_item"
+                android:layout_marginBottom="@dimen/_10sdp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Nearby Landmarks:"
+                android:textColor="@color/gray1" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLandmark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                tools:listitem="@layout/landmark_item"
+                android:layout_marginBottom="@dimen/_10sdp" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/imageViewer"
+        android:visibility="gone"
+        android:background="#99000000">
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/_15sdp"
+            android:layout_height="@dimen/_180sdp">
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/imagePager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/transparent_layer"/>
+
+            <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+                android:id="@+id/pagerDots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/_10sdp"
+                app:dotsColor="@color/white"
+                app:dotsCornerRadius="@dimen/_3sdp"
+                app:dotsSize="@dimen/_6sdp"
+                app:dotsSpacing="@dimen/_3sdp"
+                app:dotsStrokeColor="@color/colorPrimary"
+                app:dotsStrokeWidth="@dimen/_3sdp"
+                app:selectedDotColor="@color/black"
+                app:stiffness="300" />
+
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/closeViewer"
+            android:layout_margin="@dimen/_10sdp"
+            android:padding="@dimen/_5sdp"
+            android:tint="@color/white"
+            android:src="@drawable/ic_cross"/>
+    </RelativeLayout>
+
+
 </RelativeLayout>

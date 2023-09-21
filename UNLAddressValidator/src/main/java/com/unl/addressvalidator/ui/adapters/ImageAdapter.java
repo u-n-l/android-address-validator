@@ -20,21 +20,7 @@ import java.util.ArrayList;
 public class ImageAdapter extends PagerAdapter {
     Context context;
     ArrayList<String> images = new ArrayList<String>();
-/*    private int[] GalImages = new int[]{
-            R.drawable.unsecuredloan,
-            R.drawable.goldloan,
-            R.drawable.bike_loan
-    };*/
-    private String[] URL = new String[]{
-            "https://www.nextfin.in/personal-unsecured-loans/",
-            "https://www.nextfin.in/loan-against-property/",
-            "https://www.nextfin.in/bike-loans/"
-    };
-    /* private String[] URL = new String[]{
-            "https://www.kindpng.com/imgv/bbimJR_transparent-gold-loan-png-png-download/",
-            "https://www.shutterstock.com/search/unsecured+loan",
-            "https://www.fundingcircle.com/uk/"
-    };*/
+
     LayoutInflater mLayoutInflater;
 
     public ImageAdapter(Context context) {

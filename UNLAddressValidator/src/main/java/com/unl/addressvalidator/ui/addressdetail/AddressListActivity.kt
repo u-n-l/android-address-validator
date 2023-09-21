@@ -9,21 +9,25 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
+import com.example.roomdatabasewithmodelclassess.model.EntranceModel
+import com.example.roomdatabasewithmodelclassess.model.LandmarkModel
 import com.google.gson.internal.LinkedTreeMap
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 import com.unl.addressvalidator.R
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.databinding.ActivityAddressListBinding
 import com.unl.addressvalidator.model.dbmodel.CreateAddressModel
-import com.unl.addressvalidator.ui.adapters.AddressListAdapter
-import com.unl.addressvalidator.ui.adapters.DeliveryHoursAdapter
-import com.unl.addressvalidator.ui.adapters.ImageAdapter
-import com.unl.addressvalidator.ui.adapters.OperationalDayAdapter
+import com.unl.addressvalidator.model.landmark.LandmarkDataList
+import com.unl.addressvalidator.ui.adapters.*
 import com.unl.addressvalidator.ui.deliveryhours.DeliveryHoursActivity
 import com.unl.addressvalidator.ui.interfaces.AddressItemClickListner
+import com.unl.addressvalidator.ui.interfaces.EntranceClickListner
+import com.unl.addressvalidator.ui.interfaces.LandmarkClickListner
 import com.unl.addressvalidator.util.Constant.ELEVATOR_ACCESSIBILITY
 import com.unl.addressvalidator.util.Constant.WHEELCHAIR_ACCESSIBILITY
+import com.unl.addressvalidator.util.Utility
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * [AddressListActivity] provide functionality to show your address
@@ -31,7 +35,8 @@ import java.util.*
  * @constructor
  *
  */
-class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
+class AddressListActivity : AppCompatActivity(), AddressItemClickListner , EntranceClickListner,
+    LandmarkClickListner {
     var binding: ActivityAddressListBinding? = null
     lateinit var viewModel: AddressViewModel
     lateinit var database: UnlAddressDatabase
@@ -93,6 +98,21 @@ class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
 
            binding!!.addressesDetailView.tvCategory.text = addresses.addressType
            binding!!.addressesDetailView.tvPlaceName.text = addresses.address
+
+           val layoutManager = LinearLayoutManager(this)
+           binding!!.addressesDetailView.rvEntrances.layoutManager = layoutManager
+           binding!!.addressesDetailView.rvEntrances.setBackgroundResource(R.color.white)
+
+           val layoutManager1 = LinearLayoutManager(this)
+           binding!!.addressesDetailView.rvLandmark.layoutManager = layoutManager1
+           binding!!.addressesDetailView.rvLandmark.setBackgroundResource(R.color.white)
+
+
+
+
+           binding!!.addressesDetailView!!.closeViewer.setOnClickListener {
+               binding!!.addressesDetailView!!.imageViewer.visibility = View.GONE
+           }
 
            if (addresses.addressType.equals("home")) {
                binding!!.addressesDetailView.ivAdressType.setImageResource(R.drawable.home)
@@ -168,17 +188,39 @@ class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
                binding!!.addressesDetailView.accessibilityHeading.visibility = View.GONE
                binding!!.addressesDetailView.accessibilityValue.visibility = View.GONE
            }
-
-
-
-
        }
        catch (e:java.lang.Exception)
        {
            e.printStackTrace()
        }
+        showEntrances(addresses)
+        showLandmark(addresses)
+    }
+    fun showEntrances(addresses: CreateAddressModel)
+    {
+
+     try {
+         binding!!.addressesDetailView.rvEntrances.visibility = View.VISIBLE
+         binding!!.addressesDetailView.rvEntrances.adapter = EntrancesListAdapter(addresses.entranceModel!!, this)
+         binding!!.addressesDetailView.rvEntrances.adapter!!.notifyDataSetChanged()
+     }
+     catch (e:java.lang.Exception)
+     {
+         e.printStackTrace()
+     }
     }
 
+    fun showLandmark(addresses: CreateAddressModel)
+    {
+      try {
+              binding!!.addressesDetailView.rvLandmark.adapter = LandMarksAdapter(addresses.landmarkModel!!, this)
+              binding!!.addressesDetailView.rvLandmark.adapter!!.notifyDataSetChanged()
+      }
+      catch (e:java.lang.Exception)
+      {
+          e.printStackTrace()
+      }
+    }
     override fun addressItemClick(createAddressModel: CreateAddressModel) {
         initAddressDetails(createAddressModel)
     }
@@ -192,4 +234,54 @@ class AddressListActivity : AppCompatActivity(), AddressItemClickListner {
             super.onBackPressed()
         }
     }
+
+    override fun entranceEditClick(position: Int, entranceModel: ArrayList<EntranceModel>) {
+
+    }
+
+    override fun entranceDeleteClick(position: Int, entranceModel: ArrayList<EntranceModel>) {
+
+    }
+
+    override fun entranceImageClick(position: Int, entranceModel: ArrayList<EntranceModel>) {
+       try {
+           val getrow: Any = entranceModel.get(position)
+           val t: LinkedTreeMap<Any, Any> = getrow as LinkedTreeMap<Any, Any>
+
+           val imageArray : ArrayList<String> = t["imageArray"] as  ArrayList<String>
+
+           val adapter = ImageAdapter(this)
+           adapter.setData(imageArray)
+           binding!!.addressesDetailView.imagePager.adapter = adapter
+           binding!!.addressesDetailView.pagerDots.setViewPager( binding!!.addressesDetailView.pager)
+           binding!!.addressesDetailView!!.imageViewer.visibility = View.VISIBLE
+       }
+       catch (e:java.lang.Exception)
+       {
+           e.printStackTrace()
+       }
+    }
+
+    override fun landmarkItemClick(reverseGeoCodeResponse: LandmarkDataList) {
+
+    }
+
+    override fun uploadLandmarkPic(position: Int, resulttList: ArrayList<LandmarkDataList>) {
+
+
+    }
+
+    override fun viewLandMarkPic(position: Int, resulttList: ArrayList<LandmarkModel>)
+    {
+        val getrow: Any = resulttList.get(position)
+        val t: LinkedTreeMap<Any, Any> = getrow as LinkedTreeMap<Any, Any>
+        val list : ArrayList<String> = t["imageList"] as  ArrayList<String>
+        val adapter = ImageAdapter(this)
+        adapter.setData(list)
+        binding!!.addressesDetailView.imagePager.adapter = adapter
+        binding!!.addressesDetailView.pagerDots.setViewPager( binding!!.addressesDetailView.pager)
+        binding!!.addressesDetailView!!.imageViewer.visibility = View.VISIBLE
+    }
+
+
 }

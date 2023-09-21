@@ -37,7 +37,6 @@ fun UnlValidatorActivity.showAddPictureDialog() {
     val bottomSheetDialog = BottomSheetDialog(this)
     bottomSheetDialog.setContentView(bind.root)
 
-
     // binding!!.addPicture!!.root.visibility = View.VISIBLE
     bind!!.headerTitle.text = "Add Picture to the Address"
     bind!!.addressType.text = addressType
@@ -210,3 +209,4 @@ fun UnlValidatorActivity.getAddressImageUploadResponse() {
         }
     })
 }
+

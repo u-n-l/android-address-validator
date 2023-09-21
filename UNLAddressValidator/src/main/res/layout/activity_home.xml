@@ -114,6 +114,8 @@
         </androidx.cardview.widget.CardView>
 
 
+
+
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
@@ -229,5 +231,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_100sdp"
+        android:padding="@dimen/_1sdp"
+        android:id="@+id/ivrecenter"
+        android:layout_alignParentEnd="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/recenter"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

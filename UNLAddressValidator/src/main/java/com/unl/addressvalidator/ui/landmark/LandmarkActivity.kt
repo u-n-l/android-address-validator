@@ -1,8 +1,12 @@
 package com.unl.addressvalidator.ui.landmark
 
+import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +14,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -47,6 +55,7 @@ import com.unl.addressvalidator.ui.interfaces.AddressImageClickListner
 import com.unl.addressvalidator.ui.interfaces.LandmarkClickListner
 import com.unl.addressvalidator.ui.interfaces.SearchItemClickListner
 import com.unl.addressvalidator.ui.viewmodel.HomeViewModel
+import com.unl.addressvalidator.util.Constant.CAMERA_REQUEST_CODE
 import com.unl.addressvalidator.util.Utility
 import com.unl.addressvalidator.util.Utility.changeCameraPosition
 import com.unl.map.sdk.UnlMap
@@ -97,6 +106,11 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
 
             Utility.configureMap(binding!!.mapView, this)
             setMapData()
+        }
+
+
+        binding!!.ivrecenter.setOnClickListener {
+            changeCameraPosition(LatLng(UnlValidatorActivity.currLat,UnlValidatorActivity.currLong), mapBoxMap!!)
         }
 
         landmarkActivity = this
@@ -214,7 +228,7 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
         var jsonArray = JsonArray()
         jsonArray.add(pinLong)
         jsonArray.add(pinLat)
-        jsonArray.add(1000)
+        jsonArray.add(5000)
         jsonObject.add("Point", jsonArray)
         circleObject.add("Circle", jsonObject)
         viewModel.getNearbyLandmark(circleObject)
@@ -346,15 +360,13 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
 
     }
 
+    override fun viewLandMarkPic(position: Int, resulttList: ArrayList<LandmarkModel>) {
+
+    }
+
     override fun addressImageClick(index: Int, isReplaceImage: Boolean) {
-        isReplace = isReplaceImage
-        if (isReplace) {
-            replaceIndex = index
-            openImagePicker(1)
-        } else {
-            replaceIndex = landmarkImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
-            openImagePicker(dataListSize - replaceIndex)
-        }
+        uploadImage(index,isReplaceImage)
+
     }
 
     fun openImagePicker(imageLimit: Int) {
@@ -399,9 +411,43 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
 
                 adapter.notifyDataSetChanged()
             }
+        } else {
+            if (requestCode == CAMERA_REQUEST_CODE) {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    val photo = data.extras!!["data"] as Bitmap?
+                    updateImagePickerUI(Utility.getImageUri(this@LandmarkActivity, photo!!)!!)
+                    adapter.notifyDataSetChanged()
+
+                }
+            }
         }
     }
 
+
+    fun updateImagePickerUI(uri: Uri) {
+        val uriList = java.util.ArrayList<AddPicturesModel>()
+        uriList.clear()
+        uriList.add(AddPicturesModel(uri))
+        val uriListSize = uriList.size
+        try {
+            if (isReplace) {
+                landmarkImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
+            } else {
+                for (i in replaceIndex until dataListSize) {
+                    if (i - replaceIndex < uriListSize) {
+                        landmarkImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                    } else {
+                        landmarkImageList[i] = AddPicturesModel(Uri.EMPTY)
+                    }
+                }
+            }
+            if (uriListSize > 0)
+                updateAddPictureSavebtn(true)
+        }catch (e : java.lang.Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     private fun getAutocompleteResponse() {
         viewModel.autoCompleteData.observe(this, { response ->
@@ -569,6 +615,54 @@ class LandmarkActivity : AppCompatActivity(), LandmarkClickListner, AddressImage
             e.printStackTrace()
         }
     }
+
+
+
+    private fun uploadImage(index: Int, isReplaceImage: Boolean) {
+        // setup the alert builder
+
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.image_picker_popup)
+        dialog.show()
+        // dialog.setCanceledOnTouchOutside(true)
+        dialog.window!!.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.setGravity(Gravity.CENTER)
+
+        dialog.findViewById<ImageView>(R.id.dismissPopup).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.findViewById<TextView>(R.id.tvCameraOption).setOnClickListener {
+            isReplace = isReplaceImage
+            if (isReplaceImage) {
+                replaceIndex = index
+            } else {
+                replaceIndex = landmarkImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+            }
+            Utility.askCameraPermissions(this)
+            dialog.dismiss()
+        }
+
+
+        dialog.findViewById<TextView>(R.id.tvGalleryOption).setOnClickListener {
+            isReplace = isReplaceImage
+            if (isReplaceImage) {
+                replaceIndex = index
+                openImagePicker(1)
+            } else {
+                replaceIndex = landmarkImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+                openImagePicker(dataListSize - replaceIndex)
+            }
+            dialog.dismiss()
+        }
+
+    }
+
 
     companion object
     {

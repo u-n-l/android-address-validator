@@ -1,43 +1,46 @@
 package com.unl.addressvalidator.ui.deliveryhours
 
+import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.roomdatabasewithmodelclassess.model.AddressModel
 import com.example.roomdatabasewithmodelclassess.model.DaySelectionModel
-import com.example.roomdatabasewithmodelclassess.model.ImageUploadResponse
+import com.example.roomdatabasewithmodelclassess.model.LandmarkModel
 import com.example.roomdatabasewithmodelclassess.model.OpeningHoursSpecificationModel
 import com.unl.addressvalidator.R
 import com.unl.addressvalidator.database.UnlAddressDatabase
 import com.unl.addressvalidator.databinding.ActivityDeliveryHoursBinding
 import com.unl.addressvalidator.databinding.AddPicturesPopupBinding
 import com.unl.addressvalidator.model.address.AddressRequestModel
-import com.unl.addressvalidator.model.dbmodel.CreateAddressModel
 import com.unl.addressvalidator.network.ApiCallBack
 import com.unl.addressvalidator.network.RetrofitImageUploadClient
 import com.unl.addressvalidator.ui.adapters.OperationalDayAdapter
 import com.unl.addressvalidator.ui.adapters.OperationalHoursAdapter
 import com.unl.addressvalidator.ui.entrances.EntrancesActivity
-import com.unl.addressvalidator.ui.fragments.HomeFragment
-import com.unl.addressvalidator.ui.fragments.showAddPictureDialog
 import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity
 import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity.Companion.addressImageList
 import com.unl.addressvalidator.ui.homescreen.UnlValidatorActivity.Companion.createAddressModel
-import com.unl.addressvalidator.ui.homescreen.ValidatorViewModel
-import com.unl.addressvalidator.ui.homescreen.showAddPictureDialog
 import com.unl.addressvalidator.ui.imagepicker.adapter.AddPicturesAdapter
 import com.unl.addressvalidator.ui.imagepicker.builder.MultiImagePicker
 import com.unl.addressvalidator.ui.imagepicker.data.AddPicturesModel
@@ -45,8 +48,11 @@ import com.unl.addressvalidator.ui.interfaces.AddressImageClickListner
 import com.unl.addressvalidator.ui.interfaces.OperationHoursClickListner
 import com.unl.addressvalidator.ui.landmark.LandmarkActivity
 import com.unl.addressvalidator.util.Constant
+import com.unl.addressvalidator.util.Constant.CAMERA_REQUEST_CODE
 import com.unl.addressvalidator.util.Utility
 import com.unl.addressvalidator.util.Utility.convertObjIntoJson
+import com.unl.addressvalidator.util.Utility.getAddressBody
+import com.unl.addressvalidator.util.Utility.showToast
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -105,6 +111,7 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
         database = UnlAddressDatabase.getInstance(this)
         initiateViewModel()
         setOperationalHoursClick()
+        obserCreateAddress()
     }
 
     private fun initiateViewModel() {
@@ -924,7 +931,8 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
 
 
     fun updateOperationalHours() {
-        openCloseTimeList.removeAt(0)
+        if(openCloseTimeList != null && openCloseTimeList.size>7)
+             openCloseTimeList.removeAt(0)
 
         for (i in 0..6)
         {
@@ -932,7 +940,6 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
                 openCloseTimeList.get(i).isHoliday = true
             }
         }
-
         createAddressModel!!.openingHoursSpecificationModel = openCloseTimeList
         var accessbilityArray = ArrayList<String>()
         if (isElevatorSelected)
@@ -944,6 +951,7 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
         prepareCreateAddressModel()
         viewModel.insertAddress(database, createAddressModel!!)
     }
+
     var addressModel: AddressRequestModel? = null
     fun prepareCreateAddressModel()
     {
@@ -956,7 +964,7 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
             createAddressModel!!.landmarkModel,
             createAddressModel!!.entranceModel,
             createAddressModel!!.images,
-            ArrayList<String>(),
+            createAddressModel!!.accessibility,
             openCloseTimeList
         )
 
@@ -965,6 +973,97 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
         {
 
         }
+        viewModel.addNewAddress(getAddressBody(addressModel!!))
+      //  viewModel.addNewAddress(createFromData())
+      //
+
+    }
+
+    fun createFromData() : RequestBody
+    {
+
+        var builder = MultipartBody.Builder()
+        builder.setType(MultipartBody.FORM)
+
+        if(true)
+        {
+
+        }else
+        {
+            builder.addFormDataPart("address.houseNumber", "24")
+            builder.addFormDataPart("address.floor", "2nd")
+            builder.addFormDataPart("address.buildingName", "Rajni Bhawan")
+            builder.addFormDataPart("address.street", "RNT Marg")
+            builder.addFormDataPart("address.colonyName", "dwarkapuri")
+            builder.addFormDataPart("address.city", "Indore")
+            builder.addFormDataPart("address.state","MP")
+            builder.addFormDataPart("address.country", "India")
+            builder.addFormDataPart("address.postalCode", "452009")
+        }
+
+        if(true)
+        {
+
+        }else
+        {
+            builder.addFormDataPart("location.latitude", "22.56765434")
+            builder.addFormDataPart("location.longitude","75.324565432")
+            builder.addFormDataPart("addressType", "house")
+            builder.addFormDataPart("landmark.landmark_name", "Gyan Sagar school")
+            builder.addFormDataPart("landmark._type","school")
+            builder.addFormDataPart("landmark.location.latitude","22.56765434")
+            builder.addFormDataPart("landmark.location.longitude", "75.324565432")
+            builder.addFormDataPart("address.buildingNumber", "HIG 2/2")
+            builder.addFormDataPart("address.neighbourhood", "")
+        }
+
+       if(true)
+       {
+
+       }else
+       {
+           builder.addFormDataPart("openingHoursSpecification[0].opens", "08:00:00")
+           builder.addFormDataPart("openingHoursSpecification[0].closes", "11:00:00")
+           builder.addFormDataPart("openingHoursSpecification[0].day_of_week", "Monday")
+           builder.addFormDataPart("openingHoursSpecification[0].is_holiday", "True")
+           builder.addFormDataPart("entrance[0].entrance_no", "1")
+           builder.addFormDataPart("entrance[0].entrance_name", "main gate")
+           builder.addFormDataPart("entrance[1].entrance_no", "2")
+           builder.addFormDataPart("entrance[1].entrance_name", "side gate")
+       }
+
+
+       /* val requestBody: RequestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("address.houseNumber", "24")
+            .addFormDataPart("address.floor", "2nd")
+            .addFormDataPart("address.buildingName", "Rajni Bhawan")
+            .addFormDataPart("address.street", "RNT Marg")
+            .addFormDataPart("address.colonyName", "dwarkapuri")
+            .addFormDataPart("address.city", "Indore")
+            .addFormDataPart("address.state","MP")
+            .addFormDataPart("address.country", "India")
+            .addFormDataPart("address.postalCode", "452009")
+            .addFormDataPart("location.latitude", "22.56765434")
+            .addFormDataPart("location.longitude","75.324565432")
+            .addFormDataPart("addressType", "house")
+            .addFormDataPart("landmark.landmark_name", "Gyan Sagar school")
+            .addFormDataPart("landmark._type","school")
+            .addFormDataPart("landmark.location.latitude","22.56765434")
+            .addFormDataPart("landmark.location.longitude", "75.324565432")
+            .addFormDataPart("address.buildingNumber", "HIG 2/2")
+            .addFormDataPart("address.neighbourhood", "")
+            .addFormDataPart("openingHoursSpecification[0].opens", "08:00:00")
+            .addFormDataPart("openingHoursSpecification[0].closes", "11:00:00")
+            .addFormDataPart("openingHoursSpecification[0].day_of_week", "Monday")
+            .addFormDataPart("openingHoursSpecification[0].is_holiday", "True")
+            .addFormDataPart("entrance[0].entrance_no", "1")
+            .addFormDataPart("entrance[0].entrance_name", "main gate")
+            .addFormDataPart("entrance[1].entrance_no", "2")
+            .addFormDataPart("entrance[1].entrance_name", "side gate")
+            .build()*/
+
+        return builder.build()
 
     }
     var lastIndex = -1
@@ -1032,15 +1131,9 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
 
 
     override fun addressImageClick(index: Int, isReplaceImage: Boolean) {
-        isReplace = isReplaceImage
-        if (isReplace) {
-            replaceIndex = index
-            openImagePicker(1)
-        } else {
-            replaceIndex =
-                UnlValidatorActivity.addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
-            openImagePicker(dataListSize - replaceIndex)
-        }
+
+        uploadImage(index,isReplaceImage)
+
     }
 
     fun openImagePicker(imageLimit: Int) {
@@ -1084,6 +1177,40 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
 
                 adapter.notifyDataSetChanged()
             }
+        } else {
+            if (requestCode == CAMERA_REQUEST_CODE) {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    val photo = data.extras!!["data"] as Bitmap?
+                    updateImagePickerUI(Utility.getImageUri(this@DeliveryHoursActivity, photo!!)!!)
+                    adapter.notifyDataSetChanged()
+
+                }
+            }
+        }
+    }
+
+    fun updateImagePickerUI(uri: Uri) {
+        val uriList = java.util.ArrayList<AddPicturesModel>()
+        uriList.clear()
+        uriList.add(AddPicturesModel(uri))
+        val uriListSize = uriList.size
+        try {
+            if (isReplace) {
+                addressImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
+            } else {
+                for (i in replaceIndex until dataListSize) {
+                    if (i - replaceIndex < uriListSize) {
+                        addressImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                    } else {
+                        addressImageList[i] = AddPicturesModel(Uri.EMPTY)
+                    }
+                }
+            }
+            if (uriListSize > 0)
+                updateAddPictureSavebtn(true)
+        }catch (e : java.lang.Exception)
+        {
+            e.printStackTrace()
         }
     }
 
@@ -1099,54 +1226,163 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
     private suspend fun uploadImageWithPart() {
         try {
 
-            // uploadAddressImage()
-            binding!!.progressBar.visibility = View.GONE
+             uploadAddressImage()
+            uploadLandmarkImage()
+            uploadEntranceImage()
+         //   binding!!.progressBar.visibility = View.GONE
             updateOperationalHours()
             Handler().postDelayed(Runnable {
-                addressImageList.clear()
+
+          /*      addressImageList.clear()
                 createAddressModel = null
                 createAddressModel
                 UnlValidatorActivity.pinLat = 0.0
                 UnlValidatorActivity.pinLong = 0.0
                 startActivity(Intent(this@DeliveryHoursActivity, UnlValidatorActivity::class.java))
-                finishAffinity()
+                finishAffinity()*/
+
             }, 500)
             //   imageUploadResponseData.postValue(handleImageUploadResponse(response))
         } catch (e: java.lang.Exception) {
+            binding!!.progressBar.visibility = View.GONE
             e.printStackTrace()
         }
     }
 
     suspend fun uploadAddressImage() {
-        addressImageList.forEach()
+
+  try {
+      addressImageList.forEach()
+      {
+          var str: String = it.ivPhotos.toString()
+          if (str != null && !str.equals("")) {
+              var path = Utility.getImagePathFromUri(it.ivPhotos!!, this)
+              var file = File(path)
+              val mFile: RequestBody =
+                  RequestBody.create("image/png".toMediaTypeOrNull(), file)
+              val fileName: String = "photo_" + System.currentTimeMillis() + ".png"
+              val fileToUpload: MultipartBody.Part? =
+                  MultipartBody.Part.createFormData("file", fileName, mFile)
+              // imageUploadResponseData.postValue(ApiCallBack.Loading())
+              val response =
+                  RetrofitImageUploadClient.apiInterface.uploadImagewithPart(fileToUpload!!)
+              if (response != null) {
+                  for (i in 0..addressImageList.size - 1) {
+                      if (addressImageList.get(i).ivPhotos == it.ivPhotos) {
+                          createAddressModel!!.images!!.set(
+                              i,
+                              response.body()!!.asset_name
+                          )
+                          break
+                      }
+                  }
+              }
+          }
+      }
+
+  }
+  catch (e:java.lang.Exception)
+  {
+      e.printStackTrace()
+  }
+    }
+
+
+
+    suspend fun uploadLandmarkImage() {
+       try {
+           for (k in 0..createAddressModel!!.landmarkModel!!.size-1)
+           {
+               var landmarkModel = createAddressModel!!.landmarkModel!!.get(k)
+               if(landmarkModel.imageList != null && landmarkModel.imageList.size>0)
+               {
+                   landmarkModel.imageList.forEach {
+                       var str: String = it
+                       var uri =  Uri.parse(str)
+                       if (str != null && !str.equals("")) {
+
+                           var path = Utility.getImagePathFromUri(uri!!, this)
+                           var file = File(path)
+                           val mFile: RequestBody =
+                               RequestBody.create("image/png".toMediaTypeOrNull(), file)
+                           val fileName: String = "photo_" + System.currentTimeMillis() + ".png"
+                           val fileToUpload: MultipartBody.Part? =
+                               MultipartBody.Part.createFormData("file", fileName, mFile)
+                           // imageUploadResponseData.postValue(ApiCallBack.Loading())
+                           val response =
+                               RetrofitImageUploadClient.apiInterface.uploadImagewithPart(fileToUpload!!)
+                           if (response != null) {
+                               for (i in 0..landmarkModel.imageList.size - 1) {
+
+                                   if (landmarkModel.imageList.get(i) == str)
+                                   {
+                                       createAddressModel!!.landmarkModel!!.get(k).imageList.set(i,response.body()!!.asset_name)
+
+                                       break
+                                   }
+                               }
+                           }
+                       }
+                   }
+
+               }
+           }
+       }
+       catch (e:java.lang.Exception)
+       {
+           e.printStackTrace()
+       }
+    }
+
+
+
+
+    suspend fun uploadEntranceImage() {
+    try
+    {
+        for (k in 0..createAddressModel!!.entranceModel!!.size-1)
         {
-            var str: String = it.ivPhotos.toString()
-            if (str != null && !str.equals("")) {
-                var path = Utility.getImagePathFromUri(it.ivPhotos!!, this)
-                var file = File(path)
-                val mFile: RequestBody =
-                    RequestBody.create("image/png".toMediaTypeOrNull(), file)
-                val fileName: String = "photo_" + System.currentTimeMillis() + ".png"
-                val fileToUpload: MultipartBody.Part? =
-                    MultipartBody.Part.createFormData("file", fileName, mFile)
-                // imageUploadResponseData.postValue(ApiCallBack.Loading())
-                val response =
-                    RetrofitImageUploadClient.apiInterface.uploadImagewithPart(fileToUpload!!)
-                if (response != null) {
-                    for (i in 0..addressImageList.size - 1) {
-                        if (addressImageList.get(i).ivPhotos == it.ivPhotos) {
-                            createAddressModel!!.images!!.set(
-                                i,
-                                response.body()!!.catalog_item_ids.get(0)
-                            )
-                            break
+            var entranceModel = createAddressModel!!.entranceModel!!.get(k)
+            if(entranceModel.imageArray != null && entranceModel.imageArray.size>0)
+            {
+                entranceModel.imageArray.forEach {
+                    var str: String = it
+                    var uri =  Uri.parse(str)
+                    if (str != null && !str.equals("")) {
+
+                        var path = Utility.getImagePathFromUri(uri!!, this)
+                        var file = File(path)
+                        val mFile: RequestBody =
+                            RequestBody.create("image/png".toMediaTypeOrNull(), file)
+                        val fileName: String = "photo_" + System.currentTimeMillis() + ".png"
+                        val fileToUpload: MultipartBody.Part? =
+                            MultipartBody.Part.createFormData("file", fileName, mFile)
+                        // imageUploadResponseData.postValue(ApiCallBack.Loading())
+                        val response =
+                            RetrofitImageUploadClient.apiInterface.uploadImagewithPart(fileToUpload!!)
+                        if (response != null) {
+                            for (i in 0..entranceModel.imageArray.size - 1) {
+
+                                if (entranceModel.imageArray.get(i) == str)
+                                {
+                                    createAddressModel!!.entranceModel!!.get(k).imageArray.set(i,response.body()!!.asset_name)
+
+                                    break
+                                }
+                            }
                         }
                     }
                 }
+
             }
         }
-
     }
+    catch (e:java.lang.Exception)
+    {
+        e.printStackTrace()
+    }
+    }
+
 
 
     fun clearAddressImageList()
@@ -1220,5 +1456,97 @@ class DeliveryHoursActivity : AppCompatActivity(), OperationHoursClickListner,
             }
         }
         return true
+    }
+
+
+
+
+    private fun uploadImage(index: Int, isReplaceImage: Boolean) {
+        // setup the alert builder
+
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.image_picker_popup)
+        dialog.show()
+        // dialog.setCanceledOnTouchOutside(true)
+        dialog.window!!.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.setGravity(Gravity.CENTER)
+
+        dialog.findViewById<ImageView>(R.id.dismissPopup).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.findViewById<TextView>(R.id.tvCameraOption).setOnClickListener {
+            isReplace = isReplaceImage
+            if (isReplaceImage) {
+                replaceIndex = index
+            } else {
+                replaceIndex = addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+            }
+            Utility.askCameraPermissions(this)
+            dialog.dismiss()
+        }
+
+
+        dialog.findViewById<TextView>(R.id.tvGalleryOption).setOnClickListener {
+            isReplace = isReplaceImage
+            if (isReplaceImage) {
+                replaceIndex = index
+                openImagePicker(1)
+            } else {
+                replaceIndex = addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+                openImagePicker(dataListSize - replaceIndex)
+            }
+            dialog.dismiss()
+        }
+
+    }
+
+    fun obserCreateAddress()
+    {
+
+
+        viewModel.createAddressResponseData.observe(this, { response ->
+            when (response) {
+                is ApiCallBack.Success -> {
+                    binding!!.progressBar.visibility = View.GONE
+                    response.data
+                   if(response.data!= null)
+                   {
+                       launchHomeScreen()
+                   }
+
+                    //   Toast.makeText(context,""+response.data!!.size,Toast.LENGTH_SHORT).show()
+                }
+
+                is ApiCallBack.Error -> {
+                    binding!!.progressBar.visibility = View.GONE
+                    showToast(this,""+response.message )
+                    Log.v("CREATE_ADDRESS",""+response.message)
+                 //   launchHomeScreen()
+                }
+
+                is ApiCallBack.Loading -> {
+
+                }
+
+            }
+        })
+
+    }
+
+    fun launchHomeScreen()
+    {
+        addressImageList.clear()
+        createAddressModel = null
+        createAddressModel
+        UnlValidatorActivity.pinLat = 0.0
+        UnlValidatorActivity.pinLong = 0.0
+        startActivity(Intent(this@DeliveryHoursActivity, UnlValidatorActivity::class.java))
+        finishAffinity()
     }
 }

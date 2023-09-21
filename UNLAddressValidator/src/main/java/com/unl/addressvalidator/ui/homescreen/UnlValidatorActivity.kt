@@ -1,8 +1,10 @@
 package com.unl.addressvalidator.ui.homescreen
 
 import android.Manifest
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -16,15 +18,19 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -64,6 +70,7 @@ import com.unl.addressvalidator.ui.interfaces.SearchItemClickListner
 import com.unl.addressvalidator.ui.landmark.LandmarkActivity
 import com.unl.addressvalidator.util.Constant
 import com.unl.addressvalidator.util.Utility
+import com.unl.addressvalidator.util.Utility.askCameraPermissions
 import com.unl.addressvalidator.util.Utility.changeCameraPosition
 import com.unl.addressvalidator.util.Utility.configureMap
 import com.unl.map.sdk.UnlMap
@@ -99,21 +106,23 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
 
     val dataListSize = 9
     var replaceIndex: Int = 0
-    var isReplace:Boolean = false
+    var isReplace: Boolean = false
 
     var cityText = ""
     var stateText = ""
     var pincodeText = ""
 
 
-    var currLat: Double = 0.0
-    var currLong: Double = 0.0
+
 
     var isMoveMarker = true
     var moveCounter: Int = 0
     var updateLocation = true
 
     private val permissionsRequestCode = 123
+
+    val CAMERA_REQUEST_CODE = 102
+    val CAMERA_PERM_CODE = 101
 
     //Get live location from GPS
     private var locationByGps: Location? = null
@@ -123,7 +132,7 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
     var entranceList: ArrayList<EntranceModel> = ArrayList()
     var currentAddressText = ""
     lateinit var database: UnlAddressDatabase
-    lateinit  var bind : AddPicturesPopupBinding
+    lateinit var bind: AddPicturesPopupBinding
 
     //Analytics
     private lateinit var firebaseAnalytics: FirebaseAnalytics
@@ -154,7 +163,7 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             binding!!.mapView.lifeCycleOwner = this
             binding!!.mapView.enableIndoorMap = false
             binding!!.mapView.viewLifecycle = this
-            configureMap(binding!!.mapView,this)
+            configureMap(binding!!.mapView, this)
         }
 
         database = UnlAddressDatabase.getInstance(this)
@@ -172,9 +181,8 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
                     Log.v("TOUCHPINT", "Counter" + moveCounter)
                     if (isMoveMarker && moveCounter < 4) {
 
-                        val currentZoomLevel =  binding!!.mapView.mapbox!!.getCameraPosition().zoom
-                        if(currentZoomLevel>18.00)
-                        {
+                        val currentZoomLevel = binding!!.mapView.mapbox!!.getCameraPosition().zoom
+                        if (currentZoomLevel > 18.00) {
                             val new_position: LatLng =
                                 binding!!.mapView.mapbox!!.getProjection().fromScreenLocation(
                                     PointF(event.x, event.y - 50)
@@ -184,11 +192,9 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
                             pinLong = new_position.longitude
                             clearMap()
                             showMarker(new_position, "home")
-                            if(binding!!.addNewAdd.root.isVisible)
-                            {
+                            if (binding!!.addNewAdd.root.isVisible) {
                                 pinMovedPopup()
-                            }else
-                            {
+                            } else {
                                 clearAddressImageList()
                                 callReverseGeoCode(new_position)
 
@@ -202,6 +208,10 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             }
         })
 
+        binding!!.ivrecenter.setOnClickListener {
+            changeCameraPosition(LatLng(currLat,currLong), mapBoxMap!!)
+        }
+
         binding!!.hidePinHint.setOnClickListener {
             binding!!.cvPintHint.visibility = View.GONE
         }
@@ -211,7 +221,7 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
         }
 
         binding!!.ivShowAddreess.setOnClickListener {
-           // getAddressCreated()
+            // getAddressCreated()
             //viewModel.getAddress(database)
 
             startActivity(Intent(this, AddressListActivity::class.java))
@@ -266,21 +276,20 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
         setNewAddressClick()
         logEvetn()
     }
-    fun logEvetn()
-    {
+
+    fun logEvetn() {
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Validator Activity")
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
     }
 
-    fun clearAddressImageList()
-    {
+    fun clearAddressImageList() {
         addressImageList.clear()
         for (i in 0 until 9) {
             addressImageList.add(AddPicturesModel(Uri.EMPTY))
         }
-        binding!!.confirmAddress!!.imageCount.text =  "0 of 9"
-        binding!!.addNewAdd!!.imageCount.text =  "0 of 9"
+        binding!!.confirmAddress!!.imageCount.text = "0 of 9"
+        binding!!.addNewAdd!!.imageCount.text = "0 of 9"
 
         Glide.with(this)
             .load(R.drawable.photos)
@@ -294,22 +303,21 @@ class UnlValidatorActivity : AppCompatActivity(), AddressImageClickListner, Loca
             .error(R.drawable.photos) // Set an error image if loading fails
             .into(binding!!.addNewAdd!!.addImage)
     }
-fun updateMoveMarkerBtn()
-{
-    if(isMoveMarker)
-    {
-        binding!!.crossLine.visibility = View.VISIBLE
-        binding!!.ivMovePin.alpha = "0.5".toFloat()
-        isMoveMarker = false
-        clearMap()
-    }else
-    {
-        binding!!.ivMovePin.alpha = "1.0".toFloat()
-        binding!!.crossLine.visibility = View.GONE
-        isMoveMarker = true
-        showMarker(LatLng(pinLat,pinLong), "home")
+
+    fun updateMoveMarkerBtn() {
+        if (isMoveMarker) {
+            binding!!.crossLine.visibility = View.VISIBLE
+            binding!!.ivMovePin.alpha = "0.5".toFloat()
+            isMoveMarker = false
+            clearMap()
+        } else {
+            binding!!.ivMovePin.alpha = "1.0".toFloat()
+            binding!!.crossLine.visibility = View.GONE
+            isMoveMarker = true
+            showMarker(LatLng(pinLat, pinLong), "home")
+        }
     }
-}
+
     fun getAddressCreated() {
         viewModel.addresslist.observe(this, { users ->
             try {
@@ -399,12 +407,10 @@ fun updateMoveMarkerBtn()
                     binding!!.confirmAddress!!.linearLayout.visibility = View.VISIBLE
                     response.data
                     reverseGeoCodeResponse = response.data
-                    if(binding!!.addNewAdd.root.isVisible)
-                    {
+                    if (binding!!.addNewAdd.root.isVisible) {
                         clearAddressFields()
                         setMapPointAddress()
-                    }else
-                    {
+                    } else {
                         showReverseGeoAddress()
                     }
 
@@ -494,16 +500,16 @@ fun updateMoveMarkerBtn()
             reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).house_number
         var streetName =
             reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).street_address
-        var city =
+        cityText =
             reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).city_district
-        var pincode =
+        pincodeText =
             reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).postal_code
-        var state =
+        stateText =
             reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).state_district
         var country =
             reverseGeoCodeResponse!!.features!!.get(0).properties!!.postal_address.get(0).country_code
 
-        var address = Utility.returnFullAddress(houseNo, "", "", streetName, city, state, pincode)
+        var address = Utility.returnFullAddress(houseNo, "", "", streetName, cityText, stateText, pincodeText)
         binding!!.addNewAdd.tvAddressText.text = address
 
         var floor = ""
@@ -515,6 +521,7 @@ fun updateMoveMarkerBtn()
         if (addressType.equals("other")) {
             addressType = binding!!.addNewAdd!!.edtLabelName.text!!.toString()
         }
+
         val addressModel = AddressModel(
             houseNo?.trim(),
             floor?.trim(),
@@ -541,8 +548,8 @@ fun updateMoveMarkerBtn()
         var entranceList: ArrayList<EntranceModel> = ArrayList()
 
         var openCloseTimeList: ArrayList<OpeningHoursSpecificationModel> = ArrayList()
-        val openingHoursSpecificationModel =
-            OpeningHoursSpecificationModel("11:00:00", "Monday", false, "08:00:00")
+
+
         if (addressImageList != null && addressImageList.size > 0) {
             imageList.clear()
             addressImageList.forEach() {
@@ -555,7 +562,7 @@ fun updateMoveMarkerBtn()
             imageList.clear()
         }
 
-        openCloseTimeList.add(openingHoursSpecificationModel)
+
         createAddressModel = CreateAddressModel(
             addressModel,
             addressType,
@@ -610,31 +617,62 @@ fun updateMoveMarkerBtn()
                     uriList.add(AddPicturesModel(uri))
                 }
                 val uriListSize = uriList.size
-           try {
-               if(isReplace)
-               {
-                   addressImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
-               }else
-               {
-                   for (i in replaceIndex until dataListSize) {
-                       if (i - replaceIndex < uriListSize) {
-                           addressImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
-                       } else {
-                           addressImageList[i] = AddPicturesModel(Uri.EMPTY)
-                       }
-                   }
-               }
+                try {
+                    if (isReplace) {
+                        addressImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
+                    } else {
+                        for (i in replaceIndex until dataListSize) {
+                            if (i - replaceIndex < uriListSize) {
+                                addressImageList[i] =
+                                    AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                            } else {
+                                addressImageList[i] = AddPicturesModel(Uri.EMPTY)
+                            }
+                        }
+                    }
 
-               if(uriListSize >0)
-                   updateAddPictureSavebtn(true)
+                    if (uriListSize > 0)
+                        updateAddPictureSavebtn(true)
 
-           }
-           catch (e:java.lang.Exception)
-           {
-               e.printStackTrace()
-           }
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
                 adapter.notifyDataSetChanged()
             }
+        } else {
+            if (requestCode == CAMERA_REQUEST_CODE) {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    val photo = data.extras!!["data"] as Bitmap?
+                    updateImagePickerUI(Utility.getImageUri(this@UnlValidatorActivity, photo!!)!!)
+                    adapter.notifyDataSetChanged()
+
+                }
+            }
+        }
+    }
+
+    fun updateImagePickerUI(uri: Uri) {
+        val uriList = ArrayList<AddPicturesModel>()
+        uriList.clear()
+        uriList.add(AddPicturesModel(uri))
+        val uriListSize = uriList.size
+        try {
+            if (isReplace) {
+                addressImageList[replaceIndex] = AddPicturesModel(uriList[0].ivPhotos)
+            } else {
+                for (i in replaceIndex until dataListSize) {
+                    if (i - replaceIndex < uriListSize) {
+                        addressImageList[i] = AddPicturesModel(uriList[i - replaceIndex].ivPhotos)
+                    } else {
+                        addressImageList[i] = AddPicturesModel(Uri.EMPTY)
+                    }
+                }
+            }
+            if (uriListSize > 0)
+                updateAddPictureSavebtn(true)
+        }catch (e : java.lang.Exception)
+        {
+            e.printStackTrace()
         }
     }
 
@@ -657,35 +695,33 @@ fun updateMoveMarkerBtn()
         val addressImageList = ArrayList<AddPicturesModel>()
         var pinLat: Double = 0.0
         var pinLong: Double = 0.0
-        var envType : String = EnvironmentType.PROD
+        var envType: String = EnvironmentType.PROD
+
+        var currLat: Double = 0.0
+        var currLong: Double = 0.0
+
     }
 
-    override fun addressImageClick(index : Int, isReplaceImage : Boolean) {
-        isReplace = isReplaceImage
-        if(isReplaceImage) {
-            replaceIndex = index
-            openImagePicker(1)
-        }
-        else {
-            replaceIndex = addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
-            openImagePicker(dataListSize -replaceIndex)
-        }
+    override fun addressImageClick(index: Int, isReplaceImage: Boolean) {
+        uploadImage(index,isReplaceImage)
     }
 
-    fun openImagePicker(imageLimit : Int) {
+
+    fun openImagePicker(imageLimit: Int) {
         MultiImagePicker.with(this)
             .setSelectionLimit(imageLimit)
             .open()
     }
 
     override fun onLocationChanged(location: Location) {
+
         updateCurrentLocation(location)
     }
 
     override fun onResume() {
         super.onResume()
-        if(isLocationEnabled)
-        iniitLocatinoManager()
+        if (isLocationEnabled)
+            iniitLocatinoManager()
         else
             showAlert()
 
@@ -693,7 +729,7 @@ fun updateMoveMarkerBtn()
 
     private fun iniitLocatinoManager() {
         try {
-          //  locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            //  locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val hasGps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
             val hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
             val gpsLocationListener: LocationListener = object : LocationListener {
@@ -880,7 +916,9 @@ fun updateMoveMarkerBtn()
 
     fun updateAddressButton() {
 
-        if (cityText.trim().isNotEmpty() && stateText.trim().isNotEmpty() && pincodeText.trim().isNotEmpty()) {
+        if (cityText.trim().isNotEmpty() && stateText.trim().isNotEmpty() && pincodeText.trim()
+                .isNotEmpty()
+        ) {
             binding!!.addNewAdd!!.tvConfirm.setBackgroundResource(R.drawable.theme_round_btn)
             binding!!.addNewAdd!!.tvConfirm.isClickable = true
         } else {
@@ -932,14 +970,12 @@ fun updateMoveMarkerBtn()
     }
 
     override fun onBackPressed() {
-        if(binding!!.addNewAdd.root.isVisible)
-        {
+        if (binding!!.addNewAdd.root.isVisible) {
             binding!!.confirmAddress!!.root.visibility = View.VISIBLE
             binding!!.addNewAdd!!.root.visibility = View.GONE
             binding!!.backBtn!!.visibility = View.GONE
             clearAddressFields()
-        }else
-        {
+        } else {
             super.onBackPressed()
             finishAffinity()
         }
@@ -948,8 +984,7 @@ fun updateMoveMarkerBtn()
     }
 
 
-    fun pinMovedPopup()
-    {
+    fun pinMovedPopup() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.edit_location_popup)
@@ -995,4 +1030,51 @@ fun updateMoveMarkerBtn()
         }
 
     }
+
+
+    private fun uploadImage(index: Int, isReplaceImage: Boolean) {
+        // setup the alert builder
+
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.image_picker_popup)
+        dialog.show()
+       // dialog.setCanceledOnTouchOutside(true)
+        dialog.window!!.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.setGravity(Gravity.CENTER)
+
+        dialog.findViewById<ImageView>(R.id.dismissPopup).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.findViewById<TextView>(R.id.tvCameraOption).setOnClickListener {
+            isReplace = isReplaceImage
+            if (isReplaceImage) {
+                replaceIndex = index
+            } else {
+                replaceIndex = addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+            }
+            askCameraPermissions(this)
+            dialog.dismiss()
+        }
+
+
+        dialog.findViewById<TextView>(R.id.tvGalleryOption).setOnClickListener {
+            isReplace = isReplaceImage
+            if (isReplaceImage) {
+                replaceIndex = index
+                openImagePicker(1)
+            } else {
+                replaceIndex = addressImageList.indexOfFirst { it.ivPhotos == Uri.EMPTY }
+                openImagePicker(dataListSize - replaceIndex)
+            }
+            dialog.dismiss()
+        }
+
+    }
+
 }
